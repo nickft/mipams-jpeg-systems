@@ -11,6 +11,7 @@ import com.mipams.jumbf.core.util.BoxTypeEnum;
 import com.mipams.jumbf.core.util.ContentTypeEnum;
 import com.mipams.jumbf.core.util.CoreUtils;
 import com.mipams.jumbf.core.util.MipamsException;
+import com.mipams.jumbf.core.util.BadRequestException;
 
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,13 @@ public class DescriptionBox extends XTBox{
     public void populateBody(ObjectNode input) throws MipamsException{
         
         String type = input.get("type").asText();
+        
         ContentTypeEnum contentType = ContentTypeEnum.getContentTypeFromString(type);
+
+        if(contentType == null){
+            throw new BadRequestException("Content Type: "+type+" is not supported");
+        }
+
         setUuid(contentType.getTypeId());
 
         JsonNode node = input.get("requestable");
@@ -111,7 +118,6 @@ public class DescriptionBox extends XTBox{
 
         long actualSize = 0;
 
-
         try{
             byte[] uuidTemp = new byte[16];
 
@@ -128,7 +134,6 @@ public class DescriptionBox extends XTBox{
                 throw new MipamsException();
             }
             actualSize ++;
-            
             setToggle(toggleValue);
 
             if(labelExists()){
@@ -193,7 +198,7 @@ public class DescriptionBox extends XTBox{
 
     void verifyBoxSizeValidity(long actualSize) throws MipamsException{
         if (getNominalPayloadSizeInBytes() != actualSize){
-            throw new MipamsException("Mismatch in the byte counting(Nominal: "+getNominalBoxSizeInBytes()+", Actual: "+Long.toString(actualSize)+") of the Box: "+this.toString());
+            throw new MipamsException("Mismatch in the byte counting(Nominal: "+getNominalPayloadSizeInBytes()+", Actual: "+Long.toString(actualSize)+") of the Box: "+this.toString());
         }
     }
 

@@ -1,4 +1,4 @@
-package com.mipams.jumbf.core;
+package com.mipams.jumbf.core.content;
 
 import java.util.List;
 
@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mipams.jumbf.core.util.MipamsException;
+import com.mipams.jumbf.core.XTBox;
 import com.mipams.jumbf.core.util.BadRequestException;
 import com.mipams.jumbf.core.util.BoxTypeEnum;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -41,7 +42,7 @@ public class JSONBox extends XTBox{
         
         String type = input.get("type").asText();
 
-        if( !BoxTypeEnum.JSONBox.getType().equals(type)){
+        if( !getBoxType().equals(type)){
             throw new MipamsException("Box type does not match with description type.");
         }
 
@@ -103,7 +104,6 @@ public class JSONBox extends XTBox{
             input.read(temp, 0, jsonSize);
 
             ObjectNode jsonContent = (ObjectNode) reader.readTree(new ByteArrayInputStream(temp));
-            logger.info(Integer.toString(input.available()));
             setJsonContent(jsonContent);
 
             logger.debug("Discovered box: "+this.toString());

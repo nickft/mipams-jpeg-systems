@@ -4,7 +4,8 @@ public enum BoxTypeEnum{
     
     JUMBFBox("jumb", 0x6A756D62),
     DescriptionBox("jumd", 0x6A756D64),
-    JSONBox("json", 0x6A736F6E);
+    JSONBox("json", 0x6A736F6E),
+    ContiguousCodestreamBox("jp2c", 0x6A703263);
 
     private String type;
     private int typeId;

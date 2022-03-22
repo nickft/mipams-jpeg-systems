@@ -39,8 +39,8 @@ public class JUMBFBox extends XTBox{
     public void populateBody(ObjectNode input) throws MipamsException{
         String type = input.get("type").asText();
 
-        if(!BoxTypeEnum.JUMBFBox.getType().equals(type)){
-            throw new MipamsException();
+        if(!getBoxType().equals(type)){
+            throw new MipamsException("Box type does not match with description type.");
         }
 
         ObjectNode descriptionNode = (ObjectNode) input.get("description");
@@ -64,10 +64,10 @@ public class JUMBFBox extends XTBox{
     @Override
     public long calculatePayloadSizeInBytes() throws MipamsException {
 
-        long sum = descriptionBox.calculatePayloadSizeInBytes();
+        long sum = descriptionBox.getNominalBoxSizeInBytes();
 
         for (XTBox content: contentList){
-            sum += content.calculatePayloadSizeInBytes();
+            sum += content.getNominalBoxSizeInBytes();
         }
 
         return sum;
@@ -92,6 +92,7 @@ public class JUMBFBox extends XTBox{
         descriptionBox.parse(input);
 
         actualSize += descriptionBox.getNominalBoxSizeInBytes();
+        logger.info(Long.toString(actualSize));
 
         contentList = new ArrayList<>();
 
@@ -103,6 +104,8 @@ public class JUMBFBox extends XTBox{
             contentList.add(contentBox);
 
             actualSize += contentBox.getNominalBoxSizeInBytes();
+            logger.info(Long.toString(actualSize));
+
         } while(actualSize < getNominalPayloadSizeInBytes());
 
         verifyBoxSizeValidity(actualSize);
@@ -110,7 +113,7 @@ public class JUMBFBox extends XTBox{
 
     void verifyBoxSizeValidity(long actualSize) throws MipamsException{
         if (getNominalPayloadSizeInBytes() != actualSize){
-            throw new MipamsException("Mismatch in the byte counting(Nominal: "+getNominalBoxSizeInBytes()+", Actual: "+Long.toString(actualSize)+") of the Box: "+this.toString());
+            throw new MipamsException("Mismatch in the byte counting(Nominal: "+getNominalPayloadSizeInBytes()+", Actual: "+Long.toString(actualSize)+") of the Box: "+this.toString());
         }
     }
 

@@ -3,6 +3,8 @@ package com.mipams.jumbf.core;
 import com.mipams.jumbf.core.util.BoxTypeEnum;
 import com.mipams.jumbf.core.util.ContentTypeEnum;
 import com.mipams.jumbf.core.util.MipamsException;
+import com.mipams.jumbf.core.content.JSONBox;
+import com.mipams.jumbf.core.content.ContiguousCodestreamBox;
 
 import java.util.UUID;
 
@@ -42,8 +44,10 @@ public class BoxFactory {
                 return new JUMBFBox();
             case JSONBox:
                 return new JSONBox();
+            case ContiguousCodestreamBox:
+                return new ContiguousCodestreamBox();
             default:
-                throw new MipamsException("Box not supported in this Factory");
+                throw new MipamsException("Box " + boxType.toString() + " not supported yet");
         }
     }
 }

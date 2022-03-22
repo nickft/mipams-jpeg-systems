@@ -31,16 +31,17 @@ public abstract class XTBox implements BoxInterface{
     final public void populate(ObjectNode input) throws MipamsException{
         populateBody(input);
 
-        long size = calculatePayloadSizeInBytes();
+        setTBox(getBoxTypeId());
+
+        long size = 4 + 4 + calculatePayloadSizeInBytes();
         
         if(size > Integer.MAX_VALUE){
             setLBox(1);
+            size += 4;
             setXBox(size);
         } else {
             setLBox((int) size);
         }
-
-        setTBox(getBoxTypeId());
     }
 
     public abstract void populateBody(ObjectNode input) throws MipamsException;
@@ -70,7 +71,7 @@ public abstract class XTBox implements BoxInterface{
 
         parsePayload(input);
 
-        logger.debug("The box has a total length of "+getNominalPayloadSizeInBytes());
+        logger.debug("The box "+getBoxType()+" has a total length of "+getNominalBoxSizeInBytes());
         
         return;
     }
@@ -98,7 +99,7 @@ public abstract class XTBox implements BoxInterface{
 
             value = CoreUtils.convertByteArrayToInt(temp);
 
-            if(!getBoxType().equals(BoxTypeEnum.getBoxTypeFromId(value))){
+            if(!getBoxType().equals(BoxTypeEnum.getBoxTypeFromId(value).getType())){
                 throw new CorruptedJumbfFileException("Box type does not match with description type.");
             }
             setTBox(value);
