@@ -14,6 +14,25 @@ public enum BoxTypeEnum{
         setType(type);
     }
 
+    public static BoxTypeEnum getBoxTypeFromId(int id){
+        
+        for (BoxTypeEnum boxType: values()){
+            if(boxType.getTypeId() == id ){
+                return boxType;
+            }
+        }
+        return null;
+    }
+
+    public static BoxTypeEnum getBoxTypeFromString(String type){
+        for (BoxTypeEnum boxType: values()){
+            if(boxType.getType().equals(type) ){
+                return boxType;
+            }
+        }
+        return null;
+    }
+
     public String getType() {
         return type;
     }

@@ -1,11 +1,14 @@
 package com.mipams.jumbf.core;
 
 import java.nio.ByteBuffer;
-import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
+import com.mipams.jumbf.core.util.BoxTypeEnum;
 import com.mipams.jumbf.core.util.CoreUtils;
-
+import com.mipams.jumbf.core.util.MipamsException;
+import com.mipams.jumbf.core.util.CorruptedJumbfFileException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.Getter;  
@@ -25,7 +28,7 @@ public abstract class XTBox implements BoxInterface{
 
     private @Getter @Setter Long XBox;
 
-    final public void populate(ObjectNode input) throws Exception{
+    final public void populate(ObjectNode input) throws MipamsException{
         populateBody(input);
 
         long size = calculatePayloadSizeInBytes();
@@ -40,22 +43,27 @@ public abstract class XTBox implements BoxInterface{
         setTBox(getBoxTypeId());
     }
 
-    public abstract void populateBody(ObjectNode input) throws Exception;
+    public abstract void populateBody(ObjectNode input) throws MipamsException;
 
-    public abstract long calculatePayloadSizeInBytes() throws Exception;
+    public abstract long calculatePayloadSizeInBytes() throws MipamsException;
 
     @Override
-    public void toBytes(FileOutputStream fileOutputStream) throws Exception {      
-        fileOutputStream.write(CoreUtils.convertIntToByteArray(LBox));
-        fileOutputStream.write(CoreUtils.convertIntToByteArray(TBox));
+    public void toBytes(FileOutputStream fileOutputStream) throws MipamsException {  
+        
+        try{
+            fileOutputStream.write(CoreUtils.convertIntToByteArray(LBox));
+            fileOutputStream.write(CoreUtils.convertIntToByteArray(TBox));
 
-        if(isXBoxEnabled()){
-            fileOutputStream.write(CoreUtils.convertLongToByteArray(XBox));
+            if(isXBoxEnabled()){
+                fileOutputStream.write(CoreUtils.convertLongToByteArray(XBox));
+            }
+        }  catch (IOException e){
+            logger.error("Could not write to file.", e);
         }
     }
 
     @Override
-    final public void parse(ByteArrayInputStream input) throws Exception{      
+    final public void parse(InputStream input) throws MipamsException{      
         logger.debug("Start parsing a new XTBox");
 
         parseHeaders(input);
@@ -67,43 +75,52 @@ public abstract class XTBox implements BoxInterface{
         return;
     }
 
-    private void parseHeaders(ByteArrayInputStream input) throws Exception{
+    private void parseHeaders(InputStream input) throws MipamsException{
         byte[] temp = new byte[4];
         int value;
 
-        if(input.available() == 0){
-            logger.debug("No more XTBoxes to parse");
-            return;
-        }
+        try{
 
-        if(input.read(temp, 0, 4) == -1){
-            throw new Exception("JUMBF Box is corrupted");
-        }
-
-        value = CoreUtils.convertByteArrayToInt(temp);
-        setLBox(value);
-
-        if(input.read(temp, 0, 4) == -1){
-            throw new Exception("JUMBF Box is corrupted");
-        }
-
-        value = CoreUtils.convertByteArrayToInt(temp);
-        setTBox(value);
-
-        if(LBox == 1){
-            temp = new byte[8];
-            long longVal;
-
-            if(input.read(temp, 0, 8) == -1){
-                throw new Exception("JUMBF Box is corrupted");
+            if(input.available() == 0){
+                return;
             }
 
-            longVal = CoreUtils.convertByteArrayToLong(temp);
-            setXBox(longVal);
+            if(input.read(temp, 0, 4) == -1){
+                throw new CorruptedJumbfFileException("Failed to parse LBox value from byte stream");
+            }
+
+            value = CoreUtils.convertByteArrayToInt(temp);
+            setLBox(value);
+
+            if(input.read(temp, 0, 4) == -1){
+                throw new CorruptedJumbfFileException("Failed to parse TBox value from byte stream");
+            }
+
+            value = CoreUtils.convertByteArrayToInt(temp);
+
+            if(!getBoxType().equals(BoxTypeEnum.getBoxTypeFromId(value))){
+                throw new CorruptedJumbfFileException("Box type does not match with description type.");
+            }
+            setTBox(value);
+            
+
+            if(LBox == 1){
+                temp = new byte[8];
+                long longVal;
+
+                if(input.read(temp, 0, 8) == -1){
+                    throw new CorruptedJumbfFileException("Failed to parse XBox value from byte stream");
+                }
+
+                longVal = CoreUtils.convertByteArrayToLong(temp);
+                setXBox(longVal);
+            }
+        } catch (IOException e){
+            logger.error("Could not read XTBox values", e);
         }
     }
 
-    public abstract void parsePayload(ByteArrayInputStream input) throws Exception;
+    public abstract void parsePayload(InputStream input) throws MipamsException;
 
     public long getNominalPayloadSizeInBytes(){
         long payloadSize = isXBoxEnabled() ? XBox - (4 + 4 + 8) : LBox - (4 + 4);

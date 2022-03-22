@@ -4,17 +4,20 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
+import com.mipams.jumbf.core.util.MipamsException;
+import com.mipams.jumbf.core.util.BadRequestException;
 import com.mipams.jumbf.core.util.BoxTypeEnum;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
+import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import lombok.Getter;  
 import lombok.NoArgsConstructor;  
@@ -34,12 +37,12 @@ public class JSONBox extends XTBox{
     private @Getter @Setter ObjectNode  jsonContent;
 
     @Override
-    public void populateBody(ObjectNode input) throws Exception{
+    public void populateBody(ObjectNode input) throws MipamsException{
         
         String type = input.get("type").asText();
 
         if( !BoxTypeEnum.JSONBox.getType().equals(type)){
-            throw new Exception("Bad request");
+            throw new MipamsException("Box type does not match with description type.");
         }
 
         ObjectNode payloadNode = (ObjectNode) input.get("payload");
@@ -47,50 +50,66 @@ public class JSONBox extends XTBox{
     }
 
     @Override
-    public long calculatePayloadSizeInBytes() throws Exception {
+    public long calculatePayloadSizeInBytes() throws MipamsException {
 
         ObjectMapper om = new ObjectMapper();
         final ObjectWriter writer = om.writer();
+        
+        byte[] bytes;
 
-        byte[] bytes = writer.writeValueAsBytes(jsonContent);
-
-        return bytes.length;
+        try{
+            bytes = writer.writeValueAsBytes(jsonContent);
+            return bytes.length;
+        } catch (JsonProcessingException e){
+            logger.error("Coulnd not convert json to byte array", e);
+            return 0;
+        }
     }
 
     @Override
-    public void toBytes(FileOutputStream fileOutputStream) throws Exception {    
+    public void toBytes(FileOutputStream fileOutputStream) throws MipamsException {    
         super.toBytes(fileOutputStream);
         
         ObjectMapper om = new ObjectMapper();
         final ObjectWriter writer = om.writer();
 
-        final byte[] bytes = writer.writeValueAsBytes(jsonContent);
-
-        fileOutputStream.write(bytes);
+        try{
+            byte[] bytes = writer.writeValueAsBytes(jsonContent);
+            fileOutputStream.write(bytes);
+        } catch (JsonProcessingException e){
+            logger.error("Coulnd not convert json to byte array", e);
+        } catch (IOException e){
+            logger.error("Coulnd not write to file", e);
+        }        
     }
 
     @Override
-    public void parsePayload(ByteArrayInputStream input) throws Exception{
-        if(isXBoxEnabled()){
-            throw new Exception("JSON content is huge. Do not support it.");
-        }
+    public void parsePayload(InputStream input) throws MipamsException{
 
-        logger.debug("The box is a JSON box");
-        
-        int jsonSize = (int) getNominalPayloadSizeInBytes();
+        try{
+            if(isXBoxEnabled()){
+                throw new MipamsException("JSON content is huge. Do not support it.");
+            }
 
-        ObjectMapper om = new ObjectMapper();
-        final ObjectReader reader = om.reader();
+            logger.debug("The box is a JSON box");
+            
+            int jsonSize = (int) getNominalPayloadSizeInBytes();
 
-        byte[] temp = new byte[jsonSize];
+            ObjectMapper om = new ObjectMapper();
+            final ObjectReader reader = om.reader();
 
-        input.read(temp, 0, jsonSize);
+            byte[] temp = new byte[jsonSize];
 
-        ObjectNode jsonContent = (ObjectNode) reader.readTree(new ByteArrayInputStream(temp));
-        logger.info(Integer.toString(input.available()));
-        setJsonContent(jsonContent);
+            input.read(temp, 0, jsonSize);
 
-        logger.debug("Discovered box: "+this.toString());
+            ObjectNode jsonContent = (ObjectNode) reader.readTree(new ByteArrayInputStream(temp));
+            logger.info(Integer.toString(input.available()));
+            setJsonContent(jsonContent);
+
+            logger.debug("Discovered box: "+this.toString());
+        } catch (IOException e){
+            logger.error("Coulnd not read Json content", e);
+        } 
     }
 
     @Override

@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.mipams.jumbf.core.JUMBFBox;
 import com.mipams.jumbf.core.ParserService;
+import com.mipams.jumbf.core.util.MipamsException;
 import com.mipams.jumbf.core.GeneratorService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,20 +39,13 @@ public class CoreController {
     GeneratorService generatorService;
 
     @GetMapping("/parseMetadata")
-    public String parseJumbfMetadataFromPath(@RequestParam String path) throws Exception {
-
-        FileInputStream input = new FileInputStream(path);
-        byte[] temp = input.readAllBytes();
-        
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(temp);
-
-        parserService.parse(inputStream);
-
+    public String parseJumbfMetadataFromPath(@RequestParam String path) throws MipamsException {
+        parserService.parse(path);
         return "Parsing is on the way.";
     }
 
     @PostMapping("/generateBox")
-    public String generateJumbfBytes(@RequestBody JsonNode requestBody) throws Exception {
+    public String generateJumbfBytes(@RequestBody JsonNode requestBody) throws MipamsException {
 
         logger.debug(requestBody.toString());
 

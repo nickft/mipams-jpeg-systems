@@ -1,11 +1,13 @@
 package com.mipams.jumbf.core;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.io.ByteArrayInputStream;
+import com.mipams.jumbf.core.util.MipamsException;
+
+import java.io.InputStream;
 import java.io.FileOutputStream;
 
 public interface BoxInterface {
-    public void toBytes(FileOutputStream fileOutputStream) throws Exception;
+    public void toBytes(FileOutputStream fileOutputStream) throws MipamsException;
 
-    public void parse(ByteArrayInputStream input) throws Exception;
+    public void parse(InputStream input) throws MipamsException;
 }
