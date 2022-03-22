@@ -2,7 +2,7 @@ package com.mipams.jumbf.core;
 
 import java.util.UUID;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -39,8 +39,7 @@ public class DescriptionBox extends XTBox{
     private @Getter @Setter byte[] signature;
 
     @Override
-    public void populate(ObjectNode input) throws Exception{
-        super.populate(input);
+    public void populateBody(ObjectNode input) throws Exception{
         
         String type = input.get("type").asText();
         ContentTypeEnum contentType = ContentTypeEnum.getContentTypeFromString(type);
@@ -67,34 +66,45 @@ public class DescriptionBox extends XTBox{
     }
 
     @Override
-    public ByteArrayOutputStream toBytes() throws Exception {   
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
+    public long calculatePayloadSizeInBytes() throws Exception {
+        long sum = 16; // UUID length
 
-        output.write(CoreUtils.convertUUIDToByteArray(uuid));
-        output.write(CoreUtils.convertIntToSingleElementByteArray(toggle));
+        sum ++; // toggle
+
+        if(labelExists()) sum += label.length() + 1;
+
+        if(idExists()) sum += 4;
+
+        if(signatureExists()) sum += 32;
+
+        return sum;
+    }
+
+    @Override
+    public void toBytes(FileOutputStream fileOutputStream) throws Exception {   
+        super.toBytes(fileOutputStream);
+        
+        fileOutputStream.write(CoreUtils.convertUUIDToByteArray(uuid));
+        fileOutputStream.write(CoreUtils.convertIntToSingleElementByteArray(toggle));
 
         if(labelExists()){
-            output.write(CoreUtils.convertStringToByteArray(label+"\0"));
+            fileOutputStream.write(CoreUtils.convertStringToByteArray(label+"\0"));
         }
 
         if(idExists()){
-            output.write(CoreUtils.convertIntToByteArray(id));
+            fileOutputStream.write(CoreUtils.convertIntToByteArray(id));
         }
 
         if(signatureExists()){
-            logger.debug("Signature is not supported");
+            fileOutputStream.write(signature);
         }
-
-        incrementActualSizeBy(output.size());
-        setPayload(output);
-
-        return super.toBytes();
     }
    
-    public void parse(ByteArrayInputStream input) throws Exception{
-        super.parse(input);
+    @Override
+    public void parsePayload(ByteArrayInputStream input) throws Exception{
+        logger.debug("Description box");
 
-        logger.debug("The box is a description box");
+        long actualSize = 0;
 
         byte[] uuidTemp = new byte[16];
 
@@ -104,15 +114,15 @@ public class DescriptionBox extends XTBox{
 
         UUID uuidVal = CoreUtils.convertByteArrayToUUID(uuidTemp);
         setUuid(uuidVal);
-        incrementActualSizeBy(16);
+        actualSize +=16;
 
         int toggleValue = 0;
         if((toggleValue = input.read()) == -1){
             throw new Exception("JUMBF Box is corrupted");
         }
+        actualSize ++;
         
         setToggle(toggleValue);
-        incrementActualSizeBy(1);
 
         if(labelExists()){
             char charVal;
@@ -120,10 +130,10 @@ public class DescriptionBox extends XTBox{
 
             while((charVal = (char) input.read()) != '\0') {
                 str.append(charVal);
-                incrementActualSizeBy(1);
+                actualSize ++;
             }
             //For the null character that we are not included in the variable
-            incrementActualSizeBy(1);
+            actualSize ++;
 
             setLabel(str.toString());
         }
@@ -138,7 +148,7 @@ public class DescriptionBox extends XTBox{
 
             int idVal = CoreUtils.convertByteArrayToInt(temp);
             setId(idVal);
-            incrementActualSizeBy(4);
+            actualSize +=4;
         }
 
         if(signatureExists()){
@@ -149,10 +159,10 @@ public class DescriptionBox extends XTBox{
             }
 
             setSignature(signatureVal);
-            incrementActualSizeBy(32);
+            actualSize +=32;
         }
 
-        verifyBoxSizeValidity();
+        verifyBoxSizeValidity(actualSize);
 
         logger.debug("Discovered box: "+this.toString());
 
@@ -171,9 +181,9 @@ public class DescriptionBox extends XTBox{
         return CoreUtils.isBitAtGivenPositionSet(toggle, 4);
     }
 
-    void verifyBoxSizeValidity() throws Exception{
-        if (getNominalBoxSizeInBytes() != getActualSize()){
-            throw new Exception("Mismatch in the byte counting(Nominal: "+getNominalBoxSizeInBytes()+", Actual: "+getActualSize()+") of the Box: "+this.toString());
+    void verifyBoxSizeValidity(long actualSize) throws Exception{
+        if (getNominalPayloadSizeInBytes() != actualSize){
+            throw new Exception("Mismatch in the byte counting(Nominal: "+getNominalBoxSizeInBytes()+", Actual: "+Long.toString(actualSize)+") of the Box: "+this.toString());
         }
     }
 

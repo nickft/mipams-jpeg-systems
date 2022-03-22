@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mipams.jumbf.core.util.BoxTypeEnum;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 
 import lombok.Getter;  
 import lombok.NoArgsConstructor;  
@@ -34,8 +34,7 @@ public class JSONBox extends XTBox{
     private @Getter @Setter ObjectNode  jsonContent;
 
     @Override
-    public void populate(ObjectNode input) throws Exception{
-        super.populate(input);
+    public void populateBody(ObjectNode input) throws Exception{
         
         String type = input.get("type").asText();
 
@@ -47,49 +46,49 @@ public class JSONBox extends XTBox{
         setJsonContent(payloadNode);
     }
 
-    public ByteArrayOutputStream toBytes() throws Exception {   
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
+    @Override
+    public long calculatePayloadSizeInBytes() throws Exception {
 
+        ObjectMapper om = new ObjectMapper();
+        final ObjectWriter writer = om.writer();
+
+        byte[] bytes = writer.writeValueAsBytes(jsonContent);
+
+        return bytes.length;
+    }
+
+    @Override
+    public void toBytes(FileOutputStream fileOutputStream) throws Exception {    
+        super.toBytes(fileOutputStream);
+        
         ObjectMapper om = new ObjectMapper();
         final ObjectWriter writer = om.writer();
 
         final byte[] bytes = writer.writeValueAsBytes(jsonContent);
 
-        output.write(bytes);
-
-        incrementActualSizeBy(output.size());
-        setPayload(output);
-
-        return super.toBytes();
+        fileOutputStream.write(bytes);
     }
 
     @Override
-    public void parse(ByteArrayInputStream input) throws Exception{
-        super.parse(input);
-
-        logger.info(Integer.toString(input.available()));
-
+    public void parsePayload(ByteArrayInputStream input) throws Exception{
         if(isXBoxEnabled()){
             throw new Exception("JSON content is huge. Do not support it.");
         }
 
         logger.debug("The box is a JSON box");
         
-        int jsonSize = (int) getPayloadSizeInBytes();
-
-        logger.info(Long.toString(getPayloadSizeInBytes()));
+        int jsonSize = (int) getNominalPayloadSizeInBytes();
 
         ObjectMapper om = new ObjectMapper();
         final ObjectReader reader = om.reader();
 
-        byte[] temp = new byte[getLBox()];
+        byte[] temp = new byte[jsonSize];
 
-        input.read(temp, 0, getLBox());
+        input.read(temp, 0, jsonSize);
 
         ObjectNode jsonContent = (ObjectNode) reader.readTree(new ByteArrayInputStream(temp));
         logger.info(Integer.toString(input.available()));
         setJsonContent(jsonContent);
-        incrementActualSizeBy(jsonSize);
 
         logger.debug("Discovered box: "+this.toString());
     }

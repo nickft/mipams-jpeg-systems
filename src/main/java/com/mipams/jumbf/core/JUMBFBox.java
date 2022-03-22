@@ -14,7 +14,7 @@ import com.mipams.jumbf.core.util.BoxTypeEnum;
 
 import java.util.ArrayList;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 
 import lombok.Getter;  
 import lombok.NoArgsConstructor;  
@@ -35,9 +35,7 @@ public class JUMBFBox extends XTBox{
     private @Getter @Setter List<XTBox> contentList;
 
     @Override
-    public void populate(ObjectNode input) throws Exception{
-        super.populate(input);
-
+    public void populateBody(ObjectNode input) throws Exception{
         String type = input.get("type").asText();
 
         if(!BoxTypeEnum.JUMBFBox.getType().equals(type)){
@@ -63,31 +61,38 @@ public class JUMBFBox extends XTBox{
     }
 
     @Override
-    public ByteArrayOutputStream toBytes() throws Exception {   
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
+    public long calculatePayloadSizeInBytes() throws Exception {
 
-        output.write(descriptionBox.toBytes().toByteArray());
+        long sum = descriptionBox.calculatePayloadSizeInBytes();
 
         for (XTBox content: contentList){
-            output.write(content.toBytes().toByteArray());
+            sum += content.calculatePayloadSizeInBytes();
         }
 
-        incrementActualSizeBy(output.size());
-        setPayload(output);
-
-        return super.toBytes();
+        return sum;
     }
 
     @Override
-    public void parse(ByteArrayInputStream input) throws Exception{
-        super.parse(input);
+    public void toBytes(FileOutputStream fileOutputStream) throws Exception {
+        super.toBytes(fileOutputStream);
+           
+        descriptionBox.toBytes(fileOutputStream);
+
+        for (XTBox content: contentList){
+            content.toBytes(fileOutputStream);
+        }
+    }
+
+    @Override
+    public void parsePayload(ByteArrayInputStream input) throws Exception{
+        long actualSize = 0;
 
         logger.debug("The box is a JUMBF box");
 
         descriptionBox = new DescriptionBox();
         descriptionBox.parse(input);
 
-        incrementActualSizeBy(descriptionBox.getNominalBoxSizeInBytes());
+        actualSize += descriptionBox.getNominalBoxSizeInBytes();
 
         contentList = new ArrayList<>();
 
@@ -100,17 +105,17 @@ public class JUMBFBox extends XTBox{
             contentBox.parse(input);
             contentList.add(contentBox);
 
-            incrementActualSizeBy(contentBox.getNominalBoxSizeInBytes());
-        } while(getActualSize() < getNominalBoxSizeInBytes());
+            actualSize += contentBox.getNominalBoxSizeInBytes();
+        } while(actualSize < getNominalPayloadSizeInBytes());
 
         logger.debug("Finish parsing the contents of the box");
 
-        verifyBoxSizeValidity();
+        verifyBoxSizeValidity(actualSize);
     }
 
-    void verifyBoxSizeValidity() throws Exception{
-        if (getNominalBoxSizeInBytes() != getActualSize()){
-            throw new Exception("Mismatch in the byte counting(Nominal: "+getNominalBoxSizeInBytes()+", Actual: "+getActualSize()+") of the Box: "+this.toString());
+    void verifyBoxSizeValidity(long actualSize) throws Exception{
+        if (getNominalPayloadSizeInBytes() != actualSize){
+            throw new Exception("Mismatch in the byte counting(Nominal: "+getNominalBoxSizeInBytes()+", Actual: "+Long.toString(actualSize)+") of the Box: "+this.toString());
         }
     }
 

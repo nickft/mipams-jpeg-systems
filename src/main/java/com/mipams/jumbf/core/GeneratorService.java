@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,19 +21,15 @@ public class GeneratorService implements GeneratorInterface{
     @Override
     public void generate(ObjectNode input) throws Exception{
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        
+        FileOutputStream fileOutputStream = new FileOutputStream("/home/nikos/Desktop/test.jumb");
         JUMBFBox superbox = new JUMBFBox();
 
         superbox.populate(input);
         logger.debug("Created a new Superbox");
         logger.debug(superbox.toString());
 
-        ByteArrayOutputStream resultStream = superbox.toBytes();    
-
-   
-        try(FileOutputStream outputStream = new FileOutputStream("/home/nikos/Desktop/test.jumb")) {
-            resultStream.writeTo(outputStream);
-        }
+        superbox.toBytes(fileOutputStream);    
             
         logger.debug("Finish parsing. JUMBF Box is stored in file: ");
         logger.debug(superbox.toString());

@@ -2,7 +2,7 @@ package com.mipams.jumbf.core;
 
 import java.nio.ByteBuffer;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 
 import com.mipams.jumbf.core.util.CoreUtils;
 
@@ -25,31 +25,49 @@ public abstract class XTBox implements BoxInterface{
 
     private @Getter @Setter Long XBox;
 
-    private @Getter @Setter ByteArrayOutputStream payload;
+    final public void populate(ObjectNode input) throws Exception{
+        populateBody(input);
 
-    private @Getter @Setter long actualSize;
+        long size = calculatePayloadSizeInBytes();
+        
+        if(size > Integer.MAX_VALUE){
+            setLBox(1);
+            setXBox(size);
+        } else {
+            setLBox((int) size);
+        }
 
-    public void populate(ObjectNode input) throws Exception{
         setTBox(getBoxTypeId());
     }
 
+    public abstract void populateBody(ObjectNode input) throws Exception;
+
+    public abstract long calculatePayloadSizeInBytes() throws Exception;
+
     @Override
-    public ByteArrayOutputStream toBytes() throws Exception {
-        setLBox(getPayload().size() + 8);   
+    public void toBytes(FileOutputStream fileOutputStream) throws Exception {      
+        fileOutputStream.write(CoreUtils.convertIntToByteArray(LBox));
+        fileOutputStream.write(CoreUtils.convertIntToByteArray(TBox));
 
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        
-        output.write(CoreUtils.convertIntToByteArray(LBox));
-        output.write(CoreUtils.convertIntToByteArray(TBox));
-        output.write(getPayload().toByteArray());
-
-        return output;
+        if(isXBoxEnabled()){
+            fileOutputStream.write(CoreUtils.convertLongToByteArray(XBox));
+        }
     }
 
     @Override
-    public void parse(ByteArrayInputStream input) throws Exception{      
-        logger.debug("Start parsing a new box");
+    final public void parse(ByteArrayInputStream input) throws Exception{      
+        logger.debug("Start parsing a new XTBox");
 
+        parseHeaders(input);
+
+        parsePayload(input);
+
+        logger.debug("The box has a total length of "+getNominalPayloadSizeInBytes());
+        
+        return;
+    }
+
+    private void parseHeaders(ByteArrayInputStream input) throws Exception{
         byte[] temp = new byte[4];
         int value;
 
@@ -64,7 +82,6 @@ public abstract class XTBox implements BoxInterface{
 
         value = CoreUtils.convertByteArrayToInt(temp);
         setLBox(value);
-        incrementActualSizeBy(4);
 
         if(input.read(temp, 0, 4) == -1){
             throw new Exception("JUMBF Box is corrupted");
@@ -72,7 +89,6 @@ public abstract class XTBox implements BoxInterface{
 
         value = CoreUtils.convertByteArrayToInt(temp);
         setTBox(value);
-        incrementActualSizeBy(4);
 
         if(LBox == 1){
             temp = new byte[8];
@@ -84,12 +100,14 @@ public abstract class XTBox implements BoxInterface{
 
             longVal = CoreUtils.convertByteArrayToLong(temp);
             setXBox(longVal);
-            incrementActualSizeBy(8);
         }
+    }
 
-        logger.debug("The box is of type: "+Integer.toString(TBox) + " and has a total length of "+getPayloadSizeInBytes());
-        
-        return;
+    public abstract void parsePayload(ByteArrayInputStream input) throws Exception;
+
+    public long getNominalPayloadSizeInBytes(){
+        long payloadSize = isXBoxEnabled() ? XBox - (4 + 4 + 8) : LBox - (4 + 4);
+        return payloadSize;
     }
 
     protected long getNominalBoxSizeInBytes(){
@@ -98,15 +116,6 @@ public abstract class XTBox implements BoxInterface{
 
     public boolean isXBoxEnabled(){
         return LBox == 1 && (XBox != null);
-    }
-
-    public long getPayloadSizeInBytes(){
-        long payloadSize = (LBox == 1) ? XBox - (4 + 4 + 8) : LBox - (4 + 4);
-        return payloadSize;
-    }
-
-    protected void incrementActualSizeBy(long byteLength){
-        setActualSize(actualSize+byteLength);
     }
 
     public abstract String getBoxType();

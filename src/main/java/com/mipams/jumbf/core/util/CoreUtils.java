@@ -51,6 +51,5 @@ public class CoreUtils{
         int new_num = n >> (positition - 1);
     
         return (new_num & 1) == 1;
-    }
-    
+    }    
 }
