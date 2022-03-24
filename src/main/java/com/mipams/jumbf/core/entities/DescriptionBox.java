@@ -47,7 +47,7 @@ public class DescriptionBox extends XTBox {
 
         sum += getToggleSize();
 
-        if(labelExists()) sum += getLabelWithEscapeCharacter().length();
+        if(labelExists()) sum += getLabelSize();
 
         if(idExists()) sum += getIdSize();
 
@@ -71,6 +71,10 @@ public class DescriptionBox extends XTBox {
     int getSignatureSize(){
         return 32;
     }
+
+    long getLabelSize(){
+        return CoreUtils.addEscapeCharacterToText(getLabel()).length();
+    }
    
     public boolean labelExists(){
         return CoreUtils.isBitAtGivenPositionSet(toggle, 2);
@@ -83,8 +87,10 @@ public class DescriptionBox extends XTBox {
     public boolean signatureExists(){
         return CoreUtils.isBitAtGivenPositionSet(toggle, 4);
     }
-    
+
     public String getLabelWithEscapeCharacter(){
-        return getLabel() + "\0";
+        return CoreUtils.addEscapeCharacterToText(getLabel());
     }
+    
+    
 }

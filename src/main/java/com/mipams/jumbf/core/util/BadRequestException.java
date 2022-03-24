@@ -16,6 +16,10 @@ public class BadRequestException extends MipamsException{
         super(message, cause);
     }
 
+    public BadRequestException(Throwable cause) {
+        super(cause);
+    }
+
     @Override
     public String toString(){
         if(getMessage() == null){

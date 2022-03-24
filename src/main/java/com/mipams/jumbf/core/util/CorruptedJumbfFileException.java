@@ -16,6 +16,10 @@ public class CorruptedJumbfFileException extends MipamsException{
         super(message, cause);
     }
 
+    public CorruptedJumbfFileException(Throwable cause) {
+        super(cause);
+    }
+
     @Override
     public String toString(){
         if(getMessage() == null){

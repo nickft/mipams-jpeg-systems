@@ -6,7 +6,8 @@ import java.util.UUID;
 public enum ContentTypeEnum{
     Json(BoxTypeEnum.JsonBox, "6A736F6E-0011-0010-8000-00AA00389B71"),
     Jumbf(BoxTypeEnum.JumbfBox, "6A756D62-0011-0010-8000-00AA00389B71"),
-    ContiguousCodestream(BoxTypeEnum.ContiguousCodestreamBox, "6A703263-0011-0010-8000-00AA00389B71");
+    ContiguousCodestream(BoxTypeEnum.ContiguousCodestreamBox, "6A703263-0011-0010-8000-00AA00389B71"),
+    EmbeddedFile(BoxTypeEnum.EmbeddedFileBox , "40CB0C32-BB8A-489D-A70B-2AD6F47F4369");
 
     private BoxTypeEnum boxType;
     private UUID typeId;

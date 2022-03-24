@@ -20,4 +20,9 @@ public class MipamsException extends Exception{
         super(message, cause);
         logger.error(message);
     }
+
+    public MipamsException(Throwable cause) {
+        super(cause);
+        logger.error(cause.getMessage());
+    }
 }

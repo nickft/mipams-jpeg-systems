@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
-public class ContiguousCodestreamBoxService extends XTBoxService<ContiguousCodestreamBox>{
+public class ContiguousCodestreamBoxService extends XTBoxService<ContiguousCodestreamBox> {
 
     private static final Logger logger = LoggerFactory.getLogger(ContiguousCodestreamBoxService.class); 
 
@@ -68,18 +68,7 @@ public class ContiguousCodestreamBoxService extends XTBoxService<ContiguousCodes
 
     @Override
     protected void writeXTBoxPayloadToJumbfFile(ContiguousCodestreamBox contiguousCodeStreamBox, FileOutputStream fileOutputStream) throws MipamsException{
-
-        try (FileInputStream inputStream = new FileInputStream(contiguousCodeStreamBox.getPathToCodestream())){
-
-            int n;
-            while ((n = inputStream.read()) != -1) {
-                fileOutputStream.write(n);
-            }  
-        } catch(FileNotFoundException e){
-            throw new MipamsException("Coulnd not locate file", e);
-        } catch (IOException e){
-            throw new MipamsException("Coulnd not write to file", e);
-        }
+        CoreUtils.writeFileContentToOutput(contiguousCodeStreamBox.getPathToCodestream(), fileOutputStream);
     }
 
     @Override

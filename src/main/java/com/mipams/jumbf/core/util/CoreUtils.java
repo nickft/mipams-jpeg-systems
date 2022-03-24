@@ -3,8 +3,14 @@ package com.mipams.jumbf.core.util;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import java.nio.ByteBuffer;
 import java.util.UUID;
+import org.springframework.http.MediaType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +71,11 @@ public class CoreUtils{
         return (new_num & 1) == 1;
     }    
 
+    public static int setBitValueAtGivenPosition(int n, int position, int val){
+        int mask = 1 << position;
+        return (n & ~mask) | ((val << position) & mask);
+    }
+
     public static double getFileSizeFromPath(String filePath) throws MipamsException{
         try{
             File f = new File(filePath);
@@ -88,5 +99,35 @@ public class CoreUtils{
         fullPath.append(fileName);
 
         return fullPath.toString();
+    }
+
+    public static String addEscapeCharacterToText(String text){
+        return text + "\0";
+    }
+
+    public static void writeFileContentToOutput(String path, FileOutputStream fileOutputStream) throws MipamsException{
+
+        try (FileInputStream inputStream = new FileInputStream(path)){
+            int n;
+            while ((n = inputStream.read()) != -1) {
+                fileOutputStream.write(n);
+            }  
+        } catch(FileNotFoundException e){
+            throw new MipamsException("Coulnd not locate file", e);
+        } catch (IOException e){
+            throw new MipamsException("Coulnd not write to file", e);
+        }
+    }
+
+    public static MediaType getMediaTypeFromString(String input) throws IllegalArgumentException{
+        MediaType mediaType ;
+    
+        mediaType = MediaType.valueOf(input);
+
+        if(mediaType.getSubtype() == null){
+            throw new IllegalArgumentException("Subtype needs to be specified.");
+        }
+
+        return mediaType;
     }
 }
