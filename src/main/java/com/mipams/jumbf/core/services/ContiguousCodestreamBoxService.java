@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
-public class ContiguousCodestreamBoxService extends XTBoxService{
+public class ContiguousCodestreamBoxService extends XTBoxService<ContiguousCodestreamBox>{
 
     private static final Logger logger = LoggerFactory.getLogger(ContiguousCodestreamBoxService.class); 
 
@@ -40,10 +40,8 @@ public class ContiguousCodestreamBoxService extends XTBoxService{
     }
 
     @Override
-    protected void populateBox(XTBox xtBox, ObjectNode input) throws MipamsException{
-        
-        ContiguousCodestreamBox contiguousCodeStreamBox = (ContiguousCodestreamBox) xtBox;
-        
+    protected void populateBox(ContiguousCodestreamBox contiguousCodeStreamBox, ObjectNode input) throws MipamsException{
+              
         String type = input.get("type").asText();
 
         if( !contiguousCodeStreamBox.getBoxType().equals(type)){
@@ -69,9 +67,7 @@ public class ContiguousCodestreamBoxService extends XTBoxService{
     }
 
     @Override
-    protected void writeXTBoxPayloadToJumbfFile(XTBox xtBox, FileOutputStream fileOutputStream) throws MipamsException{
-
-        ContiguousCodestreamBox contiguousCodeStreamBox = (ContiguousCodestreamBox) xtBox;
+    protected void writeXTBoxPayloadToJumbfFile(ContiguousCodestreamBox contiguousCodeStreamBox, FileOutputStream fileOutputStream) throws MipamsException{
 
         try (FileInputStream inputStream = new FileInputStream(contiguousCodeStreamBox.getPathToCodestream())){
 
@@ -87,10 +83,8 @@ public class ContiguousCodestreamBoxService extends XTBoxService{
     }
 
     @Override
-    protected void populatePayloadFromJumbfFile(XTBox xtBox, InputStream input) throws MipamsException{
+    protected void populatePayloadFromJumbfFile(ContiguousCodestreamBox contiguousCodeStreamBox, InputStream input) throws MipamsException{
         logger.debug("Contiguous Codestream box");
-
-        ContiguousCodestreamBox contiguousCodeStreamBox = (ContiguousCodestreamBox) xtBox;
 
         String fileName = CoreUtils.randomStringGenerator() + ".jpeg";
 

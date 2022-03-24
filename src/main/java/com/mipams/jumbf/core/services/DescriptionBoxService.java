@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
-public class DescriptionBoxService extends XTBoxService{
+public class DescriptionBoxService extends XTBoxService<DescriptionBox>{
 
     private static final Logger logger = LoggerFactory.getLogger(DescriptionBoxService.class); 
 
@@ -32,8 +32,8 @@ public class DescriptionBoxService extends XTBoxService{
     }
 
     @Override
-    protected void populateBox(XTBox xtBox, ObjectNode input) throws MipamsException{
-        DescriptionBox descriptionBox = (DescriptionBox) xtBox;
+    protected void populateBox(DescriptionBox descriptionBox, ObjectNode input) throws MipamsException{
+        
         String type = input.get("type").asText();
         
         ContentTypeEnum contentType = ContentTypeEnum.getContentTypeFromString(type);
@@ -67,8 +67,8 @@ public class DescriptionBoxService extends XTBoxService{
     }
 
     @Override
-    protected void writeXTBoxPayloadToJumbfFile(XTBox xtBox, FileOutputStream fileOutputStream) throws MipamsException{
-        DescriptionBox descriptionBox = (DescriptionBox) xtBox;
+    protected void writeXTBoxPayloadToJumbfFile(DescriptionBox descriptionBox, FileOutputStream fileOutputStream) throws MipamsException{
+        
         try{        
             fileOutputStream.write(CoreUtils.convertUUIDToByteArray(descriptionBox.getUuid()));
             fileOutputStream.write(CoreUtils.convertIntToSingleElementByteArray(descriptionBox.getToggle()));
@@ -90,8 +90,7 @@ public class DescriptionBoxService extends XTBoxService{
     }
 
     @Override
-    protected void populatePayloadFromJumbfFile(XTBox xtBox, InputStream input) throws MipamsException{
-        DescriptionBox descriptionBox = (DescriptionBox) xtBox;
+    protected void populatePayloadFromJumbfFile(DescriptionBox descriptionBox, InputStream input) throws MipamsException{
         
         logger.debug("Description box");
 

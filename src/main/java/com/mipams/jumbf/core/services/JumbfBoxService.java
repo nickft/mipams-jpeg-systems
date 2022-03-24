@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
-public class JumbfBoxService extends XTBoxService{
+public class JumbfBoxService extends XTBoxService<JumbfBox>{
 
     private static final Logger logger = LoggerFactory.getLogger(JumbfBoxService.class); 
 
@@ -39,9 +39,7 @@ public class JumbfBoxService extends XTBoxService{
     }
 
     @Override
-    protected void populateBox(XTBox xtBox, ObjectNode input) throws MipamsException{
-
-        JumbfBox jumbfBox = (JumbfBox) xtBox;
+    protected void populateBox(JumbfBox jumbfBox, ObjectNode input) throws MipamsException{
 
         String type = input.get("type").asText();
 
@@ -72,9 +70,7 @@ public class JumbfBoxService extends XTBoxService{
     }
 
     @Override
-    protected void writeXTBoxPayloadToJumbfFile(XTBox xtBox, FileOutputStream fileOutputStream) throws MipamsException{
-
-        JumbfBox jumbfBox = (JumbfBox) xtBox;
+    protected void writeXTBoxPayloadToJumbfFile(JumbfBox jumbfBox, FileOutputStream fileOutputStream) throws MipamsException{
 
         XTBoxService descriptionBoxService = boxServiceManager.generateServiceBasedOnBoxType(BoxTypeEnum.DescriptionBox);
         descriptionBoxService.writeBoxToJumbfFile(jumbfBox.getDescriptionBox(), fileOutputStream);
@@ -87,8 +83,7 @@ public class JumbfBoxService extends XTBoxService{
     }
 
     @Override
-    protected void populatePayloadFromJumbfFile(XTBox xtBox, InputStream input) throws MipamsException{
-        JumbfBox jumbfBox = (JumbfBox) xtBox;
+    protected void populatePayloadFromJumbfFile(JumbfBox jumbfBox, InputStream input) throws MipamsException{
         
         logger.debug("Jumbf box");
 

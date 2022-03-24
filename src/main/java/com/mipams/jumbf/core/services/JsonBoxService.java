@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
-public class JsonBoxService extends XTBoxService{
+public class JsonBoxService extends XTBoxService<JsonBox>{
 
     private static final Logger logger = LoggerFactory.getLogger(JsonBoxService.class); 
 
@@ -36,8 +36,7 @@ public class JsonBoxService extends XTBoxService{
     }
 
     @Override
-    protected void populateBox(XTBox xtBox, ObjectNode input) throws MipamsException{
-        JsonBox jsonBox = (JsonBox) xtBox;
+    protected void populateBox(JsonBox jsonBox, ObjectNode input) throws MipamsException{
         String type = input.get("type").asText();
 
         if( !jsonBox.getBoxType().equals(type)){
@@ -49,8 +48,7 @@ public class JsonBoxService extends XTBoxService{
     }
 
     @Override
-    protected void writeXTBoxPayloadToJumbfFile(XTBox xtBox, FileOutputStream fileOutputStream) throws MipamsException{
-        JsonBox jsonBox = (JsonBox) xtBox;
+    protected void writeXTBoxPayloadToJumbfFile(JsonBox jsonBox, FileOutputStream fileOutputStream) throws MipamsException{
         ObjectMapper om = new ObjectMapper();
         final ObjectWriter writer = om.writer();
 
@@ -65,8 +63,7 @@ public class JsonBoxService extends XTBoxService{
     }
 
     @Override
-    protected void populatePayloadFromJumbfFile(XTBox xtBox, InputStream input) throws MipamsException{
-        JsonBox jsonBox = (JsonBox) xtBox;
+    protected void populatePayloadFromJumbfFile(JsonBox jsonBox, InputStream input) throws MipamsException{
         logger.debug("Json box");
 
         long actualSize = 0;
