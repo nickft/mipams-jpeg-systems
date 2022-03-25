@@ -93,7 +93,6 @@ public class JumbfBoxService extends XTBoxService<JumbfBox>{
         jumbfBox.setDescriptionBox((DescriptionBox) descriptionBoxService.parseFromJumbfFile(input));
 
         actualSize += jumbfBox.getDescriptionBox().getBoxSizeFromXTBoxHeaders();
-        logger.info(Long.toString(actualSize));
 
         do{
             XTBoxService xtBoxService = boxServiceManager.getServiceBasedOnContentUUID(jumbfBox.getDescriptionBox().getUuid());

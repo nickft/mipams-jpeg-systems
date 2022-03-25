@@ -10,9 +10,13 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class BoxServiceManager {
+
+    private static final Logger logger = LoggerFactory.getLogger(BoxServiceManager.class); 
 
     @Autowired
     List<XTBoxService> boxServiceList;
@@ -33,13 +37,11 @@ public class BoxServiceManager {
     }
 
     public XTBoxService generateServiceBasedOnBoxWithId(int boxId) throws MipamsException{
-
         for(XTBoxService service : boxServiceList){
             if(boxId == service.serviceIsResponsibleForBoxTypeId()){
                 return service;
             }
         }
-
         throw new MipamsException("Box type with id: " + Integer.toString(boxId) + "is not supported yet");
     }
 }

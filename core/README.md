@@ -132,7 +132,7 @@ http://localhost:8080/core/v1/parseMetadata?path=/home/nikos/Desktop/test.jumbf
 Provided that the JUMBF file is well-formed, the GET response shall be a brief string describing the structure of the parsed file. An example of this description is depicted below:
 
 ```
-
+JumbfBox(descriptionBox=DescriptionBox(uuid=6a736f6e-0011-0010-8000-00aa00389b71, toggle=2, label=This is an example JUMBF metadata format, id=null, signature=null), contentList=[JsonBox(jsonContent={"test":1})])
 ```
 
 ## Application structure and terminology <a name="intro"></a>

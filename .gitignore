@@ -24,4 +24,8 @@ hs_err_pid*
 
 target/*
 
+core/target/*
+
+provenance/target/*
+
 .mvn/*
