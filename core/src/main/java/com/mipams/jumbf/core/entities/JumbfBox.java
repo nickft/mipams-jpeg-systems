@@ -21,8 +21,8 @@ public class JumbfBox extends XTBox{
 
     private static final Logger logger = LoggerFactory.getLogger(JumbfBox.class);
    
-    private @Getter @Setter DescriptionBox descriptionBox;
-    private @Getter @Setter List<XTBox> contentList;
+    protected @Getter @Setter DescriptionBox descriptionBox;
+    protected @Getter @Setter List<XTBox> contentList;
 
     @Override
     public int getTypeId() {
@@ -34,20 +34,10 @@ public class JumbfBox extends XTBox{
 
         long sum = descriptionBox.getBoxSizeFromXTBoxHeaders();
 
-        for (XTBox content: contentList){
+        for (XTBox content: getContentList()){
             sum += content.getBoxSizeFromXTBoxHeaders();
         }
 
         return sum;
     }
-
-    public void addContentBoxToList(XTBox xtBox){
-
-        if(getContentList() == null){
-            setContentList(new ArrayList<XTBox>());
-        }
-
-        getContentList().add(xtBox);
-    }
-
 }

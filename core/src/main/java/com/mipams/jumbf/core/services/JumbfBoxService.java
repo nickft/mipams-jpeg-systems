@@ -65,8 +65,10 @@ public class JumbfBoxService extends XTBoxService<JumbfBox>{
             XTBoxService xtBoxService = boxServiceManager.getServiceBasedOnContentUUID(contentTypeUuid);
             XTBox xtBoxContent = xtBoxService.discoverXTBox((ObjectNode) contentIterator.next());
 
-            jumbfBox.addContentBoxToList(xtBoxContent);
+            contentList.add(xtBoxContent);
         }
+
+        jumbfBox.setContentList(contentList);
     }
 
     @Override
@@ -94,15 +96,18 @@ public class JumbfBoxService extends XTBoxService<JumbfBox>{
 
         actualSize += jumbfBox.getDescriptionBox().getBoxSizeFromXTBoxHeaders();
 
+        List<XTBox> contentList = new ArrayList<>();
+
         do{
             XTBoxService xtBoxService = boxServiceManager.getServiceBasedOnContentUUID(jumbfBox.getDescriptionBox().getUuid());
             XTBox contentBox = xtBoxService.parseFromJumbfFile(input);
 
             actualSize += contentBox.getBoxSizeFromXTBoxHeaders();
             
-            jumbfBox.addContentBoxToList(contentBox);
-
+            contentList.add(contentBox);
         } while(actualSize < jumbfBox.getPayloadSizeFromXTBoxHeaders());
+
+        jumbfBox.setContentList(contentList);
 
         verifyBoxSize(jumbfBox, actualSize);
 

@@ -17,11 +17,19 @@
 	<name>Jumbf Provenance Module</name>
 	<description>Module that contains the implementation of the provenance JUMBF functionality</description>
 	<dependencies>
-		<dependency>
+		<!-- <dependency>
 			<groupId>mipams</groupId>  
-			<artifactId>jumbf-core</artifactId>  
+			<artifactId>jumbf-core</artifactId>
 			<version>${project.version}</version>  
+		</dependency> -->
+		<dependency>
+			<groupId>mipams</groupId>
+			<artifactId>jumbf-core</artifactId>
+			<version>${project.version}</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/target/jumbf-core-0.0.1-SNAPSHOT.jar</systemPath>
 		</dependency>
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

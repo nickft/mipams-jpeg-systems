@@ -141,7 +141,7 @@ The whole JUMBF application (not only the one that appears on the demo) could be
 
 In this design, the two main abstractions of a layer are the *entities* and the *services*. Each service is mapped to a specific entitity. An **entitity** describes the structure (i.e. fields) of its corresponding Box definition while a **service** defines all the necessary functionalities that need to be performed in this specific box. The following diagram describes the relationship of the services that need to be defined in the core module.
 
-![UML Diagram](./diagram.png "BoxService class relationships")
+![UML Diagram](./diagram.jpg "BoxService class relationships")
 
 The *XTBoxService* contains all the functionalities related to parsing JPEG XT Box headers. Notice that it's defined as an abstract class meaning that there is no way that a box object can be solely a XTBoxService. Since each service extends the XTBoxService, these functionalities are inherited for any service in any layer which allows for code reusability. *This means that if we want to define a new box in a layer we need to define three things: 1) the structure of the new box in a new entity 2) the functionalities to parse and generate a jumbf box containing that type of box (i.e. a new service) and 3) the definition of the corresponding UUID uniquely identifying this type of box in acrosss all the layers (this is done in the enums "BoxTypeEnum" and ContentTypeEnum".*
 

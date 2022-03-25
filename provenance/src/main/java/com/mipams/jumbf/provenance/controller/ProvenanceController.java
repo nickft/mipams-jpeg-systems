@@ -1,4 +1,4 @@
-package com.mipams.jumbf.provenance.controller;
+package mipams.jumbf.provenance.controller;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.mipams.jumbf.core.services.ParserService;
-import com.mipams.jumbf.core.services.GeneratorService;
-import com.mipams.jumbf.core.util.MipamsException;
+import mipams.jumbf.provenance.services.ParserService;
+import mipams.jumbf.provenance.services.GeneratorService;
+import mipams.jumbf.core.util.MipamsException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,13 +31,9 @@ public class ProvenanceController {
     @Autowired
     GeneratorService generatorService;
 
-    @GetMapping("/parseMetadata")
-    public String parseJumbfMetadataFromPath(@RequestParam String path) throws MipamsException {
-        // TODO
+    @GetMapping("/test")
+    public String test() throws MipamsException {
+        return generatorService.generateJumbfFileFromRequest(null);
     }
 
-    @PostMapping("/generateBox")
-    public String generateJumbfBytes(@RequestBody JsonNode requestBody) throws MipamsException {
-        // TODO
-    }
 }

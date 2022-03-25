@@ -21,15 +21,15 @@ public class DescriptionBox extends XTBox {
 
     private static final Logger logger = LoggerFactory.getLogger(DescriptionBox.class);
 
-    private @Getter @Setter UUID uuid;
+    protected @Getter @Setter UUID uuid;
 
-    private @Getter @Setter int toggle;
+    protected @Getter @Setter int toggle;
 
-    private @Getter @Setter String label;
+    protected @Getter @Setter String label;
 
-    private @Getter @Setter Integer id;
+    protected @Getter @Setter Integer id;
 
-    private @Getter @Setter byte[] signature;
+    protected @Getter @Setter byte[] signature;
 
     @Override
     public int getTypeId() {
