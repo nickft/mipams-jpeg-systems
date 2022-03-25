@@ -33,17 +33,11 @@ public class CoreController {
 
     @GetMapping("/parseMetadata")
     public String parseJumbfMetadataFromPath(@RequestParam String path) throws MipamsException {
-        parserService.parseMetadataFromJumbfFile(path);
-        return "Parsing is on the way.";
+        return parserService.parseMetadataFromJumbfFile(path);
     }
 
     @PostMapping("/generateBox")
     public String generateJumbfBytes(@RequestBody JsonNode requestBody) throws MipamsException {
-        logger.debug(requestBody.toString());
-        generatorService.generateJumbfFileFromRequest((ObjectNode) requestBody);
-        return "Generating is on the way.";
+        return generatorService.generateJumbfFileFromRequest((ObjectNode) requestBody);
     }
-
-
-
 }

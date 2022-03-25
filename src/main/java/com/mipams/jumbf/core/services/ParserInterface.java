@@ -6,6 +6,6 @@ import com.mipams.jumbf.core.util.MipamsException;
 
 public interface ParserInterface{
 
-    public void parseMetadataFromJumbfFile(String path) throws MipamsException;
+    public String parseMetadataFromJumbfFile(String path) throws MipamsException;
 
 }

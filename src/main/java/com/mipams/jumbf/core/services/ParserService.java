@@ -27,13 +27,15 @@ public class ParserService implements ParserInterface{
     BoxServiceManager boxServiceManager;
 
     @Override
-    public void parseMetadataFromJumbfFile(String path) throws MipamsException{
+    public String parseMetadataFromJumbfFile(String path) throws MipamsException{
 
         try (InputStream input = new FileInputStream(path)){
 
             XTBox superbox = boxServiceManager.getSuperBoxService().parseFromJumbfFile(input);  
 
             logger.debug("Finish parsing. The complete JUMBF box is: {}",superbox.toString());
+
+            return superbox.toString();
         } catch(FileNotFoundException e){
             throw new CorruptedJumbfFileException( "File {"+path+"} does not exist", e);
         }  catch(IOException e){

@@ -2,15 +2,16 @@ package com.mipams.jumbf.core.util;
 
 import java.util.UUID;
 
-
+import lombok.Getter;  
+import lombok.Setter;  
 public enum ContentTypeEnum{
     Json(BoxTypeEnum.JsonBox, "6A736F6E-0011-0010-8000-00AA00389B71"),
     Jumbf(BoxTypeEnum.JumbfBox, "6A756D62-0011-0010-8000-00AA00389B71"),
     ContiguousCodestream(BoxTypeEnum.ContiguousCodestreamBox, "6A703263-0011-0010-8000-00AA00389B71"),
     EmbeddedFile(BoxTypeEnum.EmbeddedFileBox , "40CB0C32-BB8A-489D-A70B-2AD6F47F4369");
 
-    private BoxTypeEnum boxType;
-    private UUID typeId;
+    private @Getter @Setter BoxTypeEnum boxType;
+    private @Getter @Setter UUID typeId;
 
     ContentTypeEnum(BoxTypeEnum type, String uuidHexDigitString){
         setBoxType(type);
@@ -41,21 +42,5 @@ public enum ContentTypeEnum{
         ContentTypeEnum result = getContentTypeFromString(type);
 
         return (result != null) ? result.getBoxType() : null;
-    }
-
-    public BoxTypeEnum getBoxType() {
-        return boxType;
-    }
-
-    void setBoxType(BoxTypeEnum boxType) {
-        this.boxType = boxType;
-    }
-
-    public UUID getTypeId() {
-        return typeId;
-    }
-
-    void setTypeId(UUID typeId) {
-        this.typeId = typeId;
     }
 }

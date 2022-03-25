@@ -1,5 +1,7 @@
 package com.mipams.jumbf.core.util;
 
+import lombok.Getter;  
+import lombok.Setter;  
 public enum BoxTypeEnum{
     
     JumbfBox("jumb", 0x6A756D62),
@@ -9,8 +11,8 @@ public enum BoxTypeEnum{
     EmbeddedFileBox("bidb", 0x6266462),
     EmbeddedFileDescriptionBox("bfdb", 0x62666462);
 
-    private String type;
-    private int typeId;
+    private @Getter @Setter String type;
+    private @Getter @Setter int typeId;
 
     BoxTypeEnum(String type, int typeId){
         setTypeId(typeId);
@@ -34,21 +36,5 @@ public enum BoxTypeEnum{
             }
         }
         return null;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public int getTypeId() {
-        return typeId;
-    }
-
-    public void setTypeId(int typeId) {
-        this.typeId = typeId;
     }
 }

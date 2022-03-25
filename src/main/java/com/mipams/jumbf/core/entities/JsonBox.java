@@ -25,7 +25,7 @@ public class JsonBox extends XTBox{
 
     private static final Logger logger = LoggerFactory.getLogger(JsonBox.class);
    
-    private @Getter @Setter ObjectNode  jsonContent;
+    private @Getter @Setter ObjectNode jsonContent;
 
     @Override
     public String getBoxType() {
