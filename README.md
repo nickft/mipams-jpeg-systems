@@ -169,11 +169,11 @@ In this design, the two main abstractions of a layer are the *entities* and the 
 
 In the following diagram you may see the dependencies between the Services of different layers (i.e. Core, JLink, Provenance) as well as the important methods that are defined as abstract in the XTBoxService. This "obliges" the children classes to implement these functionalities.
 
-![UML Services](./services.png "BoxService class relationships")
+![UML Services](./services.jpg "BoxService class relationships")
 
 The second diagram illustrates the entities structures. In addition, we can also observe the fields that are defined for the boxes that are implemented in the core module in scope of this demo. JLink and Provenance modules are depicted to show the extensibility of of the classes. 
 
-![UML Entities](./entities.png "BoxService class relationships")
+![UML Entities](./entities.jpg "BoxService class relationships")
 
 The *XTBoxService* contains all the functionalities related to parsing JPEG XT Box headers. Notice that it's defined as an abstract class meaning that there is no way that a box object can be solely a XTBoxService. Since each service extends the XTBoxService, these functionalities are inherited for any service in any layer which allows for code reusability. *This means that if we want to define a new box in a layer we need to define three things: 1) the structure of the new box in a new entity 2) the functionalities to parse and generate a jumbf box containing that type of box (i.e. a new service) and 3) the definition of the corresponding UUID uniquely identifying this type of box in acrosss all the layers (this is done in the enums "BoxTypeEnum" and ContentTypeEnum".*
 
