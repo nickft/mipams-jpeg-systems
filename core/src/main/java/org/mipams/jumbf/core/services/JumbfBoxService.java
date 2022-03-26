@@ -51,7 +51,7 @@ public class JumbfBoxService extends XTBoxService<JumbfBox>{
         
         XTBoxService descriptionBoxService = boxServiceManager.generateServiceBasedOnBoxWithId(BoxTypeEnum.DescriptionBox.getTypeId());
 
-        jumbfBox.setDescriptionBox((DescriptionBox) descriptionBoxService.discoverXTBox(descriptionNode));
+        jumbfBox.setDescriptionBox((DescriptionBox) descriptionBoxService.discoverXTBoxFromRequest(descriptionNode));
 
         JsonNode contentNodeList = input.get("contentList");
 
@@ -63,7 +63,7 @@ public class JumbfBoxService extends XTBoxService<JumbfBox>{
             UUID contentTypeUuid = jumbfBox.getDescriptionBox().getUuid();
 
             XTBoxService xtBoxService = boxServiceManager.getServiceBasedOnContentUUID(contentTypeUuid);
-            XTBox xtBoxContent = xtBoxService.discoverXTBox((ObjectNode) contentIterator.next());
+            XTBox xtBoxContent = xtBoxService.discoverXTBoxFromRequest((ObjectNode) contentIterator.next());
 
             contentList.add(xtBoxContent);
         }
@@ -75,12 +75,12 @@ public class JumbfBoxService extends XTBoxService<JumbfBox>{
     protected void writeXTBoxPayloadToJumbfFile(JumbfBox jumbfBox, FileOutputStream fileOutputStream) throws MipamsException{
 
         XTBoxService descriptionBoxService = boxServiceManager.generateServiceBasedOnBoxWithId(BoxTypeEnum.DescriptionBox.getTypeId());
-        descriptionBoxService.writeBoxToJumbfFile(jumbfBox.getDescriptionBox(), fileOutputStream);
+        descriptionBoxService.writeToJumbfFile(jumbfBox.getDescriptionBox(), fileOutputStream);
 
         for (XTBox contentBox: jumbfBox.getContentList()){
 
             XTBoxService xtBoxService = boxServiceManager.generateServiceBasedOnBoxWithId(contentBox.getTypeId());
-            xtBoxService.writeBoxToJumbfFile(contentBox, fileOutputStream);
+            xtBoxService.writeToJumbfFile(contentBox, fileOutputStream);
         }
     }
 

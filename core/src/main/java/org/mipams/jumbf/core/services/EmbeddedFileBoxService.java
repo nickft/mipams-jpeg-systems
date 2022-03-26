@@ -55,7 +55,7 @@ public class EmbeddedFileBoxService extends XTBoxService<EmbeddedFileBox>{
 
         ObjectNode descriptionNode = (ObjectNode) input.get("description");
 
-        embeddedFileBox.setDescriptionBox(embeddedFileDescriptionBoxService.discoverXTBox(descriptionNode));
+        embeddedFileBox.setDescriptionBox(embeddedFileDescriptionBoxService.discoverXTBoxFromRequest(descriptionNode));
 
         String path = input.get("path").asText();
 
@@ -80,7 +80,7 @@ public class EmbeddedFileBoxService extends XTBoxService<EmbeddedFileBox>{
     @Override
     protected void writeXTBoxPayloadToJumbfFile(EmbeddedFileBox embeddedFileBox, FileOutputStream fileOutputStream) throws MipamsException{
 
-        embeddedFileDescriptionBoxService.writeBoxToJumbfFile(embeddedFileBox.getDescriptionBox(), fileOutputStream);
+        embeddedFileDescriptionBoxService.writeToJumbfFile(embeddedFileBox.getDescriptionBox(), fileOutputStream);
 
         if(embeddedFileBox.getDescriptionBox().isContentReferencedExternally()){
             writeUrlToJumbfBox(embeddedFileBox, fileOutputStream);

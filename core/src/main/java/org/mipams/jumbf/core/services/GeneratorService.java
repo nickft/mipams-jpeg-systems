@@ -40,7 +40,9 @@ public class GeneratorService implements GeneratorInterface{
 
         try(FileOutputStream fileOutputStream = new FileOutputStream(path)){
             
-            XTBox superbox = boxServiceManager.getSuperBoxService().writeToJumbfFileFromRequest(inputNode, fileOutputStream);
+            XTBox superbox = boxServiceManager.getSuperBoxService().discoverXTBoxFromRequest(inputNode);
+            
+            boxServiceManager.getSuperBoxService().writeToJumbfFile(superbox, fileOutputStream);
 
             logger.debug("Created a new Superbox in file: "+path);
             return "JUMBF file is stored in the following location: "+path;                  

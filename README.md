@@ -33,14 +33,18 @@ The demo was developped using the following tools:
 
 ## Deploying <a name="deployment"></a>
 
-First let's specify some application parameters. In the src/main/resources/application.parameters you may find the parameters that can be configured for the demo. It is important to specify the path where the images and jumbf files (files with extension .jumbf) should be stored. For documentation purposes below you may find all the parameters used for the demo:
+In the home directory of the project there are two directories core and provenance each one corresponding to a separate application. Provenance application is dependent on core application. Let's first focus on the core module. In the core/src/main/resources/application.parameters you may find the parameters that can be configured for the core application. It is important to specify the path where the images and jumbf files (files with extension .jumbf) should be stored. For documentation purposes below you may find all the parameters used for the demo:
 
 ``` 
 spring.main.allow-circular-references=true
-logging.level.com.mipams.jumbf=DEBUG 
+
+logging.level.org.mipams.jumbf.core=DEBUG 
+
 # Maximum size per file uploaded: 50 MB
-mipams.core.max_file_size_in_bytes=52428800
-mipams.core.image_folder=/home/nikos/Desktop
+org.mipams.core.max_file_size_in_bytes=52428800
+
+org.mipams.core.image_folder=/home/nikos/Desktop
+
 ```
 
 Now, let's compile the application. In the application's home directory run the following command:
@@ -49,16 +53,16 @@ Now, let's compile the application. In the application's home directory run the 
 mvn clean package
 ```
 
-This will produce a tar directory with the .jar containing our compiled application. Now, we are ready to run our application:
+This will produce the respective jars in each of the projects. In core/target directory we shall find two jar files. The first one is marked as exec which allows us to run the core module as a standalone application. The second jar is not executable and can be placed as a dependency to other modules. In provenance/target directory we shall find one executable jar file to run the provenance application. For the first part of the demo we will show the core functionalities. Thus, we launch the core module as a standalone application using the following command:
 
 ```
-java -jar target/jumbf-0.0.1-SNAPSHOT.jar
+java -jar core/target/jumbf-core-0.0.1-SNAPSHOT-exec.jar
 ```
 
 Providing that all the steps were executed with no error, the following message should be displayed in the terminal:
 
 ```
-com.mipams.jumbf.JumbfApplication        : Application is up and running
+org.mipams.jumbf.core.JumbfApplication       : Application is up and running
 ```
 
 The application runs on port 8080.
@@ -132,18 +136,46 @@ http://localhost:8080/core/v1/parseMetadata?path=/home/nikos/Desktop/test.jumbf
 Provided that the JUMBF file is well-formed, the GET response shall be a brief string describing the structure of the parsed file. An example of this description is depicted below:
 
 ```
-
+JumbfBox(descriptionBox=DescriptionBox(uuid=6a736f6e-0011-0010-8000-00aa00389b71, toggle=2, label=This is an example JUMBF metadata format, id=null, signature=null), contentList=[JsonBox(jsonContent={"test":1})])
 ```
 
-## Application structure and terminology <a name="intro"></a>
+### Provenance module "extending" core module
+
+Now we will validate that indeed the core module can be injected as a library in the provenance module. Provided that we have stopped the application from the previous demo, we can launch the provenance application by executing the following command:
+
+```
+java -jar provenance/target/jumbf-provenance-0.0.1-SNAPSHOT.jar
+```
+
+For this demo we have implemented a simple "test" GET request to showcase that the AssertionBoxService (which extends the JumbfBoxService defined in the core module) is instantiated properly.
+
+If we need to execute the following GET request in the URL:
+
+```
+http://localhost:8080/provenance/v1/test
+```
+
+The response is a simple message specifying that the class has been successfully instantiated:
+
+```
+I connected one package with another. The box with id: 1836081523 is discovered properly.
+```
+
+## Application structure and terminology <a name="spring"></a>
 
 The whole JUMBF application (not only the one that appears on the demo) could be logically separated in independent layers each of whom is responsible for a specific application over JUMBF metadata. All these layers are strongly dependent on **core layer** which implements the basic JUMBF box definitions. Each layer can be defined in a separate package inside the jumbf package. In the jumbf package we could contain not only the core layer but also all the layers related to any application that needs to parse application-specific JUMBF boxes.
 
-In this design, the two main abstractions of a layer are the *entities* and the *services*. Each service is mapped to a specific entitity. An **entitity** describes the structure (i.e. fields) of its corresponding Box definition while a **service** defines all the necessary functionalities that need to be performed in this specific box. The following diagram describes the relationship of the services that need to be defined in the core module.
+In this design, the two main abstractions of a layer are the *entities* and the *services*. Each service is mapped to a specific entitity. An **entitity** describes the structure (i.e. fields) of its corresponding Box definition while a **service** defines all the necessary functionalities that need to be performed in this specific box. The following diagram describes the relationship of the services that need to be defined in the core module. Notice that the two important methods that any service shall implement (BoxServiceInterface.java) is how to parse metadata from a JUMBF file and how to write in it. In this demo we added a third method, discoverXTBoxFromRequest in XTBoxService.java, which defines a way to instantiate a JUMBF structure from a json request (i.e. through a REST request). 
 
-![UML Diagram](./diagram.jpg "BoxService class relationships")
+In the following diagram you may see the dependencies between the Services of different layers (i.e. Core, JLink, Provenance) as well as the important methods that are defined as abstract in the XTBoxService. This "obliges" the children classes to implement these functionalities.
+
+![UML Services](./services.png "BoxService class relationships")
+
+The second diagram illustrates the entities structures. In addition, we can also observe the fields that are defined for the boxes that are implemented in the core module in scope of this demo. JLink and Provenance modules are depicted to show the extensibility of of the classes. 
+
+![UML Entities](./entities.png "BoxService class relationships")
 
 The *XTBoxService* contains all the functionalities related to parsing JPEG XT Box headers. Notice that it's defined as an abstract class meaning that there is no way that a box object can be solely a XTBoxService. Since each service extends the XTBoxService, these functionalities are inherited for any service in any layer which allows for code reusability. *This means that if we want to define a new box in a layer we need to define three things: 1) the structure of the new box in a new entity 2) the functionalities to parse and generate a jumbf box containing that type of box (i.e. a new service) and 3) the definition of the corresponding UUID uniquely identifying this type of box in acrosss all the layers (this is done in the enums "BoxTypeEnum" and ContentTypeEnum".*
 
-## Implementing a BoxService
+### Implementing a BoxService
 A box is considered as a plain object and all the functionalities are described in each corresponsing service. A service is implemented as a Spring Bean. This is extremely useful as it allows as to easily discover the correct BoxService class that needs to be called once the functionality at a specific level has finished. 

@@ -8,9 +8,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.mipams.jumbf.core.entities.BoxInterface;
 import org.mipams.jumbf.core.util.MipamsException;
 
-public interface BoxServiceInterface<T>{
+public interface BoxServiceInterface<T extends BoxInterface>{
 
-    public T writeToJumbfFileFromRequest(ObjectNode input, FileOutputStream output) throws MipamsException;
+    public void writeToJumbfFile(T inputBox, FileOutputStream output) throws MipamsException;
 
     public T parseFromJumbfFile(InputStream input) throws MipamsException;
 

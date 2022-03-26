@@ -18,22 +18,11 @@ import org.mipams.jumbf.core.util.CorruptedJumbfFileException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class XTBoxService<T extends XTBox> implements BoxServiceInterface{
+public abstract class XTBoxService<T extends XTBox> implements BoxServiceInterface<T>{
 
     private static final Logger logger = LoggerFactory.getLogger(XTBoxService.class); 
-
-    @Override
-    public final T writeToJumbfFileFromRequest(ObjectNode inputNode, FileOutputStream fileOutputStream) throws MipamsException{
-
-        T xtBox = discoverXTBox(inputNode);
-
-        logger.debug(xtBox.toString());
-
-        writeBoxToJumbfFile(xtBox, fileOutputStream);
-        return xtBox;
-    }
-
-    protected final T discoverXTBox(ObjectNode inputNode) throws MipamsException{
+    
+    public final T discoverXTBoxFromRequest(ObjectNode inputNode) throws MipamsException{
         T xtBox = initializeBox();
         populateBox(xtBox, inputNode);
         xtBox.setXTHeadersBasedOnBox();
@@ -41,9 +30,9 @@ public abstract class XTBoxService<T extends XTBox> implements BoxServiceInterfa
     }
 
     protected abstract void populateBox(T xtBox, ObjectNode input) throws MipamsException;
-    
-    
-    protected final void writeBoxToJumbfFile(T xtBox, FileOutputStream fileOutputStream) throws MipamsException{
+
+    @Override
+    public void writeToJumbfFile(T xtBox, FileOutputStream fileOutputStream) throws MipamsException{
         writeXTBoxHeadersToJumbfFile(xtBox, fileOutputStream);
         writeXTBoxPayloadToJumbfFile(xtBox, fileOutputStream);
     }
