@@ -1,4 +1,4 @@
-package org.mipams.jumbf.provenance;
+package org.mipams.jumbf.core;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SpringBootApplication(scanBasePackages = "org.mipams.jumbf.provenance" )
+@SpringBootApplication(scanBasePackages = "org.mipams.jumbf.core")
 public class JumbfApplication {
 	private static final Logger logger = LoggerFactory.getLogger(JumbfApplication.class);
 

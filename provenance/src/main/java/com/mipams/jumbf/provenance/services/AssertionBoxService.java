@@ -1,4 +1,4 @@
-package mipams.jumbf.provenance.services;
+package org.mipams.jumbf.provenance.services;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -7,17 +7,22 @@ import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import mipams.jumbf.core.entities.JumbfBox;
-import mipams.jumbf.core.entities.XTBox;
-import mipams.jumbf.core.BoxServiceManager;
-import mipams.jumbf.core.entities.DescriptionBox;
-import mipams.jumbf.core.util.MipamsException;
-import mipams.jumbf.core.util.BadRequestException;
-import mipams.jumbf.core.util.BoxTypeEnum;
-import mipams.jumbf.core.util.CoreUtils;
+import org.mipams.jumbf.core.entities.JumbfBox;
+import org.mipams.jumbf.core.entities.XTBox;
+import org.mipams.jumbf.core.BoxServiceManager;
+import org.mipams.jumbf.core.entities.DescriptionBox;
+import org.mipams.jumbf.core.util.MipamsException;
+import org.mipams.jumbf.core.util.BadRequestException;
+import org.mipams.jumbf.core.util.CoreUtils;
+import org.mipams.jumbf.core.services.XTBoxService;
+
+import org.mipams.jumbf.provenance.entities.AssertionBox;
+import org.mipams.jumbf.provenance.util.BoxTypeEnum;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,8 +56,8 @@ public class AssertionBoxService extends XTBoxService<AssertionBox>{
     }
 
     @Override
-    public BoxTypeEnum serviceIsResponsibleForBoxType(){
-        return BoxTypeEnum.AssertionBox;
+    public int serviceIsResponsibleForBoxTypeId(){
+        return BoxTypeEnum.AssertionBox.getTypeId();
     }
 
 }

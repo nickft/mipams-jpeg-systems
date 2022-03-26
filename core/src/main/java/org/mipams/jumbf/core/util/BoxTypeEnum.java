@@ -1,13 +1,18 @@
-package org.mipams.jumbf.provenance.util;
+package org.mipams.jumbf.core.util;
 
 import java.util.UUID;
 
 import lombok.Getter;  
-import lombok.Setter;  
+import lombok.Setter;
 
 public enum BoxTypeEnum {
     
-    AssertionBox("mpas", 0x6D706173, "6D706173-0011-0010-8000-00AA00389B71");
+    JumbfBox("jumb", 0x6A756D62, "6A756D62-0011-0010-8000-00AA00389B71"),
+    DescriptionBox("jumd", 0x6A756D64, null),
+    JsonBox("json", 0x6A736F6E, "6A736F6E-0011-0010-8000-00AA00389B71"),
+    ContiguousCodestreamBox("jp2c", 0x6A703263, "6A703263-0011-0010-8000-00AA00389B71"),
+    EmbeddedFileBox("bidb", 0x6266462, "40CB0C32-BB8A-489D-A70B-2AD6F47F4369"),
+    EmbeddedFileDescriptionBox("bfdb", 0x62666462, null);
 
     private @Getter @Setter String type;
     private @Getter @Setter int typeId;
@@ -24,6 +29,7 @@ public enum BoxTypeEnum {
 
         return (result != null) ? result.getType() : "";
     }
+
 
     public static BoxTypeEnum getBoxTypeFromIdOrNull(int boxId){
         BoxTypeEnum resultType = null;

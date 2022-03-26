@@ -1,4 +1,4 @@
-package org.mipams.jumbf.provenance.services;
+package org.mipams.jumbf.core.services;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,14 +9,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.mipams.jumbf.provenance.ProvenanceBoxServiceManager;
-
+import org.mipams.jumbf.core.BoxServiceManager;
 import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.entities.XTBox;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.core.util.CorruptedJumbfFileException;
-import org.mipams.jumbf.core.services.ParserInterface;
-
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +24,23 @@ public class ParserService implements ParserInterface{
     private static final Logger logger = LoggerFactory.getLogger(ParserService.class); 
 
     @Autowired
-    ProvenanceBoxServiceManager boxServiceManager;
+    BoxServiceManager boxServiceManager;
 
     @Override
     public String parseMetadataFromJumbfFile(String path) throws MipamsException{
-        return null;
+
+        try (InputStream input = new FileInputStream(path)){
+
+            XTBox superbox = boxServiceManager.getSuperBoxService().parseFromJumbfFile(input);  
+
+            logger.debug("Finish parsing. The complete JUMBF box is: {}",superbox.toString());
+
+            return superbox.toString();
+        } catch(FileNotFoundException e){
+            throw new CorruptedJumbfFileException( "File {"+path+"} does not exist", e);
+        }  catch(IOException e){
+            throw new CorruptedJumbfFileException("Could not open file: "+path , e);
+        }
+
     }
 }

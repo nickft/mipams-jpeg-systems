@@ -9,10 +9,11 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
-	<groupId>mipams</groupId>
+	<groupId>org.mipams.jumbf</groupId>
 	<artifactId>jumbf</artifactId>
 	<packaging>pom</packaging>
 	<version>0.0.1-SNAPSHOT</version>
+	
 	<name>JUMBF</name>
 	<description>JUMBF Implementation</description>
 	
@@ -24,7 +25,6 @@
 	<properties>
 		<java.version>11</java.version>
 	</properties>
-
 
 	<dependencies>
 		<dependency>
@@ -54,21 +54,4 @@
 			<version>2.13.2</version>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>

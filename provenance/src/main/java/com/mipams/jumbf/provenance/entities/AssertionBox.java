@@ -1,14 +1,14 @@
-package mipams.jumbf.provenance.entities;
+package org.mipams.jumbf.provenance.entities;
 
 import java.util.List;
 import java.util.ArrayList;
 
-import mipams.jumbf.provenance.util.BoxTypeEnum;
+import org.mipams.jumbf.provenance.util.BoxTypeEnum;
 
 
-import mipams.jumbf.core.util.MipamsException;
-import mipams.jumbf.core.entities.JumbfBox;
-import mipams.jumbf.core.entities.DescriptionBox;
+import org.mipams.jumbf.core.util.MipamsException;
+import org.mipams.jumbf.core.entities.JumbfBox;
+import org.mipams.jumbf.core.entities.DescriptionBox;
 
 import lombok.Getter;  
 import lombok.NoArgsConstructor;  
@@ -25,7 +25,7 @@ public class AssertionBox extends JumbfBox{
     private static final Logger logger = LoggerFactory.getLogger(AssertionBox.class); 
 
     @Override
-    public int getBoxTypeId() {
+    public int getTypeId() {
         return BoxTypeEnum.AssertionBox.getTypeId();
     }
 

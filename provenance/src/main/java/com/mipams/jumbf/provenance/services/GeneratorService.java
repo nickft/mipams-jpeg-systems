@@ -1,6 +1,6 @@
-package mipams.jumbf.provenance.services;
+package org.mipams.jumbf.provenance.services;
 
-import mipams.jumbf.provenance.util.BoxTypeEnum;
+import org.mipams.jumbf.provenance.util.BoxTypeEnum;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,12 +8,14 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import mipams.jumbf.core.util.MipamsException;
-import mipams.jumbf.core.BoxServiceManager;
-import mipams.jumbf.core.entities.XTBox;
-import mipams.jumbf.core.util.BadRequestException;
-import mipams.jumbf.core.util.CoreUtils;
-import mipams.jumbf.core.services.GeneratorInterface;
+import org.mipams.jumbf.core.util.MipamsException;
+import org.mipams.jumbf.core.entities.XTBox;
+import org.mipams.jumbf.core.util.BadRequestException;
+import org.mipams.jumbf.core.util.CoreUtils;
+import org.mipams.jumbf.core.services.GeneratorInterface;
+import org.mipams.jumbf.core.services.XTBoxService;
+
+import org.mipams.jumbf.provenance.ProvenanceBoxServiceManager;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -31,16 +33,16 @@ public class GeneratorService implements GeneratorInterface{
     private static final Logger logger = LoggerFactory.getLogger(GeneratorService.class); 
 
     @Autowired
-    BoxServiceManager boxServiceManager;
+    ProvenanceBoxServiceManager boxServiceManager;
 
     @Override
     public String generateJumbfFileFromRequest(ObjectNode inputNode) throws MipamsException{             
-        String result = boxServiceManager.generateServiceBasedOnBoxWithId(BoxTypeEnum.AssertionBox.getTypeId());
+        XTBoxService result = boxServiceManager.generateServiceBasedOnBoxWithId(BoxTypeEnum.AssertionBox.getTypeId());
 
         if(result == null){
             return "failed to connect the two packages";
         } else {
-            return "I connected one package with another. The box with id: "+Integer.toString(result.serviceIsResponsibleForBoxType())+" is discovered properly.";
+            return "I connected one package with another. The box with id: "+Integer.toString(result.serviceIsResponsibleForBoxTypeId())+" is discovered properly.";
         }               
     }
 }

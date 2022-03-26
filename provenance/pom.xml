@@ -5,34 +5,43 @@
 	<modelVersion>4.0.0</modelVersion>  
 	
 	<parent>  
-		<groupId>mipams</groupId>  
+		<groupId>org.mipams.jumbf</groupId>  
 		<artifactId>jumbf</artifactId>  
 		<version>0.0.1-SNAPSHOT</version>  
 	</parent> 
 
-	<groupId>mipams</groupId>
+	<groupId>org.mipams.jumbf</groupId>
 	<artifactId>jumbf-provenance</artifactId>
 	<packaging>jar</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Jumbf Provenance Module</name>
 	<description>Module that contains the implementation of the provenance JUMBF functionality</description>
 	<dependencies>
-		<!-- <dependency>
-			<groupId>mipams</groupId>  
+		<dependency>
+			<groupId>org.mipams.jumbf</groupId>  
 			<artifactId>jumbf-core</artifactId>
 			<version>${project.version}</version>  
-		</dependency> -->
-		<dependency>
-			<groupId>mipams</groupId>
-			<artifactId>jumbf-core</artifactId>
-			<version>${project.version}</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/target/jumbf-core-0.0.1-SNAPSHOT.jar</systemPath>
 		</dependency>
-
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 		</dependency>
 	</dependencies>
+
+		<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
