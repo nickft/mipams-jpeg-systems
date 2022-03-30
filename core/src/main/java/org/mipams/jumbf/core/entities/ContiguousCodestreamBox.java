@@ -13,7 +13,7 @@ import lombok.ToString;
 @ToString
 public class ContiguousCodestreamBox extends XTBox {
 
-    private @Getter @Setter String pathToCodestream;
+    protected @Getter @Setter String pathToCodestream;
 
     @Override
     public int getTypeId() {
