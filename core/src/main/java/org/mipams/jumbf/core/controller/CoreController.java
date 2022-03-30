@@ -7,37 +7,38 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.List;
 
-import org.mipams.jumbf.core.services.ParserService;
-import org.mipams.jumbf.core.services.GeneratorService;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import org.mipams.jumbf.core.services.CoreParserService;
+import org.mipams.jumbf.core.entities.XTBox;
+import org.mipams.jumbf.core.services.CoreGeneratorService;
 import org.mipams.jumbf.core.util.MipamsException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 @RestController
 @RequestMapping("/core/v1")
 public class CoreController {
-    
-    private static final Logger logger = LoggerFactory.getLogger(CoreController.class);
-    
-    @Autowired
-    ParserService parserService;
 
     @Autowired
-    GeneratorService generatorService;
+    CoreParserService parserService;
+
+    @Autowired
+    CoreGeneratorService generatorService;
 
     @GetMapping("/parseMetadata")
     public String parseJumbfMetadataFromPath(@RequestParam String path) throws MipamsException {
-        return parserService.parseMetadataFromJumbfFile(path);
+        List<XTBox> boxList = parserService.parseMetadataFromJumbfFile(path);
+        return boxList.toString();
     }
 
     @PostMapping("/generateBox")
     public String generateJumbfBytes(@RequestBody JsonNode requestBody) throws MipamsException {
-        return generatorService.generateJumbfFileFromRequest((ObjectNode) requestBody);
+
+        List<XTBox> boxList = generatorService.generateBoxFromRequest(requestBody);
+
+        return generatorService.generateJumbfFileFromBox(boxList);
     }
 }

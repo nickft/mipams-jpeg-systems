@@ -1,26 +1,18 @@
 package org.mipams.jumbf.core.entities;
 
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-
-import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
-import org.mipams.jumbf.core.entities.XTBox;
+import org.mipams.jumbf.core.util.MipamsException;
 
-import lombok.Getter;  
-import lombok.NoArgsConstructor;  
-import lombok.Setter;  
-import lombok.ToString;  
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+@NoArgsConstructor
+@ToString
+public class ContiguousCodestreamBox extends XTBox {
 
-@NoArgsConstructor  
-@ToString  
-public class ContiguousCodestreamBox extends XTBox{
-  
     private @Getter @Setter String pathToCodestream;
 
     @Override

@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.stereotype.Service;
 
 import org.mipams.jumbf.core.entities.DescriptionBox;
-import org.mipams.jumbf.core.entities.XTBox;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
@@ -21,28 +20,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
-public class DescriptionBoxService extends XTBoxService<DescriptionBox>{
+public class DescriptionBoxService extends XTBoxService<DescriptionBox> {
 
-    private static final Logger logger = LoggerFactory.getLogger(DescriptionBoxService.class); 
+    private static final Logger logger = LoggerFactory.getLogger(DescriptionBoxService.class);
 
     @Override
-    protected DescriptionBox initializeBox() throws MipamsException{
+    protected DescriptionBox initializeBox() throws MipamsException {
         return new DescriptionBox();
     }
 
     @Override
-    protected void populateBox(DescriptionBox descriptionBox, ObjectNode input) throws MipamsException{
-        
+    protected void populateBox(DescriptionBox descriptionBox, ObjectNode input) throws MipamsException {
+
         String type = input.get("type").asText();
-        
+
         BoxTypeEnum boxType = BoxTypeEnum.getBoxTypeFromString(type);
 
-        if(boxType == null){
-            throw new BadRequestException("Content Type: "+type+" is not supported");
+        if (boxType == null) {
+            throw new BadRequestException("Content Type: " + type + " is not supported");
         }
 
-        if (!boxType.isContentBox()){
-            throw new BadRequestException("Box with type: "+type+" is not a content box");
+        if (!boxType.isContentBox()) {
+            throw new BadRequestException("Box with type: " + type + " is not a content box");
         }
 
         descriptionBox.setUuid(boxType.getContentUuid());
@@ -52,14 +51,14 @@ public class DescriptionBoxService extends XTBoxService<DescriptionBox>{
 
         node = input.get("label");
 
-        if(node != null){
+        if (node != null) {
             descriptionBox.setLabel(node.asText());
             toggle = toggle | 2;
         }
 
         node = input.get("id");
 
-        if(node != null){
+        if (node != null) {
             descriptionBox.setId(node.asInt());
             toggle = toggle | 4;
         }
@@ -70,92 +69,96 @@ public class DescriptionBoxService extends XTBoxService<DescriptionBox>{
     }
 
     @Override
-    protected void writeXTBoxPayloadToJumbfFile(DescriptionBox descriptionBox, FileOutputStream fileOutputStream) throws MipamsException{
-        
-        try{        
+    protected void writeXTBoxPayloadToJumbfFile(DescriptionBox descriptionBox, FileOutputStream fileOutputStream)
+            throws MipamsException {
+
+        try {
             fileOutputStream.write(CoreUtils.convertUUIDToByteArray(descriptionBox.getUuid()));
             fileOutputStream.write(CoreUtils.convertIntToSingleElementByteArray(descriptionBox.getToggle()));
 
-            if(descriptionBox.labelExists()){
-                fileOutputStream.write(CoreUtils.convertStringToByteArray(descriptionBox.getLabelWithEscapeCharacter()));
+            if (descriptionBox.labelExists()) {
+                fileOutputStream
+                        .write(CoreUtils.convertStringToByteArray(descriptionBox.getLabelWithEscapeCharacter()));
             }
 
-            if(descriptionBox.idExists()){
+            if (descriptionBox.idExists()) {
                 fileOutputStream.write(CoreUtils.convertIntToByteArray(descriptionBox.getId()));
             }
 
-            if(descriptionBox.signatureExists()){
+            if (descriptionBox.signatureExists()) {
                 fileOutputStream.write(descriptionBox.getSignature());
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             throw new MipamsException("Could not write to file.", e);
         }
     }
 
     @Override
-    protected void populatePayloadFromJumbfFile(DescriptionBox descriptionBox, InputStream input) throws MipamsException{
-        
+    protected void populatePayloadFromJumbfFile(DescriptionBox descriptionBox, InputStream input)
+            throws MipamsException {
+
         logger.debug("Description box");
 
         long actualSize = 0;
 
-        try{
+        try {
             byte[] uuidTemp = new byte[16];
 
-            if(input.read(uuidTemp, 0, 16) == -1){
+            if (input.read(uuidTemp, 0, 16) == -1) {
                 throw new MipamsException();
             }
 
             UUID uuidVal = CoreUtils.convertByteArrayToUUID(uuidTemp);
             descriptionBox.setUuid(uuidVal);
-            actualSize +=16;
+            actualSize += 16;
 
             int toggleValue = 0;
-            if((toggleValue = input.read()) == -1){
+            if ((toggleValue = input.read()) == -1) {
                 throw new MipamsException();
             }
-            actualSize ++;
+            actualSize++;
             descriptionBox.setToggle(toggleValue);
 
-            if(descriptionBox.labelExists()){
+            if (descriptionBox.labelExists()) {
                 char charVal;
                 StringBuilder str = new StringBuilder();
 
-                while((charVal = (char) input.read()) != '\0') {
+                while ((charVal = (char) input.read()) != '\0') {
                     str.append(charVal);
-                    actualSize ++;
+                    actualSize++;
                 }
-                //For the null character that we are not included in the variable
-                actualSize ++;
+                // For the null character that we are not included in the variable
+                actualSize++;
 
                 descriptionBox.setLabel(str.toString());
             }
 
-            if(descriptionBox.idExists()){
+            if (descriptionBox.idExists()) {
 
                 byte[] temp = new byte[4];
 
-                if(input.read(temp, 0, 4) == -1){
+                if (input.read(temp, 0, 4) == -1) {
                     throw new MipamsException();
                 }
 
                 int idVal = CoreUtils.convertByteArrayToInt(temp);
                 descriptionBox.setId(idVal);
-                actualSize +=4;
+                actualSize += 4;
             }
 
-            if(descriptionBox.signatureExists()){
+            if (descriptionBox.signatureExists()) {
                 byte[] signatureVal = new byte[32];
 
-                if(input.read(signatureVal, 0, 32) == -1){
+                if (input.read(signatureVal, 0, 32) == -1) {
                     throw new MipamsException();
                 }
 
                 descriptionBox.setSignature(signatureVal);
-                actualSize +=32;
+                actualSize += 32;
             }
-        } catch (IOException e){
-            throw new MipamsException("Failed to read description box after {"+Long.toString(actualSize)+"} bytes.", e);
+        } catch (IOException e) {
+            throw new MipamsException("Failed to read description box after {" + Long.toString(actualSize) + "} bytes.",
+                    e);
         }
 
         verifyBoxSize(descriptionBox, actualSize);
@@ -164,7 +167,7 @@ public class DescriptionBoxService extends XTBoxService<DescriptionBox>{
     }
 
     @Override
-    public int serviceIsResponsibleForBoxTypeId(){
+    public int serviceIsResponsibleForBoxTypeId() {
         return BoxTypeEnum.DescriptionBox.getTypeId();
     }
 }

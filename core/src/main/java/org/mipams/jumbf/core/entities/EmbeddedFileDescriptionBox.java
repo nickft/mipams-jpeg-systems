@@ -1,29 +1,19 @@
 package org.mipams.jumbf.core.entities;
 
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-
-import org.mipams.jumbf.core.util.MipamsException;
-import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
-import org.mipams.jumbf.core.entities.XTBox;
-
-import lombok.Getter;  
-import lombok.NoArgsConstructor;  
-import lombok.Setter;  
-import lombok.ToString;  
-
+import org.mipams.jumbf.core.util.MipamsException;
 import org.springframework.http.MediaType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-@NoArgsConstructor  
-@ToString  
+@NoArgsConstructor
+@ToString
 public class EmbeddedFileDescriptionBox extends XTBox {
-  
+
     private @Getter @Setter int toggle;
 
     private @Getter @Setter MediaType mediaType;
@@ -42,62 +32,65 @@ public class EmbeddedFileDescriptionBox extends XTBox {
 
         sum += getMediaTypeSize();
 
-        if(fileNameExists()) sum += getFileNameSize();
+        if (fileNameExists())
+            sum += getFileNameSize();
 
         return sum;
     }
 
-    public int getToggleSize(){
+    public int getToggleSize() {
         return 1;
     }
 
-    public int getMediaTypeSize(){
+    public int getMediaTypeSize() {
         return getMediaTypeWithEscapeCharacter().length();
     }
 
-    public int getFileNameSize(){
+    public int getFileNameSize() {
         return getFileNameWithEscapeCharacter().length();
     }
 
-    public boolean fileNameExists(){
+    public boolean fileNameExists() {
         return CoreUtils.isBitAtGivenPositionSet(toggle, 0);
     }
 
-    public boolean isContentReferencedExternally(){
+    public boolean isContentReferencedExternally() {
         return CoreUtils.isBitAtGivenPositionSet(toggle, 1);
     }
 
-    public void markAsExternalFile(){
+    public void markAsExternalFile() {
         int value = 1;
         int updatedToggle = CoreUtils.setBitValueAtGivenPosition(toggle, 1, value);
+        setToggle(updatedToggle);
     }
 
-    public void markAsInternalFile(){
+    public void markAsInternalFile() {
         int value = 0;
         int updatedToggle = CoreUtils.setBitValueAtGivenPosition(toggle, 1, value);
+        setToggle(updatedToggle);
     }
 
-    public String getMediaTypeWithEscapeCharacter(){
+    public String getMediaTypeWithEscapeCharacter() {
         return CoreUtils.addEscapeCharacterToText(getMediaType().toString());
     }
 
-    public String getFileNameWithEscapeCharacter(){
+    public String getFileNameWithEscapeCharacter() {
         return CoreUtils.addEscapeCharacterToText(getFileName());
     }
 
-    public void setMediaTypeFromString(String type) throws MipamsException{
-        try{
+    public void setMediaTypeFromString(String type) throws MipamsException {
+        try {
             MediaType mediaType = CoreUtils.getMediaTypeFromString(type);
-            setMediaType(mediaType);    
-        } catch (IllegalArgumentException e){
+            setMediaType(mediaType);
+        } catch (IllegalArgumentException e) {
             throw new MipamsException("Bad Media Type", e);
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             throw new MipamsException("Media type not specified", e);
-        }  
+        }
     }
 
-    public String discoverFileName(){
-        if(fileNameExists()){
+    public String discoverFileName() {
+        if (fileNameExists()) {
             return getFileName();
         } else {
             return CoreUtils.randomStringGenerator() + "." + getMediaType().getSubtype();

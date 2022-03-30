@@ -1,26 +1,19 @@
 package org.mipams.jumbf.core.entities;
 
 import java.util.List;
-import java.util.ArrayList;
 
+import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.MipamsException;
-import org.mipams.jumbf.core.util.BoxTypeEnum;
-import org.mipams.jumbf.core.util.BoxTypeEnum;
 
-import lombok.Getter;  
-import lombok.NoArgsConstructor;  
-import lombok.Setter;  
-import lombok.ToString;  
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+@NoArgsConstructor
+@ToString
+public class JumbfBox extends XTBox {
 
-@NoArgsConstructor  
-@ToString  
-public class JumbfBox extends XTBox{
-
-    private static final Logger logger = LoggerFactory.getLogger(JumbfBox.class);
-   
     protected @Getter @Setter DescriptionBox descriptionBox;
     protected @Getter @Setter List<XTBox> contentList;
 
@@ -34,7 +27,7 @@ public class JumbfBox extends XTBox{
 
         long sum = descriptionBox.getBoxSizeFromXTBoxHeaders();
 
-        for (XTBox content: getContentList()){
+        for (XTBox content : getContentList()) {
             sum += content.getBoxSizeFromXTBoxHeaders();
         }
 

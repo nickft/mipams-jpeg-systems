@@ -1,144 +1,141 @@
 package org.mipams.jumbf.core.services;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Value;
-
-import org.mipams.jumbf.core.entities.ContiguousCodestreamBox;
-import org.mipams.jumbf.core.entities.EmbeddedFileBox;
 import org.mipams.jumbf.core.entities.EmbeddedFileDescriptionBox;
-import org.mipams.jumbf.core.entities.XTBox;
-import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
-
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
+import org.mipams.jumbf.core.util.MipamsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 @Service
-public class EmbeddedFileDescriptionBoxService extends XTBoxService<EmbeddedFileDescriptionBox>{
+public class EmbeddedFileDescriptionBoxService extends XTBoxService<EmbeddedFileDescriptionBox> {
 
-    private static final Logger logger = LoggerFactory.getLogger(EmbeddedFileDescriptionBoxService.class); 
+    private static final Logger logger = LoggerFactory.getLogger(EmbeddedFileDescriptionBoxService.class);
 
     @Override
-    protected EmbeddedFileDescriptionBox initializeBox() throws MipamsException{
+    protected EmbeddedFileDescriptionBox initializeBox() throws MipamsException {
         return new EmbeddedFileDescriptionBox();
     }
 
     @Override
-    protected void populateBox(EmbeddedFileDescriptionBox embeddedFileDescriptionBox, ObjectNode input) throws MipamsException{
-              
+    protected void populateBox(EmbeddedFileDescriptionBox embeddedFileDescriptionBox, ObjectNode input)
+            throws MipamsException {
+
         String type = input.get("type").asText();
 
-        if( !BoxTypeEnum.EmbeddedFileDescriptionBox.getType().equals(type)){
+        if (!BoxTypeEnum.EmbeddedFileDescriptionBox.getType().equals(type)) {
             throw new BadRequestException("Box type does not match with description type.");
         }
 
         int toggle = 0;
-        
-        try{
+
+        try {
             embeddedFileDescriptionBox.setMediaTypeFromString(input.get("mediaType").asText());
-        } catch (MipamsException e){
+        } catch (MipamsException e) {
             throw new BadRequestException(e);
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             throw new BadRequestException("Media type not specified", e);
         }
 
         JsonNode node = input.get("fileName");
 
-        if(node != null){
+        if (node != null) {
             toggle = 1;
             embeddedFileDescriptionBox.setFileName(node.asText());
         }
-        
+
         node = input.get("externalFile");
 
-        if(node != null) {
+        if (node != null) {
             toggle = toggle | 2;
-            if(node.asBoolean()){
+            if (node.asBoolean()) {
                 embeddedFileDescriptionBox.markAsExternalFile();
             } else {
                 embeddedFileDescriptionBox.markAsInternalFile();
             }
-            
+
         } else {
             embeddedFileDescriptionBox.markAsExternalFile();
         }
     }
 
     @Override
-    protected void writeXTBoxPayloadToJumbfFile(EmbeddedFileDescriptionBox embeddedFileDescriptionBox, FileOutputStream fileOutputStream) throws MipamsException{
-        
-        try{        
-            fileOutputStream.write(CoreUtils.convertIntToSingleElementByteArray(embeddedFileDescriptionBox.getToggle()));
-            fileOutputStream.write(CoreUtils.convertStringToByteArray(embeddedFileDescriptionBox.getMediaTypeWithEscapeCharacter()));
+    protected void writeXTBoxPayloadToJumbfFile(EmbeddedFileDescriptionBox embeddedFileDescriptionBox,
+            FileOutputStream fileOutputStream) throws MipamsException {
 
-            if(embeddedFileDescriptionBox.fileNameExists()){
-                fileOutputStream.write(CoreUtils.convertStringToByteArray(embeddedFileDescriptionBox.getFileNameWithEscapeCharacter()));
+        try {
+            fileOutputStream
+                    .write(CoreUtils.convertIntToSingleElementByteArray(embeddedFileDescriptionBox.getToggle()));
+            fileOutputStream.write(
+                    CoreUtils.convertStringToByteArray(embeddedFileDescriptionBox.getMediaTypeWithEscapeCharacter()));
+
+            if (embeddedFileDescriptionBox.fileNameExists()) {
+                fileOutputStream.write(CoreUtils
+                        .convertStringToByteArray(embeddedFileDescriptionBox.getFileNameWithEscapeCharacter()));
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             throw new MipamsException("Could not write to file.", e);
         }
 
     }
 
     @Override
-    protected void populatePayloadFromJumbfFile(EmbeddedFileDescriptionBox embeddedFileDescriptionBox, InputStream input) throws MipamsException{
+    protected void populatePayloadFromJumbfFile(EmbeddedFileDescriptionBox embeddedFileDescriptionBox,
+            InputStream input) throws MipamsException {
         logger.debug("Embedded File Description box");
 
         long actualSize = 0;
 
-        try{
+        try {
 
             int toggleValue = 0;
-            if((toggleValue = input.read()) == -1){
+            if ((toggleValue = input.read()) == -1) {
                 throw new MipamsException();
             }
-            actualSize ++;
+            actualSize++;
             embeddedFileDescriptionBox.setToggle(toggleValue);
 
             char charVal;
             StringBuilder str = new StringBuilder();
 
-            while((charVal = (char) input.read()) != '\0') {
+            while ((charVal = (char) input.read()) != '\0') {
                 str.append(charVal);
-                actualSize ++;
+                actualSize++;
             }
-            //For the null character that we are not included in the variable
-            actualSize ++;
+            // For the null character that we are not included in the variable
+            actualSize++;
 
-            try{
+            try {
                 embeddedFileDescriptionBox.setMediaTypeFromString(str.toString());
-            } catch (MipamsException e){
+            } catch (MipamsException e) {
                 throw new BadRequestException(e);
             }
 
-            if(embeddedFileDescriptionBox.fileNameExists()){
+            if (embeddedFileDescriptionBox.fileNameExists()) {
                 str = new StringBuilder();
 
-                while((charVal = (char) input.read()) != '\0') {
+                while ((charVal = (char) input.read()) != '\0') {
                     str.append(charVal);
-                    actualSize ++;
+                    actualSize++;
                 }
-                //For the null character that we are not included in the variable
-                actualSize ++;
+                // For the null character that we are not included in the variable
+                actualSize++;
 
                 embeddedFileDescriptionBox.setFileName(str.toString());
             }
 
-        } catch (IOException e){
-            throw new MipamsException("Failed to read description box after {"+Long.toString(actualSize)+"} bytes.", e);
+        } catch (IOException e) {
+            throw new MipamsException("Failed to read description box after {" + Long.toString(actualSize) + "} bytes.",
+                    e);
         }
 
         verifyBoxSize(embeddedFileDescriptionBox, actualSize);
@@ -147,7 +144,7 @@ public class EmbeddedFileDescriptionBoxService extends XTBoxService<EmbeddedFile
     }
 
     @Override
-    public int serviceIsResponsibleForBoxTypeId(){
+    public int serviceIsResponsibleForBoxTypeId() {
         return BoxTypeEnum.EmbeddedFileDescriptionBox.getTypeId();
     }
 }

@@ -6,20 +6,14 @@ import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-import lombok.Getter;  
-import lombok.NoArgsConstructor;  
-import lombok.Setter;  
-import lombok.ToString;  
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-@NoArgsConstructor  
-@ToString  
+@NoArgsConstructor
+@ToString
 public class DescriptionBox extends XTBox {
-
-    private static final Logger logger = LoggerFactory.getLogger(DescriptionBox.class);
 
     protected @Getter @Setter UUID uuid;
 
@@ -42,48 +36,51 @@ public class DescriptionBox extends XTBox {
 
         sum += getToggleSize();
 
-        if(labelExists()) sum += getLabelSize();
+        if (labelExists())
+            sum += getLabelSize();
 
-        if(idExists()) sum += getIdSize();
+        if (idExists())
+            sum += getIdSize();
 
-        if(signatureExists()) sum += getSignatureSize();
+        if (signatureExists())
+            sum += getSignatureSize();
 
         return sum;
     }
 
-    int getUuidSize(){
+    int getUuidSize() {
         return CoreUtils.UUID_BYTE_SIZE;
     }
 
-    int getToggleSize(){
+    int getToggleSize() {
         return 1;
     }
 
-    int getIdSize(){
+    int getIdSize() {
         return CoreUtils.INT_BYTE_SIZE;
     }
 
-    int getSignatureSize(){
+    int getSignatureSize() {
         return 32;
     }
 
-    long getLabelSize(){
+    long getLabelSize() {
         return CoreUtils.addEscapeCharacterToText(getLabel()).length();
     }
-   
-    public boolean labelExists(){
+
+    public boolean labelExists() {
         return CoreUtils.isBitAtGivenPositionSet(toggle, 2);
     }
 
-    public boolean idExists(){
+    public boolean idExists() {
         return CoreUtils.isBitAtGivenPositionSet(toggle, 3);
     }
 
-    public boolean signatureExists(){
+    public boolean signatureExists() {
         return CoreUtils.isBitAtGivenPositionSet(toggle, 4);
     }
 
-    public String getLabelWithEscapeCharacter(){
+    public String getLabelWithEscapeCharacter() {
         return CoreUtils.addEscapeCharacterToText(getLabel());
-    }    
+    }
 }

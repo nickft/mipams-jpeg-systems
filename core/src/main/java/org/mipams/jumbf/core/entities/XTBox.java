@@ -3,16 +3,14 @@ package org.mipams.jumbf.core.entities;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
-import org.mipams.jumbf.core.entities.BoxInterface;
-
-import lombok.Getter;  
-import lombok.NoArgsConstructor;  
-import lombok.Setter;  
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
-@NoArgsConstructor  
-@ToString  
-public abstract class XTBox implements BoxInterface{
+@NoArgsConstructor
+@ToString
+public abstract class XTBox implements BoxInterface {
 
     private @Getter @Setter int LBox;
 
@@ -22,32 +20,33 @@ public abstract class XTBox implements BoxInterface{
 
     public abstract int getTypeId();
 
-    public final long getPayloadSizeFromXTBoxHeaders(){
+    public final long getPayloadSizeFromXTBoxHeaders() {
 
         long payloadSize = getBoxSizeFromXTBoxHeaders();
 
         payloadSize -= getLBoxSize() + getTBoxSize();
 
-        if(isXBoxEnabled()) payloadSize -= getXBoxSize();
+        if (isXBoxEnabled())
+            payloadSize -= getXBoxSize();
 
         return payloadSize;
     }
 
-    public final long getBoxSizeFromXTBoxHeaders(){
+    public final long getBoxSizeFromXTBoxHeaders() {
         return isXBoxEnabled() ? getXBox() : getLBox();
     }
 
-    public final boolean isXBoxEnabled(){
+    public final boolean isXBoxEnabled() {
         return LBox == 1 && (XBox != null);
     }
-    
-    public final void setXTHeadersBasedOnBox() throws MipamsException{   
+
+    public final void setXTHeadersBasedOnBox() throws MipamsException {
 
         setTBox(getTypeId());
 
-        long size = getLBoxSize() + getTBoxSize() +calculatePayloadSize();
+        long size = getLBoxSize() + getTBoxSize() + calculatePayloadSize();
 
-        if(size > Integer.MAX_VALUE){                       
+        if (size > Integer.MAX_VALUE) {
             size += getXBoxSize();
             setLBox(1);
             setXBox(size);
@@ -56,15 +55,15 @@ public abstract class XTBox implements BoxInterface{
         }
     }
 
-    int getLBoxSize(){
+    int getLBoxSize() {
         return CoreUtils.INT_BYTE_SIZE;
     }
 
-    int getTBoxSize(){
+    int getTBoxSize() {
         return CoreUtils.INT_BYTE_SIZE;
     }
 
-    int getXBoxSize(){
+    int getXBoxSize() {
         return CoreUtils.LONG_BYTE_SIZE;
     }
 

@@ -1,11 +1,12 @@
 package org.mipams.jumbf.core.services;
 
-import java.io.InputStream;
+import java.util.List;
 
+import org.mipams.jumbf.core.entities.XTBox;
 import org.mipams.jumbf.core.util.MipamsException;
 
-public interface ParserInterface{
+public interface ParserInterface {
 
-    public String parseMetadataFromJumbfFile(String path) throws MipamsException;
+    public List<XTBox> parseMetadataFromJumbfFile(String path) throws MipamsException;
 
 }
