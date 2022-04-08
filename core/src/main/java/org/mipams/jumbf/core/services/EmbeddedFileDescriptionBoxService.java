@@ -30,12 +30,6 @@ public class EmbeddedFileDescriptionBoxService extends XTBoxService<EmbeddedFile
     protected void populateBox(EmbeddedFileDescriptionBox embeddedFileDescriptionBox, ObjectNode input)
             throws MipamsException {
 
-        String type = input.get("type").asText();
-
-        if (!BoxTypeEnum.EmbeddedFileDescriptionBox.getType().equals(type)) {
-            throw new BadRequestException("Box type does not match with description type.");
-        }
-
         int toggle = 0;
 
         try {
@@ -62,7 +56,6 @@ public class EmbeddedFileDescriptionBoxService extends XTBoxService<EmbeddedFile
             } else {
                 embeddedFileDescriptionBox.markAsInternalFile();
             }
-
         } else {
             embeddedFileDescriptionBox.markAsExternalFile();
         }
@@ -104,33 +97,24 @@ public class EmbeddedFileDescriptionBoxService extends XTBoxService<EmbeddedFile
             actualSize++;
             embeddedFileDescriptionBox.setToggle(toggleValue);
 
-            char charVal;
-            StringBuilder str = new StringBuilder();
+            String mediaTypeAsString = CoreUtils.readStringFromInputStream(input);
 
-            while ((charVal = (char) input.read()) != '\0') {
-                str.append(charVal);
-                actualSize++;
-            }
-            // For the null character that we are not included in the variable
-            actualSize++;
+            // +1 for the null terminating character
+            actualSize += CoreUtils.addEscapeCharacterToText(mediaTypeAsString).length();
 
             try {
-                embeddedFileDescriptionBox.setMediaTypeFromString(str.toString());
+                embeddedFileDescriptionBox.setMediaTypeFromString(mediaTypeAsString);
             } catch (MipamsException e) {
                 throw new BadRequestException(e);
             }
 
             if (embeddedFileDescriptionBox.fileNameExists()) {
-                str = new StringBuilder();
+                String fileName = CoreUtils.readStringFromInputStream(input);
 
-                while ((charVal = (char) input.read()) != '\0') {
-                    str.append(charVal);
-                    actualSize++;
-                }
-                // For the null character that we are not included in the variable
-                actualSize++;
+                // +1 for the null terminating character
+                actualSize += CoreUtils.addEscapeCharacterToText(fileName).length();
 
-                embeddedFileDescriptionBox.setFileName(str.toString());
+                embeddedFileDescriptionBox.setFileName(fileName);
             }
 
         } catch (IOException e) {
@@ -146,5 +130,10 @@ public class EmbeddedFileDescriptionBoxService extends XTBoxService<EmbeddedFile
     @Override
     public int serviceIsResponsibleForBoxTypeId() {
         return BoxTypeEnum.EmbeddedFileDescriptionBox.getTypeId();
+    }
+
+    @Override
+    public String serviceIsResponsibleForBoxType() {
+        return BoxTypeEnum.EmbeddedFileDescriptionBox.getType();
     }
 }

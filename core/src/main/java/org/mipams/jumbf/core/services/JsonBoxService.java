@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import org.mipams.jumbf.core.entities.JsonBox;
 import org.mipams.jumbf.core.util.MipamsException;
-import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 
 import java.io.ByteArrayInputStream;
@@ -33,12 +32,6 @@ public class JsonBoxService extends XTBoxService<JsonBox> {
 
     @Override
     protected void populateBox(JsonBox jsonBox, ObjectNode input) throws MipamsException {
-        String type = input.get("type").asText();
-
-        if (!BoxTypeEnum.JsonBox.getType().equals(type)) {
-            throw new BadRequestException("Box type does not match with description type.");
-        }
-
         ObjectNode payloadNode = (ObjectNode) input.get("payload");
         jsonBox.setJsonContent(payloadNode);
     }
@@ -89,5 +82,10 @@ public class JsonBoxService extends XTBoxService<JsonBox> {
     @Override
     public int serviceIsResponsibleForBoxTypeId() {
         return BoxTypeEnum.JsonBox.getTypeId();
+    }
+
+    @Override
+    public String serviceIsResponsibleForBoxType() {
+        return BoxTypeEnum.JsonBox.getType();
     }
 }

@@ -85,7 +85,8 @@ The body of this request should be the following JSON document describing the JU
     "type": "jumb",
     "description":
     {
-        "type": "json",
+    	"type": "jumd"
+        "contentType": "json",
         "label": "This is an example JUMBF metadata format"
     },
     "contentList":
@@ -108,18 +109,19 @@ Let's see a more complicated example where we can specify metadata consisting of
 {
     "type": "jumb",
     "description": {
-        "type": "jumb",
+        "type": "jumd"
+        "contentType": "jumb",
         "label": "Superbox containing two children boxes"
     },
     "contentList": [
         {
             "type": "jumb",
-            "description": {"type":"json","label":"Box containing the JSON metadata"},
+            "description": {"type": "jumd", "contentType":"json","label":"Box containing the JSON metadata"},
             "contentList": [{"type":"json","payload":{"test":1}}]
         },
         {
             "type": "jumb",
-            "description": {"type":"jp2c","label":"Box containing the Contiguous Codestream metadata"},
+            "description": {"type": "jumd", "contentType":"jp2c","label":"Box containing the Contiguous Codestream metadata"},
             "contentList": [{"type":"jp2c","path":"/home/nikos/Desktop/test.jpeg"}]
         }
     ]

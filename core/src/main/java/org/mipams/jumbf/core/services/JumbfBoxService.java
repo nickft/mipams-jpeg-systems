@@ -18,7 +18,6 @@ import org.mipams.jumbf.core.entities.XTBox;
 import org.mipams.jumbf.core.BoxServiceManager;
 import org.mipams.jumbf.core.entities.DescriptionBox;
 import org.mipams.jumbf.core.util.MipamsException;
-import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 
 import org.slf4j.Logger;
@@ -40,12 +39,6 @@ public class JumbfBoxService extends XTBoxService<JumbfBox> {
 
     @Override
     protected void populateBox(JumbfBox jumbfBox, ObjectNode input) throws MipamsException {
-
-        String type = input.get("type").asText();
-
-        if (!BoxTypeEnum.JumbfBox.getType().equals(type)) {
-            throw new BadRequestException("Box type does not match with description type.");
-        }
 
         ObjectNode descriptionNode = (ObjectNode) input.get("description");
 
@@ -122,6 +115,11 @@ public class JumbfBoxService extends XTBoxService<JumbfBox> {
     @Override
     public int serviceIsResponsibleForBoxTypeId() {
         return BoxTypeEnum.JumbfBox.getTypeId();
+    }
+
+    @Override
+    public String serviceIsResponsibleForBoxType() {
+        return BoxTypeEnum.JumbfBox.getType();
     }
 
 }

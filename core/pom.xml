@@ -19,13 +19,12 @@
 	<description>Module that contains the implementation of the core JUMBF structure</description>
 	
 	<dependencies>
-			<dependency>
+		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 		</dependency>
 	</dependencies>
-
-	<!-- The following plugin needs to be uncommented if you want core module to run standalone -->
+	
 	<build>
 		<plugins>
 			<plugin>

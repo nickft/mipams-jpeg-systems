@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 import org.springframework.http.MediaType;
@@ -69,7 +69,7 @@ public class CoreUtils {
         return (n & ~mask) | ((val << position) & mask);
     }
 
-    public static double getFileSizeFromPath(String filePath) throws MipamsException {
+    public static long getFileSizeFromPath(String filePath) throws MipamsException {
         try {
             File f = new File(filePath);
             return f.length();
@@ -123,5 +123,26 @@ public class CoreUtils {
         }
 
         return mediaType;
+    }
+
+    public static String parseStringFromFile(String fileUrl) throws MipamsException {
+
+        try (InputStream inputStream = new FileInputStream(fileUrl)) {
+            String result = readStringFromInputStream(inputStream);
+            return result;
+        } catch (IOException e) {
+            throw new MipamsException(e);
+        }
+    }
+
+    public static String readStringFromInputStream(InputStream input) throws IOException {
+        char charVal;
+        StringBuilder str = new StringBuilder();
+
+        while ((charVal = (char) input.read()) != '\0') {
+            str.append(charVal);
+        }
+
+        return str.toString();
     }
 }

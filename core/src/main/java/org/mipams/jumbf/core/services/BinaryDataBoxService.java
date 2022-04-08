@@ -6,20 +6,14 @@ import java.io.InputStream;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import org.mipams.jumbf.core.entities.XmlBox;
+import org.mipams.jumbf.core.entities.BinaryDataBox;
 import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
-@Service
-public class XmlBoxService extends XTBoxService<XmlBox> {
-
-    private static final Logger logger = LoggerFactory.getLogger(XmlBoxService.class);
+public class BinaryDataBoxService extends XTBoxService<BinaryDataBox> {
 
     @Value("${org.mipams.core.image_folder}")
     private String IMAGE_FOLDER;
@@ -28,30 +22,28 @@ public class XmlBoxService extends XTBoxService<XmlBox> {
     private long MAX_FILE_SIZE;
 
     @Override
-    protected XmlBox initializeBox() throws MipamsException {
-        return new XmlBox();
-    }
-
-    @Override
-    protected void populateBox(XmlBox xmlBox, ObjectNode input)
-            throws MipamsException {
-
-        String type = input.get("type").asText();
-
-        if (!BoxTypeEnum.XmlBox.getType().equals(type)) {
-            throw new BadRequestException("Box type does not match with description type.");
-        }
-
+    protected void populateBox(BinaryDataBox binaryDataBox, ObjectNode input) throws MipamsException {
         String path = input.get("path").asText();
 
         if (path == null) {
             throw new BadRequestException("Path is not specified");
         }
 
-        xmlBox.setPathToCodestream(path);
+        binaryDataBox.setFileUrl(path);
+    }
 
-        if (doesFileSizeExceedApplicationLimits(path)) {
+    @Override
+    protected void writeXTBoxPayloadToJumbfFile(BinaryDataBox binaryDataBox, FileOutputStream fileOutputStream)
+            throws MipamsException {
+
+        if (doesFileSizeExceedApplicationLimits(binaryDataBox.getFileUrl())) {
             throw new BadRequestException("File is too large for the application. Check the available limits.");
+        }
+
+        if (binaryDataBox.isReferencedExternally()) {
+            writeUrlToJumbfBox(binaryDataBox, fileOutputStream);
+        } else {
+            CoreUtils.writeFileContentToOutput(binaryDataBox.getFileUrl(), fileOutputStream);
         }
     }
 
@@ -60,26 +52,32 @@ public class XmlBoxService extends XTBoxService<XmlBox> {
         return size > MAX_FILE_SIZE || size > Long.MAX_VALUE;
     }
 
-    @Override
-    protected void writeXTBoxPayloadToJumbfFile(XmlBox xmlBox,
-            FileOutputStream fileOutputStream) throws MipamsException {
-        CoreUtils.writeFileContentToOutput(xmlBox.getPathToCodestream(), fileOutputStream);
+    private void writeUrlToJumbfBox(BinaryDataBox binaryDataBox, FileOutputStream fileOutputStream)
+            throws MipamsException {
+        try {
+            fileOutputStream.write(CoreUtils.convertStringToByteArray(binaryDataBox.getFileUrl()));
+        } catch (IOException e) {
+            throw new MipamsException(e);
+        }
     }
 
     @Override
-    protected void populatePayloadFromJumbfFile(XmlBox xmlBox, InputStream input)
-            throws MipamsException {
-        logger.debug("Xml box");
+    protected BinaryDataBox initializeBox() throws MipamsException {
+        return new BinaryDataBox();
+    }
 
-        String fileName = CoreUtils.randomStringGenerator() + ".xml";
+    @Override
+    protected void populatePayloadFromJumbfFile(BinaryDataBox binaryDataBox, InputStream input) throws MipamsException {
+
+        String fileName = CoreUtils.randomStringGenerator();
 
         String fullPath = CoreUtils.getFullPath(IMAGE_FOLDER, fileName);
 
-        xmlBox.setPathToCodestream(fullPath);
+        binaryDataBox.setFileUrl(fullPath);
 
         try (FileOutputStream fileOutputStream = new FileOutputStream(fullPath)) {
 
-            long nominalTotalSizeInBytes = xmlBox.getPayloadSizeFromXTBoxHeaders();
+            long nominalTotalSizeInBytes = binaryDataBox.getPayloadSizeFromXTBoxHeaders();
 
             int actualBytes = 0, n;
 
@@ -88,20 +86,19 @@ public class XmlBoxService extends XTBoxService<XmlBox> {
                 actualBytes++;
             }
 
-            logger.debug("Finished writing file to: " + fullPath);
-
         } catch (IOException e) {
             throw new MipamsException("Coulnd not read Json content", e);
         }
+
     }
 
     @Override
     public int serviceIsResponsibleForBoxTypeId() {
-        return BoxTypeEnum.XmlBox.getTypeId();
+        return BoxTypeEnum.BinaryDataBox.getTypeId();
     }
 
     @Override
     public String serviceIsResponsibleForBoxType() {
-        return BoxTypeEnum.XmlBox.getType();
+        return BoxTypeEnum.BinaryDataBox.getType();
     }
 }

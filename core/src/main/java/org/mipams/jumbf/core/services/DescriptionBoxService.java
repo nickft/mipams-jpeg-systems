@@ -32,7 +32,7 @@ public class DescriptionBoxService extends XTBoxService<DescriptionBox> {
     @Override
     protected void populateBox(DescriptionBox descriptionBox, ObjectNode input) throws MipamsException {
 
-        String type = input.get("type").asText();
+        String type = input.get("contentType").asText();
 
         BoxTypeEnum boxType = BoxTypeEnum.getBoxTypeFromString(type);
 
@@ -120,17 +120,13 @@ public class DescriptionBoxService extends XTBoxService<DescriptionBox> {
             descriptionBox.setToggle(toggleValue);
 
             if (descriptionBox.labelExists()) {
-                char charVal;
-                StringBuilder str = new StringBuilder();
 
-                while ((charVal = (char) input.read()) != '\0') {
-                    str.append(charVal);
-                    actualSize++;
-                }
-                // For the null character that we are not included in the variable
-                actualSize++;
+                String label = CoreUtils.readStringFromInputStream(input);
 
-                descriptionBox.setLabel(str.toString());
+                // +1 for the null terminating character
+                actualSize += CoreUtils.addEscapeCharacterToText(label).length();
+
+                descriptionBox.setLabel(label);
             }
 
             if (descriptionBox.idExists()) {
@@ -169,5 +165,10 @@ public class DescriptionBoxService extends XTBoxService<DescriptionBox> {
     @Override
     public int serviceIsResponsibleForBoxTypeId() {
         return BoxTypeEnum.DescriptionBox.getTypeId();
+    }
+
+    @Override
+    public String serviceIsResponsibleForBoxType() {
+        return BoxTypeEnum.DescriptionBox.getType();
     }
 }

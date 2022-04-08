@@ -99,4 +99,9 @@ public class ContiguousCodestreamBoxService extends XTBoxService<ContiguousCodes
     public int serviceIsResponsibleForBoxTypeId() {
         return BoxTypeEnum.ContiguousCodestreamBox.getTypeId();
     }
+
+    @Override
+    public String serviceIsResponsibleForBoxType() {
+        return BoxTypeEnum.ContiguousCodestreamBox.getType();
+    }
 }

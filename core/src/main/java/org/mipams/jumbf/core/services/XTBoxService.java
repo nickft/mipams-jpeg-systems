@@ -4,9 +4,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.mipams.jumbf.core.entities.XTBox;
+import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
@@ -21,34 +23,47 @@ public abstract class XTBoxService<T extends XTBox> implements BoxServiceInterfa
 
     public final T discoverXTBoxFromRequest(ObjectNode inputNode) throws MipamsException {
         T xtBox = initializeBox();
+        validateRequestType(inputNode);
         populateBox(xtBox, inputNode);
         xtBox.setXTHeadersBasedOnBox();
         return xtBox;
     }
 
-    protected abstract void populateBox(T xtBox, ObjectNode input) throws MipamsException;
+    private void validateRequestType(ObjectNode inputNode) throws BadRequestException {
+        JsonNode typeNode = inputNode.get("type");
 
-    @Override
-    public void writeToJumbfFile(T xtBox, FileOutputStream fileOutputStream) throws MipamsException {
-        writeXTBoxHeadersToJumbfFile(xtBox, fileOutputStream);
-        writeXTBoxPayloadToJumbfFile(xtBox, fileOutputStream);
+        if (typeNode.isNull()) {
+            throw new BadRequestException("Box type must be specified");
+        }
+
+        if (!serviceIsResponsibleForBoxType().equals(typeNode.asText())) {
+            throw new BadRequestException("Box type does not match with description type.");
+        }
     }
 
-    private final void writeXTBoxHeadersToJumbfFile(T xtBox, FileOutputStream fileOutputStream) throws MipamsException {
+    protected abstract void populateBox(T box, ObjectNode input) throws MipamsException;
+
+    @Override
+    public void writeToJumbfFile(T box, FileOutputStream fileOutputStream) throws MipamsException {
+        writeXTBoxHeadersToJumbfFile(box, fileOutputStream);
+        writeXTBoxPayloadToJumbfFile(box, fileOutputStream);
+    }
+
+    private final void writeXTBoxHeadersToJumbfFile(T box, FileOutputStream fileOutputStream) throws MipamsException {
         try {
 
-            fileOutputStream.write(CoreUtils.convertIntToByteArray(xtBox.getLBox()));
-            fileOutputStream.write(CoreUtils.convertIntToByteArray(xtBox.getTBox()));
+            fileOutputStream.write(CoreUtils.convertIntToByteArray(box.getLBox()));
+            fileOutputStream.write(CoreUtils.convertIntToByteArray(box.getTBox()));
 
-            if (xtBox.isXBoxEnabled()) {
-                fileOutputStream.write(CoreUtils.convertLongToByteArray(xtBox.getXBox()));
+            if (box.isXBoxEnabled()) {
+                fileOutputStream.write(CoreUtils.convertLongToByteArray(box.getXBox()));
             }
         } catch (IOException e) {
             throw new MipamsException("Could not write to file", e);
         }
     }
 
-    protected abstract void writeXTBoxPayloadToJumbfFile(T xtBox, FileOutputStream fileOutputStream)
+    protected abstract void writeXTBoxPayloadToJumbfFile(T box, FileOutputStream fileOutputStream)
             throws MipamsException;
 
     @Override
@@ -70,7 +85,7 @@ public abstract class XTBoxService<T extends XTBox> implements BoxServiceInterfa
 
     protected abstract T initializeBox() throws MipamsException;
 
-    private void populateHeadersFromJumbfFile(T xtBox, InputStream input) throws MipamsException {
+    private void populateHeadersFromJumbfFile(T box, InputStream input) throws MipamsException {
         byte[] temp = new byte[4];
         int value;
 
@@ -85,7 +100,7 @@ public abstract class XTBoxService<T extends XTBox> implements BoxServiceInterfa
             }
 
             value = CoreUtils.convertByteArrayToInt(temp);
-            xtBox.setLBox(value);
+            box.setLBox(value);
 
             if (input.read(temp, 0, 4) == -1) {
                 throw new CorruptedJumbfFileException("Failed to parse TBox value from byte stream");
@@ -95,14 +110,14 @@ public abstract class XTBoxService<T extends XTBox> implements BoxServiceInterfa
 
             BoxTypeEnum boxType = BoxTypeEnum.getBoxTypeFromIdOrNull(value);
 
-            if (boxType != null && xtBox.getTypeId() != boxType.getTypeId()) {
+            if (boxType != null && box.getTypeId() != boxType.getTypeId()) {
                 throw new CorruptedJumbfFileException("TBox Id " + value + " does not match with box "
-                        + BoxTypeEnum.getBoxTypeAsStringFromId(xtBox.getTypeId()));
+                        + BoxTypeEnum.getBoxTypeAsStringFromId(box.getTypeId()));
             }
 
-            xtBox.setTBox(value);
+            box.setTBox(value);
 
-            if (xtBox.getLBox() == 1) {
+            if (box.getLBox() == 1) {
                 temp = new byte[8];
                 long longVal;
 
@@ -111,21 +126,23 @@ public abstract class XTBoxService<T extends XTBox> implements BoxServiceInterfa
                 }
 
                 longVal = CoreUtils.convertByteArrayToLong(temp);
-                xtBox.setXBox(longVal);
+                box.setXBox(longVal);
             }
         } catch (IOException e) {
             throw new MipamsException("Could not read XTBox values", e);
         }
     }
 
-    protected void verifyBoxSize(T xtBox, long actualSize) throws MipamsException {
-        if (xtBox.getPayloadSizeFromXTBoxHeaders() != actualSize) {
-            throw new MipamsException("Mismatch in the byte counting(Nominal: " + xtBox.getPayloadSizeFromXTBoxHeaders()
-                    + ", Actual: " + Long.toString(actualSize) + ") of the Box: " + xtBox.toString());
+    protected void verifyBoxSize(T box, long actualSize) throws MipamsException {
+        if (box.getPayloadSizeFromXTBoxHeaders() != actualSize) {
+            throw new MipamsException("Mismatch in the byte counting(Nominal: " + box.getPayloadSizeFromXTBoxHeaders()
+                    + ", Actual: " + Long.toString(actualSize) + ") of the Box: " + box.toString());
         }
     }
 
-    protected abstract void populatePayloadFromJumbfFile(T xtBox, InputStream input) throws MipamsException;
+    protected abstract void populatePayloadFromJumbfFile(T box, InputStream input) throws MipamsException;
 
     public abstract int serviceIsResponsibleForBoxTypeId();
+
+    public abstract String serviceIsResponsibleForBoxType();
 }

@@ -36,9 +36,7 @@ public class CoreController {
 
     @PostMapping("/generateBox")
     public String generateJumbfBytes(@RequestBody JsonNode requestBody) throws MipamsException {
-
         List<XTBox> boxList = generatorService.generateBoxFromRequest(requestBody);
-
         return generatorService.generateJumbfFileFromBox(boxList);
     }
 }

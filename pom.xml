@@ -19,7 +19,8 @@
 	
 	<modules>
         <module>core</module>
-        <module>provenance</module>
+        <!-- <module>provenance</module> -->
+		<module>privsec</module>
     </modules>
 
 	<properties>

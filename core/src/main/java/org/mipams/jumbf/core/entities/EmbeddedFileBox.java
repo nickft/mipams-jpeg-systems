@@ -1,7 +1,6 @@
 package org.mipams.jumbf.core.entities;
 
 import org.mipams.jumbf.core.util.BoxTypeEnum;
-import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
 import lombok.Getter;
@@ -15,7 +14,7 @@ public class EmbeddedFileBox extends XTBox {
 
     private @Getter @Setter EmbeddedFileDescriptionBox descriptionBox;
 
-    private @Getter @Setter String fileUrl;
+    private @Getter @Setter BinaryDataBox binaryDataBox;
 
     @Override
     public int getTypeId() {
@@ -27,16 +26,12 @@ public class EmbeddedFileBox extends XTBox {
 
         long sum = getDescriptionBox().getBoxSizeFromXTBoxHeaders();
 
-        if (getDescriptionBox().isContentReferencedExternally()) {
-            sum += getUrlSize();
-        } else {
-            sum += CoreUtils.getFileSizeFromPath(getFileUrl());
-        }
+        sum += getBinaryDataBox().getBoxSizeFromXTBoxHeaders();
 
         return sum;
     }
 
-    private long getUrlSize() {
-        return CoreUtils.addEscapeCharacterToText(getFileUrl()).length();
+    public String getFileName() {
+        return descriptionBox.getFileName();
     }
 }
