@@ -1,7 +1,6 @@
 package org.mipams.jumbf.core.services;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -10,16 +9,13 @@ import org.mipams.jumbf.core.entities.SingleFormatBox;
 import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
-
-import org.springframework.beans.factory.annotation.Value;
+import org.mipams.jumbf.core.util.Properties;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class SingleFormatBoxService<T extends SingleFormatBox> extends XtBoxService<T> {
 
-    @Value("${org.mipams.core.image_folder}")
-    private String IMAGE_FOLDER;
-
-    @Value("${org.mipams.core.max_file_size_in_bytes}")
-    private long MAX_FILE_SIZE;
+    @Autowired
+    Properties properties;
 
     @Override
     protected void populateBox(T singleFormatBox, ObjectNode input) throws MipamsException {
@@ -32,18 +28,12 @@ public abstract class SingleFormatBoxService<T extends SingleFormatBox> extends 
         singleFormatBox.setFileUrl(path);
     }
 
-    protected boolean doesFileSizeExceedApplicationLimits(String filePath) throws MipamsException {
-        double size = CoreUtils.getFileSizeFromPath(filePath);
-        return size > MAX_FILE_SIZE || size > Long.MAX_VALUE;
-    }
-
     @Override
     protected void writeXtBoxPayloadToJumbfFile(T singleFormatBox, FileOutputStream fileOutputStream)
             throws MipamsException {
 
-        if (doesFileSizeExceedApplicationLimits(singleFormatBox.getFileUrl())) {
-            throw new BadRequestException("File is too large for the application. Check the available limits.");
-        }
+        properties.checkIfFileSizeExceedApplicationLimits(singleFormatBox.getFileUrl());
+
         CoreUtils.writeFileContentToOutput(singleFormatBox.getFileUrl(), fileOutputStream);
     }
 
@@ -52,24 +42,13 @@ public abstract class SingleFormatBoxService<T extends SingleFormatBox> extends 
 
         String fileName = getFileName();
 
-        String fullPath = CoreUtils.getFullPath(IMAGE_FOLDER, fileName);
+        String fullPath = CoreUtils.getFullPath(properties.getFileDirectory(), fileName);
 
         singleFormatBox.setFileUrl(fullPath);
 
-        try (FileOutputStream fileOutputStream = new FileOutputStream(fullPath)) {
+        long nominalTotalSizeInBytes = singleFormatBox.getPayloadSizeFromXTBoxHeaders();
 
-            long nominalTotalSizeInBytes = singleFormatBox.getPayloadSizeFromXTBoxHeaders();
-
-            int actualBytes = 0, n;
-
-            while ((actualBytes < nominalTotalSizeInBytes) && ((n = input.read()) != -1)) {
-                fileOutputStream.write(n);
-                actualBytes++;
-            }
-
-        } catch (IOException e) {
-            throw new MipamsException("Coulnd not read content", e);
-        }
+        CoreUtils.writeBytesFromInputStreamToFile(input, nominalTotalSizeInBytes, singleFormatBox.getFileUrl());
     }
 
     protected String getFileName() {

@@ -4,11 +4,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.mipams.jumbf.core.entities.BinaryDataBox;
-import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
-
+import org.mipams.jumbf.core.util.Properties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +17,9 @@ public class BinaryDataBoxService extends SingleFormatBoxService<BinaryDataBox> 
 
     @Value("${org.mipams.core.image_folder}")
     private String IMAGE_FOLDER;
+
+    @Autowired
+    Properties properties;
 
     @Override
     protected void writeXtBoxPayloadToJumbfFile(BinaryDataBox binaryDataBox, FileOutputStream fileOutputStream)
@@ -43,9 +46,7 @@ public class BinaryDataBoxService extends SingleFormatBoxService<BinaryDataBox> 
     private void writeFileToJumbfBox(BinaryDataBox binaryDataBox, FileOutputStream fileOutputStream)
             throws MipamsException {
 
-        if (doesFileSizeExceedApplicationLimits(binaryDataBox.getFileUrl())) {
-            throw new BadRequestException("File is too large for the application. Check the available limits.");
-        }
+        properties.checkIfFileSizeExceedApplicationLimits(binaryDataBox.getFileUrl());
 
         CoreUtils.writeFileContentToOutput(binaryDataBox.getFileUrl(), fileOutputStream);
     }

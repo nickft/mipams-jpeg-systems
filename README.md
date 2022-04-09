@@ -160,6 +160,26 @@ Example to define a Embedded File Jumbf Box is shown below:
 }
 ```
 
+Example to define a UUID Jumbf Box is shown below:
+
+```
+{
+  "type": "jumb",
+  "description": {
+    "type": "jumd",
+    "contentType": "uuid",
+    "label": "This is an example JUMBF metadata format"
+  },
+  "contentList": [
+    {
+      "type": "uuid",
+      "uuid": "645ba7a8-b7f4-11ec-b909-0242ac120002",
+      "fileUrl": "/home/nikos/file.enc"
+    }
+  ]	
+}
+```
+
 ### Parse a JUBMF file
 Now that we have generated one JUMBF file, let's parse it and see its contents. For this, we need to execute the following GET request in the URL:
 

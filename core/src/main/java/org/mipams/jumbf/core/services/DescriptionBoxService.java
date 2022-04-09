@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.mipams.jumbf.core.entities.DescriptionBox;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
+import org.mipams.jumbf.core.util.CorruptedJumbfFileException;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.core.util.BadRequestException;
 
@@ -102,15 +103,10 @@ public final class DescriptionBoxService extends XtBoxService<DescriptionBox> {
         long actualSize = 0;
 
         try {
-            byte[] uuidTemp = new byte[16];
-
-            if (input.read(uuidTemp, 0, 16) == -1) {
-                throw new MipamsException();
-            }
-
-            UUID uuidVal = CoreUtils.convertByteArrayToUUID(uuidTemp);
+            UUID uuidVal = CoreUtils.readUuidFromInputStream(input);
             descriptionBox.setUuid(uuidVal);
-            actualSize += 16;
+
+            actualSize += CoreUtils.UUID_BYTE_SIZE;
 
             int toggleValue = 0;
             if ((toggleValue = input.read()) == -1) {
@@ -153,8 +149,8 @@ public final class DescriptionBoxService extends XtBoxService<DescriptionBox> {
                 actualSize += 32;
             }
         } catch (IOException e) {
-            throw new MipamsException("Failed to read description box after {" + Long.toString(actualSize) + "} bytes.",
-                    e);
+            throw new CorruptedJumbfFileException(
+                    "Failed to read description box after {" + Long.toString(actualSize) + "} bytes.", e);
         }
 
         verifyBoxSize(descriptionBox, actualSize);

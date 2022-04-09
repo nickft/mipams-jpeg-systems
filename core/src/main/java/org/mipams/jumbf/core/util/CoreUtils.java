@@ -41,6 +41,21 @@ public class CoreUtils {
         return text.getBytes();
     }
 
+    public static UUID readUuidFromInputStream(InputStream input) throws MipamsException {
+        try {
+            byte[] uuidTemp = new byte[16];
+
+            if (input.read(uuidTemp, 0, 16) == -1) {
+                throw new MipamsException();
+            }
+
+            UUID uuidVal = convertByteArrayToUUID(uuidTemp);
+            return uuidVal;
+        } catch (IOException e) {
+            throw new MipamsException(e);
+        }
+    }
+
     public static UUID convertByteArrayToUUID(byte[] bytes) {
         ByteBuffer bb = ByteBuffer.wrap(bytes);
         long high = bb.getLong();
@@ -110,6 +125,23 @@ public class CoreUtils {
             throw new MipamsException("Could not locate file", e);
         } catch (IOException e) {
             throw new MipamsException("Could not write to file", e);
+        }
+    }
+
+    public static void writeBytesFromInputStreamToFile(InputStream input, long nominalTotalSizeInBytes,
+            String fileUrl) throws MipamsException {
+
+        try (FileOutputStream fileOutputStream = new FileOutputStream(fileUrl)) {
+
+            int actualBytes = 0, n;
+
+            while ((actualBytes < nominalTotalSizeInBytes) && ((n = input.read()) != -1)) {
+                fileOutputStream.write(n);
+                actualBytes++;
+            }
+
+        } catch (IOException e) {
+            throw new MipamsException("Coulnd not read content", e);
         }
     }
 
