@@ -4,21 +4,17 @@ import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@NoArgsConstructor
 @ToString
-public abstract class XTBox implements BoxInterface {
+public abstract class XtBox implements BoxInterface {
 
     private @Getter @Setter int LBox;
 
     private @Getter @Setter int TBox;
 
     private @Getter @Setter Long XBox;
-
-    public abstract int getTypeId();
 
     public final long getPayloadSizeFromXTBoxHeaders() {
 
@@ -40,11 +36,11 @@ public abstract class XTBox implements BoxInterface {
         return LBox == 1 && (XBox != null);
     }
 
-    public final void setXTHeadersBasedOnBox() throws MipamsException {
+    public final void updateXTHeadersBasedOnBox() throws MipamsException {
 
         setTBox(getTypeId());
 
-        long size = getLBoxSize() + getTBoxSize() + calculatePayloadSize();
+        long size = calculateSizeFromBox();
 
         if (size > Integer.MAX_VALUE) {
             size += getXBoxSize();
@@ -55,17 +51,23 @@ public abstract class XTBox implements BoxInterface {
         }
     }
 
-    int getLBoxSize() {
+    @Override
+    public long calculateSizeFromBox() throws MipamsException {
+        return getLBoxSize() + getTBoxSize() + calculatePayloadSize();
+    }
+
+    private int getLBoxSize() {
         return CoreUtils.INT_BYTE_SIZE;
     }
 
-    int getTBoxSize() {
+    private int getTBoxSize() {
         return CoreUtils.INT_BYTE_SIZE;
     }
 
-    int getXBoxSize() {
+    private int getXBoxSize() {
         return CoreUtils.LONG_BYTE_SIZE;
     }
 
     public abstract long calculatePayloadSize() throws MipamsException;
+
 }

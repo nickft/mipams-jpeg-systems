@@ -8,8 +8,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.mipams.jumbf.core.util.MipamsException;
-import org.mipams.jumbf.core.BoxServiceManager;
-import org.mipams.jumbf.core.entities.XTBox;
+import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.CoreUtils;
 
@@ -24,21 +23,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public class CoreGeneratorService implements GeneratorInterface {
 
     private static final Logger logger = LoggerFactory.getLogger(CoreGeneratorService.class);
 
     @Autowired
-    BoxServiceManager boxServiceManager;
+    JumbfBoxService superBoxService;
 
     @Value("${org.mipams.core.image_folder}")
     private String IMAGE_FOLDER;
 
     @Override
-    public List<XTBox> generateBoxFromRequest(JsonNode inputNode) throws MipamsException {
+    public List<JumbfBox> generateBoxFromRequest(JsonNode inputNode) throws MipamsException {
 
-        List<XTBox> xtBoxList = new ArrayList<>();
+        List<JumbfBox> jumbfBoxList = new ArrayList<>();
 
         logger.debug(inputNode.toString());
 
@@ -46,9 +44,9 @@ public class CoreGeneratorService implements GeneratorInterface {
 
             ObjectNode inputObjectNode = (ObjectNode) inputNode;
 
-            XTBox superbox = boxServiceManager.getSuperBoxService().discoverXTBoxFromRequest(inputObjectNode);
+            JumbfBox superbox = superBoxService.discoverBoxFromRequest(inputObjectNode);
 
-            xtBoxList.add(superbox);
+            jumbfBoxList.add(superbox);
         } else {
 
             Iterator<JsonNode> elementIterator = inputNode.elements();
@@ -56,26 +54,25 @@ public class CoreGeneratorService implements GeneratorInterface {
             while (elementIterator.hasNext()) {
                 ObjectNode elementNode = (ObjectNode) elementIterator.next();
 
-                XTBox box = boxServiceManager.getSuperBoxService().discoverXTBoxFromRequest(elementNode);
-                xtBoxList.add(box);
+                JumbfBox jumbfBox = superBoxService.discoverBoxFromRequest(elementNode);
+                jumbfBoxList.add(jumbfBox);
             }
         }
 
-        return xtBoxList;
+        return jumbfBoxList;
     }
 
     @Override
-    public String generateJumbfFileFromBox(List<XTBox> xtBoxList) throws MipamsException {
+    public String generateJumbfFileFromBox(List<JumbfBox> xtBoxList) throws MipamsException {
         String path = CoreUtils.getFullPath(IMAGE_FOLDER, "test.jumbf");
 
         try (FileOutputStream fileOutputStream = new FileOutputStream(path)) {
 
-            for (XTBox xtBox : xtBoxList) {
-                XTBoxService superBoxService = boxServiceManager.getSuperBoxService();
+            for (JumbfBox jumbfBox : xtBoxList) {
 
-                superBoxService.writeToJumbfFile(xtBox, fileOutputStream);
+                superBoxService.writeToJumbfFile(jumbfBox, fileOutputStream);
 
-                logger.debug("Write box: " + xtBox.toString() + " to file");
+                logger.debug("Write box: " + jumbfBox.toString() + " to file");
             }
 
             return "JUMBF file is stored in the following location: " + path;

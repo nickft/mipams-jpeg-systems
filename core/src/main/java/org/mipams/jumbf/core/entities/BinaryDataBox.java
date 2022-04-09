@@ -3,18 +3,17 @@ package org.mipams.jumbf.core.entities;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @NoArgsConstructor
-@ToString
-public class BinaryDataBox extends XTBox {
+@ToString(callSuper = true)
+public class BinaryDataBox extends SingleFormatBox {
 
-    private @Getter @Setter String fileUrl;
-
-    private @Getter @Setter boolean isReferencedExternally = false;
+    private @Getter @Setter boolean referencedExternally = false;
 
     @Override
     public int getTypeId() {

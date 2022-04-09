@@ -1,6 +1,8 @@
 package org.mipams.jumbf.core.entities;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.MipamsException;
@@ -11,11 +13,11 @@ import lombok.Setter;
 import lombok.ToString;
 
 @NoArgsConstructor
-@ToString
-public class JumbfBox extends XTBox {
+@ToString(callSuper = true)
+public class JumbfBox extends XtBox implements ContentBox {
 
     protected @Getter @Setter DescriptionBox descriptionBox;
-    protected @Getter @Setter List<XTBox> contentList;
+    protected @Getter @Setter List<ContentBox> contentList;
 
     @Override
     public int getTypeId() {
@@ -27,10 +29,27 @@ public class JumbfBox extends XTBox {
 
         long sum = descriptionBox.getBoxSizeFromXTBoxHeaders();
 
-        for (XTBox content : getContentList()) {
-            sum += content.getBoxSizeFromXTBoxHeaders();
+        for (ContentBox content : getContentList()) {
+            sum += content.calculateSizeFromBox();
         }
 
         return sum;
+    }
+
+    @Override
+    public List<XtBox> getXtBoxes() {
+
+        List<XtBox> xtBoxes = new ArrayList<>();
+
+        for (ContentBox contentBox : contentList) {
+            xtBoxes.addAll(contentBox.getXtBoxes());
+        }
+
+        return xtBoxes;
+    }
+
+    @Override
+    public UUID getContentTypeUUID() {
+        return BoxTypeEnum.JumbfBox.getContentUuid();
     }
 }

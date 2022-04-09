@@ -85,7 +85,7 @@ The body of this request should be the following JSON document describing the JU
     "type": "jumb",
     "description":
     {
-    	"type": "jumd"
+    	"type": "jumd",
         "contentType": "json",
         "label": "This is an example JUMBF metadata format"
     },
@@ -93,7 +93,7 @@ The body of this request should be the following JSON document describing the JU
     [
         {
             "type": "json",
-            "payload": {"test":1}
+            "fileUrl":"/home/nikos/Desktop/test.json"
         }
     ]
 }
@@ -103,28 +103,60 @@ The above JSON format describes a jumbf box with one description box (by definit
 
 Provided that the request is well-formed, the POST request is a string  corresponding to the path where the .jumbf file is stored.
 
-Let's see a more complicated example where we can specify metadata consisting of two type of content boxes: A JSON and a Contiguous Codestream (Image file) Box. Below you can see the Request body that needs to be sent through the aforementioned URI:
+Let's see a more complicated example where we can specify metadata consisting of three type of content boxes: A JSON, a XML and a Contiguous Codestream (Image file) Box. Below you can see the Request body that needs to be sent through the aforementioned URI:
 
 ```
 {
     "type": "jumb",
     "description": {
-        "type": "jumd"
+        "type": "jumd",
         "contentType": "jumb",
-        "label": "Superbox containing two children boxes"
+        "label": "Superbox containing three children boxes"
     },
     "contentList": [
         {
             "type": "jumb",
             "description": {"type": "jumd", "contentType":"json","label":"Box containing the JSON metadata"},
-            "contentList": [{"type":"json","payload":{"test":1}}]
+            "contentList": [{"type":"json","fileUrl":"/home/nikos/Desktop/test.json"}]
         },
         {
             "type": "jumb",
             "description": {"type": "jumd", "contentType":"jp2c","label":"Box containing the Contiguous Codestream metadata"},
-            "contentList": [{"type":"jp2c","path":"/home/nikos/Desktop/test.jpeg"}]
+            "contentList": [{"type":"jp2c","fileUrl":"/home/nikos/Desktop/test.jpeg"}]
+        },
+        {
+            "type": "jumb",
+            "description": {"type": "jumd", "contentType":"xml","label":"Box containing the Contiguous Codestream metadata"},
+            "contentList": [{"type":"xml","fileUrl":"/home/nikos/Desktop/test.xml"}]
         }
     ]
+}
+```
+
+Example to define a Embedded File Jumbf Box is shown below:
+
+```
+{
+  "type": "jumb",
+  "description": {
+    "type": "jumd",
+    "contentType": "bfbd",
+    "label": "This is an example JUMBF metadata format"
+  },
+  "contentList": [
+    {
+      "embeddedFileDescription": {
+        "type": "bfdb",
+        "mediaType": "image/jpeg",
+        "fileName": "test.jpeg",
+        "fileExternallyReferenced": "true"
+      },
+      "content": {
+        "type": "bidb",
+        "fileUrl": "http://example.org/test.png"
+      }
+    }
+  ]	
 }
 ```
 

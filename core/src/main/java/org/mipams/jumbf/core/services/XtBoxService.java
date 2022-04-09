@@ -7,7 +7,7 @@ import java.io.InputStream;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import org.mipams.jumbf.core.entities.XTBox;
+import org.mipams.jumbf.core.entities.XtBox;
 import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
@@ -17,23 +17,31 @@ import org.mipams.jumbf.core.util.CorruptedJumbfFileException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class XTBoxService<T extends XTBox> implements BoxServiceInterface<T> {
+public abstract class XtBoxService<T extends XtBox> implements BoxServiceInterface<T> {
 
-    private static final Logger logger = LoggerFactory.getLogger(XTBoxService.class);
+    private static final Logger logger = LoggerFactory.getLogger(XtBoxService.class);
 
-    public final T discoverXTBoxFromRequest(ObjectNode inputNode) throws MipamsException {
+    @Override
+    public final T discoverBoxFromRequest(ObjectNode inputNode) throws MipamsException {
         T xtBox = initializeBox();
-        validateRequestType(inputNode);
-        populateBox(xtBox, inputNode);
-        xtBox.setXTHeadersBasedOnBox();
+
+        try {
+            validateRequestType(inputNode);
+            populateBox(xtBox, inputNode);
+        } catch (NullPointerException e) {
+            throw new MipamsException("Error while parsing the request for box: " + serviceIsResponsibleForBoxType());
+        }
+
+        xtBox.updateXTHeadersBasedOnBox();
+
         return xtBox;
     }
 
     private void validateRequestType(ObjectNode inputNode) throws BadRequestException {
         JsonNode typeNode = inputNode.get("type");
 
-        if (typeNode.isNull()) {
-            throw new BadRequestException("Box type must be specified");
+        if (typeNode == null) {
+            throw new BadRequestException("Box 'type' must be specified");
         }
 
         if (!serviceIsResponsibleForBoxType().equals(typeNode.asText())) {
@@ -45,11 +53,11 @@ public abstract class XTBoxService<T extends XTBox> implements BoxServiceInterfa
 
     @Override
     public void writeToJumbfFile(T box, FileOutputStream fileOutputStream) throws MipamsException {
-        writeXTBoxHeadersToJumbfFile(box, fileOutputStream);
-        writeXTBoxPayloadToJumbfFile(box, fileOutputStream);
+        writeXtBoxHeadersToJumbfFile(box, fileOutputStream);
+        writeXtBoxPayloadToJumbfFile(box, fileOutputStream);
     }
 
-    private final void writeXTBoxHeadersToJumbfFile(T box, FileOutputStream fileOutputStream) throws MipamsException {
+    private final void writeXtBoxHeadersToJumbfFile(T box, FileOutputStream fileOutputStream) throws MipamsException {
         try {
 
             fileOutputStream.write(CoreUtils.convertIntToByteArray(box.getLBox()));
@@ -63,7 +71,7 @@ public abstract class XTBoxService<T extends XTBox> implements BoxServiceInterfa
         }
     }
 
-    protected abstract void writeXTBoxPayloadToJumbfFile(T box, FileOutputStream fileOutputStream)
+    protected abstract void writeXtBoxPayloadToJumbfFile(T box, FileOutputStream fileOutputStream)
             throws MipamsException;
 
     @Override
@@ -141,8 +149,6 @@ public abstract class XTBoxService<T extends XTBox> implements BoxServiceInterfa
     }
 
     protected abstract void populatePayloadFromJumbfFile(T box, InputStream input) throws MipamsException;
-
-    public abstract int serviceIsResponsibleForBoxTypeId();
 
     public abstract String serviceIsResponsibleForBoxType();
 }

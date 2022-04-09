@@ -1,19 +1,16 @@
 package org.mipams.jumbf.core.entities;
 
-import org.mipams.jumbf.core.util.BoxTypeEnum;
-import org.mipams.jumbf.core.util.CoreUtils;
-import org.mipams.jumbf.core.util.MipamsException;
+import java.util.List;
+import java.util.UUID;
 
-import lombok.Getter;
+import org.mipams.jumbf.core.util.BoxTypeEnum;
+
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 @NoArgsConstructor
-@ToString
-public class ContiguousCodestreamBox extends XTBox {
-
-    protected @Getter @Setter String pathToCodestream;
+@ToString(callSuper = true)
+public class ContiguousCodestreamBox extends SingleFormatBox implements ContentBox {
 
     @Override
     public int getTypeId() {
@@ -21,7 +18,12 @@ public class ContiguousCodestreamBox extends XTBox {
     }
 
     @Override
-    public long calculatePayloadSize() throws MipamsException {
-        return (long) CoreUtils.getFileSizeFromPath(pathToCodestream);
+    public List<XtBox> getXtBoxes() {
+        return List.of(this);
+    }
+
+    @Override
+    public UUID getContentTypeUUID() {
+        return BoxTypeEnum.ContiguousCodestreamBox.getContentUuid();
     }
 }

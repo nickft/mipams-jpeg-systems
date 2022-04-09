@@ -7,8 +7,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.mipams.jumbf.core.BoxServiceManager;
-import org.mipams.jumbf.core.entities.XTBox;
+import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.util.CorruptedJumbfFileException;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.slf4j.Logger;
@@ -22,22 +21,22 @@ public class CoreParserService implements ParserInterface {
     private static final Logger logger = LoggerFactory.getLogger(CoreParserService.class);
 
     @Autowired
-    BoxServiceManager boxServiceManager;
+    JumbfBoxService superBoxService;
 
     @Override
-    public List<XTBox> parseMetadataFromJumbfFile(String path) throws MipamsException {
+    public List<JumbfBox> parseMetadataFromJumbfFile(String path) throws MipamsException {
 
         try (InputStream input = new FileInputStream(path)) {
 
-            List<XTBox> xtBoxList = new ArrayList<XTBox>();
+            List<JumbfBox> xtBoxList = new ArrayList<>();
 
             while (input.available() > 0) {
 
-                XTBox box = boxServiceManager.getSuperBoxService().parseFromJumbfFile(input);
+                JumbfBox jumbfBox = superBoxService.parseFromJumbfFile(input);
 
-                logger.debug("New box discovered: " + box.toString());
+                logger.debug("New box discovered: " + jumbfBox.toString());
 
-                xtBoxList.add(box);
+                xtBoxList.add(jumbfBox);
             }
 
             return xtBoxList;

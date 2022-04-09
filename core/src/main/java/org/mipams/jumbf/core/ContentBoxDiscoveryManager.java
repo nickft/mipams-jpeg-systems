@@ -2,7 +2,7 @@ package org.mipams.jumbf.core;
 
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.MipamsException;
-import org.mipams.jumbf.core.services.XTBoxService;
+import org.mipams.jumbf.core.services.ContentBoxService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,16 +13,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @SuppressWarnings("rawtypes")
-public class BoxServiceManager {
+public class ContentBoxDiscoveryManager {
 
     @Autowired
-    protected List<XTBoxService> boxServiceList;
+    protected List<ContentBoxService> contentBoxServiceList;
 
-    public XTBoxService getSuperBoxService() throws MipamsException {
-        return generateServiceBasedOnBoxWithId(BoxTypeEnum.JumbfBox.getTypeId());
-    }
-
-    public XTBoxService getServiceBasedOnContentUUID(UUID uuid) throws MipamsException {
+    public ContentBoxService getContentBoxServiceBasedOnContentUUID(UUID uuid) throws MipamsException {
 
         BoxTypeEnum boxType = BoxTypeEnum.getBoxTypeFromContentUuidOrNull(uuid);
 
@@ -30,15 +26,17 @@ public class BoxServiceManager {
             throw new MipamsException("Box with uuid" + uuid.toString() + " is not a Content Box");
         }
 
-        return generateServiceBasedOnBoxWithId(boxType.getTypeId());
+        return generateContentBoxServiceBasedOnBoxWithId(boxType.getTypeId());
     }
 
-    public XTBoxService generateServiceBasedOnBoxWithId(int boxId) throws MipamsException {
-        for (XTBoxService service : boxServiceList) {
+    public ContentBoxService generateContentBoxServiceBasedOnBoxWithId(int boxId) throws MipamsException {
+
+        for (ContentBoxService service : contentBoxServiceList) {
             if (boxId == service.serviceIsResponsibleForBoxTypeId()) {
                 return service;
             }
         }
-        throw new MipamsException("Box type with id: " + Integer.toString(boxId) + "is not supported yet");
+
+        throw new MipamsException("Box type with id: " + Integer.toHexString(boxId) + " is not supported yet");
     }
 }

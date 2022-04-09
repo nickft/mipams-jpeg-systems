@@ -3,6 +3,8 @@ package org.mipams.jumbf.core.entities;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 
 import lombok.Getter;
@@ -11,8 +13,10 @@ import lombok.Setter;
 import lombok.ToString;
 
 @NoArgsConstructor
-@ToString
-public class EmbeddedFileDescriptionBox extends XTBox {
+@ToString(callSuper = true)
+public class EmbeddedFileDescriptionBox extends XtBox {
+
+    private static final Logger logger = LoggerFactory.getLogger(EmbeddedFileDescriptionBox.class);
 
     private @Getter @Setter int toggle;
 
@@ -58,13 +62,13 @@ public class EmbeddedFileDescriptionBox extends XTBox {
         return CoreUtils.isBitAtGivenPositionSet(toggle, 1);
     }
 
-    public void markAsExternalFile() {
+    public void markFileAsExternallyReferenced() {
         int value = 1;
         int updatedToggle = CoreUtils.setBitValueAtGivenPosition(toggle, 1, value);
         setToggle(updatedToggle);
     }
 
-    public void markAsInternalFile() {
+    public void markFileAsInternallyReferenced() {
         int value = 0;
         int updatedToggle = CoreUtils.setBitValueAtGivenPosition(toggle, 1, value);
         setToggle(updatedToggle);
@@ -93,6 +97,7 @@ public class EmbeddedFileDescriptionBox extends XTBox {
         if (fileNameExists()) {
             return getFileName();
         } else {
+            logger.info(getMediaType().toString());
             return CoreUtils.randomStringGenerator() + "." + getMediaType().getSubtype();
         }
     }

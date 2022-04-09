@@ -3,10 +3,10 @@ package org.mipams.jumbf.core.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("serial")  
-public class MipamsException extends Exception{
-    
-    private static final Logger logger = LoggerFactory.getLogger(MipamsException.class); 
+@SuppressWarnings("serial")
+public class MipamsException extends Exception {
+
+    private static final Logger logger = LoggerFactory.getLogger(MipamsException.class);
 
     public MipamsException() {
     }
@@ -18,11 +18,11 @@ public class MipamsException extends Exception{
 
     public MipamsException(String message, Throwable cause) {
         super(message, cause);
-        logger.error(message);
+        logger.error(message, cause);
     }
 
     public MipamsException(Throwable cause) {
         super(cause);
-        logger.error(cause.getMessage());
+        logger.error(cause.getMessage(), cause);
     }
 }

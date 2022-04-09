@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.mipams.jumbf.core.entities.JumbfBox;
-import org.mipams.jumbf.core.entities.XTBox;
-import org.mipams.jumbf.core.BoxServiceManager;
+import org.mipams.jumbf.core.ContentBoxDiscoveryManager;
+import org.mipams.jumbf.core.entities.ContentBox;
 import org.mipams.jumbf.core.entities.DescriptionBox;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
@@ -25,12 +25,15 @@ import org.slf4j.LoggerFactory;
 
 @Service
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class JumbfBoxService extends XTBoxService<JumbfBox> {
+public final class JumbfBoxService extends XtBoxService<JumbfBox> implements ContentBoxService<JumbfBox> {
 
     private static final Logger logger = LoggerFactory.getLogger(JumbfBoxService.class);
 
     @Autowired
-    BoxServiceManager boxServiceManager;
+    DescriptionBoxService descriptionBoxService;
+
+    @Autowired
+    ContentBoxDiscoveryManager contentBoxDiscoveryManager;
 
     @Override
     protected JumbfBox initializeBox() throws MipamsException {
@@ -42,41 +45,42 @@ public class JumbfBoxService extends XTBoxService<JumbfBox> {
 
         ObjectNode descriptionNode = (ObjectNode) input.get("description");
 
-        XTBoxService descriptionBoxService = boxServiceManager
-                .generateServiceBasedOnBoxWithId(BoxTypeEnum.DescriptionBox.getTypeId());
-
-        jumbfBox.setDescriptionBox((DescriptionBox) descriptionBoxService.discoverXTBoxFromRequest(descriptionNode));
+        jumbfBox.setDescriptionBox(descriptionBoxService.discoverBoxFromRequest(descriptionNode));
 
         JsonNode contentNodeList = input.get("contentList");
 
         Iterator<JsonNode> contentIterator = contentNodeList.elements();
-        List<XTBox> contentList = new ArrayList<>();
+        List<ContentBox> contentList = new ArrayList<>();
 
         while (contentIterator.hasNext()) {
 
+            ObjectNode contentNode = (ObjectNode) contentIterator.next();
+
             UUID contentTypeUuid = jumbfBox.getDescriptionBox().getUuid();
 
-            XTBoxService xtBoxService = boxServiceManager.getServiceBasedOnContentUUID(contentTypeUuid);
-            XTBox xtBoxContent = xtBoxService.discoverXTBoxFromRequest((ObjectNode) contentIterator.next());
+            ContentBoxService contentBoxService = contentBoxDiscoveryManager
+                    .getContentBoxServiceBasedOnContentUUID(contentTypeUuid);
 
-            contentList.add(xtBoxContent);
+            ContentBox contentBoxContent = contentBoxService.discoverBoxFromRequest(contentNode);
+
+            contentList.add(contentBoxContent);
         }
 
         jumbfBox.setContentList(contentList);
     }
 
     @Override
-    protected void writeXTBoxPayloadToJumbfFile(JumbfBox jumbfBox, FileOutputStream fileOutputStream)
+    protected void writeXtBoxPayloadToJumbfFile(JumbfBox jumbfBox, FileOutputStream fileOutputStream)
             throws MipamsException {
 
-        XTBoxService descriptionBoxService = boxServiceManager
-                .generateServiceBasedOnBoxWithId(BoxTypeEnum.DescriptionBox.getTypeId());
         descriptionBoxService.writeToJumbfFile(jumbfBox.getDescriptionBox(), fileOutputStream);
 
-        for (XTBox contentBox : jumbfBox.getContentList()) {
+        for (ContentBox contentBox : jumbfBox.getContentList()) {
 
-            XTBoxService xtBoxService = boxServiceManager.generateServiceBasedOnBoxWithId(contentBox.getTypeId());
+            ContentBoxService xtBoxService = contentBoxDiscoveryManager
+                    .generateContentBoxServiceBasedOnBoxWithId(contentBox.getTypeId());
             xtBoxService.writeToJumbfFile(contentBox, fileOutputStream);
+
         }
     }
 
@@ -87,20 +91,19 @@ public class JumbfBoxService extends XTBoxService<JumbfBox> {
 
         long actualSize = 0;
 
-        XTBoxService descriptionBoxService = boxServiceManager
-                .generateServiceBasedOnBoxWithId(BoxTypeEnum.DescriptionBox.getTypeId());
         jumbfBox.setDescriptionBox((DescriptionBox) descriptionBoxService.parseFromJumbfFile(input));
 
         actualSize += jumbfBox.getDescriptionBox().getBoxSizeFromXTBoxHeaders();
 
-        List<XTBox> contentList = new ArrayList<>();
+        List<ContentBox> contentList = new ArrayList<>();
 
         do {
-            XTBoxService xtBoxService = boxServiceManager
-                    .getServiceBasedOnContentUUID(jumbfBox.getDescriptionBox().getUuid());
-            XTBox contentBox = xtBoxService.parseFromJumbfFile(input);
+            ContentBoxService contentBoxService = contentBoxDiscoveryManager
+                    .getContentBoxServiceBasedOnContentUUID(jumbfBox.getDescriptionBox().getUuid());
 
-            actualSize += contentBox.getBoxSizeFromXTBoxHeaders();
+            ContentBox contentBox = contentBoxService.parseFromJumbfFile(input);
+
+            actualSize += contentBox.calculateSizeFromBox();
 
             contentList.add(contentBox);
         } while (actualSize < jumbfBox.getPayloadSizeFromXTBoxHeaders());

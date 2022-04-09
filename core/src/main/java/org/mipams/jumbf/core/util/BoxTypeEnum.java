@@ -10,7 +10,7 @@ public enum BoxTypeEnum {
     JumbfBox("jumb", 0x6A756D62, "6A756D62-0011-0010-8000-00AA00389B71"),
     DescriptionBox("jumd", 0x6A756D64, null),
     JsonBox("json", 0x6A736F6E, "6A736F6E-0011-0010-8000-00AA00389B71"),
-    XmlBox("xml\040", 0x75756964, "75756964-0011-0010-8000-00AA00389B71"),
+    XmlBox("xml", 0x786D6C20, "786D6C20-0011-0010-8000-00AA00389B71"),
     ContiguousCodestreamBox("jp2c", 0x6A703263, "6A703263-0011-0010-8000-00AA00389B71"),
     EmbeddedFileBox("bfbd", 0x6266264, "40CB0C32-BB8A-489D-A70B-2AD6F47F4369"),
     EmbeddedFileDescriptionBox("bfdb", 0x62666462, null),

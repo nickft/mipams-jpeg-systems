@@ -1,12 +1,11 @@
 package org.mipams.jumbf.core.entities;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import java.util.List;
+import java.util.UUID;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.mipams.jumbf.core.util.BoxTypeEnum;
-import org.mipams.jumbf.core.util.MipamsException;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,8 +13,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 @NoArgsConstructor
-@ToString
-public class JsonBox extends XTBox {
+@ToString(callSuper = true)
+public class JsonBox extends SingleFormatBox implements ContentBox {
 
     private @Getter @Setter ObjectNode jsonContent;
 
@@ -25,18 +24,13 @@ public class JsonBox extends XTBox {
     }
 
     @Override
-    public long calculatePayloadSize() throws MipamsException {
-
-        ObjectMapper om = new ObjectMapper();
-        final ObjectWriter writer = om.writer();
-
-        byte[] bytes;
-
-        try {
-            bytes = writer.writeValueAsBytes(jsonContent);
-            return bytes.length;
-        } catch (JsonProcessingException e) {
-            throw new MipamsException("Coulnd not convert json to byte array", e);
-        }
+    public List<XtBox> getXtBoxes() {
+        return List.of(this);
     }
+
+    @Override
+    public UUID getContentTypeUUID() {
+        return BoxTypeEnum.JsonBox.getContentUuid();
+    }
+
 }

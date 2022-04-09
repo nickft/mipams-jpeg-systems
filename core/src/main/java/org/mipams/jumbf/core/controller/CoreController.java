@@ -12,11 +12,12 @@ import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.mipams.jumbf.core.services.CoreParserService;
-import org.mipams.jumbf.core.entities.XTBox;
+import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.services.CoreGeneratorService;
 import org.mipams.jumbf.core.util.MipamsException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/core/v1")
@@ -29,14 +30,25 @@ public class CoreController {
     CoreGeneratorService generatorService;
 
     @GetMapping("/parseMetadata")
-    public String parseJumbfMetadataFromPath(@RequestParam String path) throws MipamsException {
-        List<XTBox> boxList = parserService.parseMetadataFromJumbfFile(path);
-        return boxList.toString();
+    public ResponseEntity<?> parseJumbfMetadataFromPath(@RequestParam String path) {
+        try {
+            List<JumbfBox> boxList = parserService.parseMetadataFromJumbfFile(path);
+            return ResponseEntity.ok().body(boxList.toString());
+        } catch (MipamsException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/generateBox")
-    public String generateJumbfBytes(@RequestBody JsonNode requestBody) throws MipamsException {
-        List<XTBox> boxList = generatorService.generateBoxFromRequest(requestBody);
-        return generatorService.generateJumbfFileFromBox(boxList);
+    public ResponseEntity<?> generateJumbfBytes(@RequestBody JsonNode requestBody) {
+        try {
+            List<JumbfBox> boxList = generatorService.generateBoxFromRequest(requestBody);
+
+            String result = generatorService.generateJumbfFileFromBox(boxList);
+            return ResponseEntity.ok().body(result);
+        } catch (MipamsException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 }

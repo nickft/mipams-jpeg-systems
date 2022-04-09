@@ -12,8 +12,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 @NoArgsConstructor
-@ToString
-public class DescriptionBox extends XTBox {
+@ToString(callSuper = true)
+public class DescriptionBox extends XtBox {
 
     protected @Getter @Setter UUID uuid;
 
@@ -69,15 +69,15 @@ public class DescriptionBox extends XTBox {
     }
 
     public boolean labelExists() {
-        return CoreUtils.isBitAtGivenPositionSet(toggle, 2);
+        return CoreUtils.isBitAtGivenPositionSet(toggle, 1);
     }
 
     public boolean idExists() {
-        return CoreUtils.isBitAtGivenPositionSet(toggle, 3);
+        return CoreUtils.isBitAtGivenPositionSet(toggle, 2);
     }
 
     public boolean signatureExists() {
-        return CoreUtils.isBitAtGivenPositionSet(toggle, 4);
+        return CoreUtils.isBitAtGivenPositionSet(toggle, 3);
     }
 
     public String getLabelWithEscapeCharacter() {

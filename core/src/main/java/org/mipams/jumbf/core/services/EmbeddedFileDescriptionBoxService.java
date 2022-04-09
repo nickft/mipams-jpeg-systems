@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmbeddedFileDescriptionBoxService extends XTBoxService<EmbeddedFileDescriptionBox> {
+public class EmbeddedFileDescriptionBoxService extends XtBoxService<EmbeddedFileDescriptionBox> {
 
     private static final Logger logger = LoggerFactory.getLogger(EmbeddedFileDescriptionBoxService.class);
 
@@ -47,22 +47,24 @@ public class EmbeddedFileDescriptionBoxService extends XTBoxService<EmbeddedFile
             embeddedFileDescriptionBox.setFileName(node.asText());
         }
 
-        node = input.get("externalFile");
+        node = input.get("fileExternallyReferenced");
 
         if (node != null) {
             toggle = toggle | 2;
             if (node.asBoolean()) {
-                embeddedFileDescriptionBox.markAsExternalFile();
+                embeddedFileDescriptionBox.markFileAsExternallyReferenced();
             } else {
-                embeddedFileDescriptionBox.markAsInternalFile();
+                embeddedFileDescriptionBox.markFileAsInternallyReferenced();
             }
         } else {
-            embeddedFileDescriptionBox.markAsExternalFile();
+            embeddedFileDescriptionBox.markFileAsExternallyReferenced();
         }
+
+        embeddedFileDescriptionBox.setToggle(toggle);
     }
 
     @Override
-    protected void writeXTBoxPayloadToJumbfFile(EmbeddedFileDescriptionBox embeddedFileDescriptionBox,
+    protected void writeXtBoxPayloadToJumbfFile(EmbeddedFileDescriptionBox embeddedFileDescriptionBox,
             FileOutputStream fileOutputStream) throws MipamsException {
 
         try {

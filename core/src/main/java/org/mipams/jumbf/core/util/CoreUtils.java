@@ -58,8 +58,8 @@ public class CoreUtils {
         return bb.array();
     }
 
-    public static boolean isBitAtGivenPositionSet(int n, int positition) {
-        int new_num = n >> (positition - 1);
+    public static boolean isBitAtGivenPositionSet(int n, int position) {
+        int new_num = n >> position;
 
         return (new_num & 1) == 1;
     }
@@ -107,9 +107,9 @@ public class CoreUtils {
                 fileOutputStream.write(n);
             }
         } catch (FileNotFoundException e) {
-            throw new MipamsException("Coulnd not locate file", e);
+            throw new MipamsException("Could not locate file", e);
         } catch (IOException e) {
-            throw new MipamsException("Coulnd not write to file", e);
+            throw new MipamsException("Could not write to file", e);
         }
     }
 

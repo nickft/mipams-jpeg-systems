@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
-public class DescriptionBoxService extends XTBoxService<DescriptionBox> {
+public final class DescriptionBoxService extends XtBoxService<DescriptionBox> {
 
     private static final Logger logger = LoggerFactory.getLogger(DescriptionBoxService.class);
 
@@ -69,7 +69,7 @@ public class DescriptionBoxService extends XTBoxService<DescriptionBox> {
     }
 
     @Override
-    protected void writeXTBoxPayloadToJumbfFile(DescriptionBox descriptionBox, FileOutputStream fileOutputStream)
+    protected void writeXtBoxPayloadToJumbfFile(DescriptionBox descriptionBox, FileOutputStream fileOutputStream)
             throws MipamsException {
 
         try {
