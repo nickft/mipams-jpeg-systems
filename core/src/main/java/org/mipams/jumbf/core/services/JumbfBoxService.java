@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.mipams.jumbf.core.entities.JumbfBox;
+import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.ContentBoxDiscoveryManager;
 import org.mipams.jumbf.core.entities.ContentBox;
 import org.mipams.jumbf.core.entities.DescriptionBox;
@@ -38,6 +39,11 @@ public final class JumbfBoxService extends XtBoxService<JumbfBox> implements Con
     @Override
     protected JumbfBox initializeBox() throws MipamsException {
         return new JumbfBox();
+    }
+
+    @Override
+    public ServiceMetadata getServiceMetadata() {
+        return BoxTypeEnum.JumbfBox.getServiceMetadata();
     }
 
     @Override
@@ -114,15 +120,4 @@ public final class JumbfBoxService extends XtBoxService<JumbfBox> implements Con
 
         logger.debug("Discovered box: " + jumbfBox.toString());
     }
-
-    @Override
-    public int serviceIsResponsibleForBoxTypeId() {
-        return BoxTypeEnum.JumbfBox.getTypeId();
-    }
-
-    @Override
-    public String serviceIsResponsibleForBoxType() {
-        return BoxTypeEnum.JumbfBox.getType();
-    }
-
 }

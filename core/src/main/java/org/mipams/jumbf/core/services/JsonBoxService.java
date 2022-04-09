@@ -3,6 +3,7 @@ package org.mipams.jumbf.core.services;
 import org.springframework.stereotype.Service;
 
 import org.mipams.jumbf.core.entities.JsonBox;
+import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 
@@ -15,13 +16,8 @@ public class JsonBoxService extends SingleFormatBoxService<JsonBox> implements C
     }
 
     @Override
-    public int serviceIsResponsibleForBoxTypeId() {
-        return BoxTypeEnum.JsonBox.getTypeId();
-    }
-
-    @Override
-    public String serviceIsResponsibleForBoxType() {
-        return BoxTypeEnum.JsonBox.getType();
+    public ServiceMetadata getServiceMetadata() {
+        return BoxTypeEnum.JsonBox.getServiceMetadata();
     }
 
     @Override

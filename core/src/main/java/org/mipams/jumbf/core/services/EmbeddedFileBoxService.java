@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.mipams.jumbf.core.entities.BinaryDataBox;
 import org.mipams.jumbf.core.entities.EmbeddedFileBox;
 import org.mipams.jumbf.core.entities.EmbeddedFileDescriptionBox;
+import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
@@ -22,6 +23,11 @@ public class EmbeddedFileBoxService implements ContentBoxService<EmbeddedFileBox
 
     @Autowired
     BinaryDataBoxService binaryDataBoxService;
+
+    @Override
+    public ServiceMetadata getServiceMetadata() {
+        return BoxTypeEnum.EmbeddedFileBox.getServiceMetadata();
+    }
 
     @Override
     public void writeToJumbfFile(EmbeddedFileBox embeddedFileBox, FileOutputStream fileOutputStream)
@@ -39,11 +45,6 @@ public class EmbeddedFileBoxService implements ContentBoxService<EmbeddedFileBox
         embeddedFileBox.setBinaryDataBox(binaryDataBoxService.parseFromJumbfFile(inputStream));
 
         return embeddedFileBox;
-    }
-
-    @Override
-    public int serviceIsResponsibleForBoxTypeId() {
-        return BoxTypeEnum.EmbeddedFileBox.getTypeId();
     }
 
     public String getFileUrlFromBox(EmbeddedFileBox embeddedFileBox) throws MipamsException {

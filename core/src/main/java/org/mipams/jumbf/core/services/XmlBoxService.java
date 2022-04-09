@@ -1,5 +1,6 @@
 package org.mipams.jumbf.core.services;
 
+import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.entities.XmlBox;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.MipamsException;
@@ -15,13 +16,8 @@ public class XmlBoxService extends SingleFormatBoxService<XmlBox> implements Con
     }
 
     @Override
-    public int serviceIsResponsibleForBoxTypeId() {
-        return BoxTypeEnum.XmlBox.getTypeId();
-    }
-
-    @Override
-    public String serviceIsResponsibleForBoxType() {
-        return BoxTypeEnum.XmlBox.getType();
+    public ServiceMetadata getServiceMetadata() {
+        return BoxTypeEnum.XmlBox.getServiceMetadata();
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.mipams.jumbf.core.entities.BinaryDataBox;
+import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
@@ -57,12 +58,7 @@ public class BinaryDataBoxService extends SingleFormatBoxService<BinaryDataBox> 
     }
 
     @Override
-    public int serviceIsResponsibleForBoxTypeId() {
-        return BoxTypeEnum.BinaryDataBox.getTypeId();
-    }
-
-    @Override
-    public String serviceIsResponsibleForBoxType() {
-        return BoxTypeEnum.BinaryDataBox.getType();
+    public ServiceMetadata getServiceMetadata() {
+        return BoxTypeEnum.BinaryDataBox.getServiceMetadata();
     }
 }

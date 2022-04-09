@@ -8,9 +8,11 @@ import java.util.UUID;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.mipams.jumbf.core.ContentBoxDiscoveryManager;
 import org.mipams.jumbf.core.entities.DescriptionBox;
+import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.CorruptedJumbfFileException;
@@ -25,6 +27,14 @@ public final class DescriptionBoxService extends XtBoxService<DescriptionBox> {
 
     private static final Logger logger = LoggerFactory.getLogger(DescriptionBoxService.class);
 
+    @Autowired
+    ContentBoxDiscoveryManager contentBoxDiscoveryManager;
+
+    @Override
+    public ServiceMetadata getServiceMetadata() {
+        return BoxTypeEnum.DescriptionBox.getServiceMetadata();
+    }
+
     @Override
     protected DescriptionBox initializeBox() throws MipamsException {
         return new DescriptionBox();
@@ -35,17 +45,13 @@ public final class DescriptionBoxService extends XtBoxService<DescriptionBox> {
 
         String type = input.get("contentType").asText();
 
-        BoxTypeEnum boxType = BoxTypeEnum.getBoxTypeFromString(type);
+        ServiceMetadata serviceMetadata = contentBoxDiscoveryManager.getMetadataForContentBoxServiceWithType(type);
 
-        if (boxType == null) {
+        if (serviceMetadata == null) {
             throw new BadRequestException("Content Type: " + type + " is not supported");
         }
 
-        if (!boxType.isContentBox()) {
-            throw new BadRequestException("Box with type: " + type + " is not a content box");
-        }
-
-        descriptionBox.setUuid(boxType.getContentUuid());
+        descriptionBox.setUuid(serviceMetadata.getContentTypeUuid());
 
         JsonNode node = input.get("requestable");
         int toggle = (node == null) ? 0 : 1;
@@ -158,13 +164,4 @@ public final class DescriptionBoxService extends XtBoxService<DescriptionBox> {
         logger.debug("Discovered box: " + descriptionBox.toString());
     }
 
-    @Override
-    public int serviceIsResponsibleForBoxTypeId() {
-        return BoxTypeEnum.DescriptionBox.getTypeId();
-    }
-
-    @Override
-    public String serviceIsResponsibleForBoxType() {
-        return BoxTypeEnum.DescriptionBox.getType();
-    }
 }

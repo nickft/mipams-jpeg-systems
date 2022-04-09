@@ -29,7 +29,7 @@ public abstract class XtBoxService<T extends XtBox> implements BoxServiceInterfa
             validateRequestType(inputNode);
             populateBox(xtBox, inputNode);
         } catch (NullPointerException e) {
-            throw new MipamsException("Error while parsing the request for box: " + serviceIsResponsibleForBoxType());
+            throw new MipamsException("Error while parsing the request for box: " + getServiceMetadata().toString(), e);
         }
 
         xtBox.updateXTHeadersBasedOnBox();
@@ -44,9 +44,22 @@ public abstract class XtBoxService<T extends XtBox> implements BoxServiceInterfa
             throw new BadRequestException("Box 'type' must be specified");
         }
 
-        if (!serviceIsResponsibleForBoxType().equals(typeNode.asText())) {
-            throw new BadRequestException("Box type does not match with description type.");
+        String expectedType = getServiceMetadata().getBoxType();
+        String requestedType = typeNode.asText();
+
+        if (!expectedType.equals(requestedType)) {
+            String errorMessage = generateErrorMessageForRequestValidation(expectedType, requestedType);
+            throw new BadRequestException(errorMessage);
         }
+    }
+
+    private String generateErrorMessageForRequestValidation(String expectedType, String requestedType) {
+
+        String errorMessage = String.format(
+                "Box type does not match with description type. Expected: %s, Found: %s",
+                expectedType, requestedType);
+
+        return errorMessage;
     }
 
     protected abstract void populateBox(T box, ObjectNode input) throws MipamsException;
@@ -149,6 +162,4 @@ public abstract class XtBoxService<T extends XtBox> implements BoxServiceInterfa
     }
 
     protected abstract void populatePayloadFromJumbfFile(T box, InputStream input) throws MipamsException;
-
-    public abstract String serviceIsResponsibleForBoxType();
 }

@@ -2,6 +2,8 @@ package org.mipams.jumbf.core.util;
 
 import java.util.UUID;
 
+import org.mipams.jumbf.core.entities.ServiceMetadata;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -78,5 +80,9 @@ public enum BoxTypeEnum {
         }
 
         return resultType;
+    }
+
+    public ServiceMetadata getServiceMetadata() {
+        return new ServiceMetadata(getTypeId(), getType(), getContentUuid());
     }
 }

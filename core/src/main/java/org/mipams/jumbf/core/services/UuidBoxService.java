@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.entities.UuidBox;
 import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
@@ -29,8 +30,8 @@ public class UuidBoxService extends XtBoxService<UuidBox> implements ContentBoxS
     Properties properties;
 
     @Override
-    public int serviceIsResponsibleForBoxTypeId() {
-        return BoxTypeEnum.UuidBox.getTypeId();
+    public ServiceMetadata getServiceMetadata() {
+        return BoxTypeEnum.UuidBox.getServiceMetadata();
     }
 
     @Override
@@ -101,11 +102,6 @@ public class UuidBoxService extends XtBoxService<UuidBox> implements ContentBoxS
 
         verifyBoxSize(uuidBox, actualSize);
         logger.debug("Discovered box: " + uuidBox.toString());
-    }
-
-    @Override
-    public String serviceIsResponsibleForBoxType() {
-        return BoxTypeEnum.UuidBox.getType();
     }
 
 }

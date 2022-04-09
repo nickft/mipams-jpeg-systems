@@ -52,4 +52,5 @@ public class JumbfBox extends XtBox implements ContentBox {
     public UUID getContentTypeUUID() {
         return BoxTypeEnum.JumbfBox.getContentUuid();
     }
+
 }

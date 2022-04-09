@@ -1,6 +1,7 @@
 package org.mipams.jumbf.core.services;
 
 import org.mipams.jumbf.core.entities.ContiguousCodestreamBox;
+import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.MipamsException;
 
@@ -16,13 +17,8 @@ public class ContiguousCodestreamBoxService extends SingleFormatBoxService<Conti
     }
 
     @Override
-    public int serviceIsResponsibleForBoxTypeId() {
-        return BoxTypeEnum.ContiguousCodestreamBox.getTypeId();
-    }
-
-    @Override
-    public String serviceIsResponsibleForBoxType() {
-        return BoxTypeEnum.ContiguousCodestreamBox.getType();
+    public ServiceMetadata getServiceMetadata() {
+        return BoxTypeEnum.ContiguousCodestreamBox.getServiceMetadata();
     }
 
     @Override

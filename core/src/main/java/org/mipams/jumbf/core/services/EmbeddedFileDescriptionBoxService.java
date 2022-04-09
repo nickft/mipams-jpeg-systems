@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.mipams.jumbf.core.entities.EmbeddedFileDescriptionBox;
+import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
@@ -24,6 +25,11 @@ public class EmbeddedFileDescriptionBoxService extends XtBoxService<EmbeddedFile
     @Override
     protected EmbeddedFileDescriptionBox initializeBox() throws MipamsException {
         return new EmbeddedFileDescriptionBox();
+    }
+
+    @Override
+    public ServiceMetadata getServiceMetadata() {
+        return BoxTypeEnum.EmbeddedFileDescriptionBox.getServiceMetadata();
     }
 
     @Override
@@ -129,13 +135,4 @@ public class EmbeddedFileDescriptionBoxService extends XtBoxService<EmbeddedFile
         logger.debug("Discovered box: " + embeddedFileDescriptionBox.toString());
     }
 
-    @Override
-    public int serviceIsResponsibleForBoxTypeId() {
-        return BoxTypeEnum.EmbeddedFileDescriptionBox.getTypeId();
-    }
-
-    @Override
-    public String serviceIsResponsibleForBoxType() {
-        return BoxTypeEnum.EmbeddedFileDescriptionBox.getType();
-    }
 }

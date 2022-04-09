@@ -14,4 +14,5 @@ public interface ContentBoxService<T extends ContentBox> extends BoxServiceInter
 
     @Override
     public T parseFromJumbfFile(InputStream input) throws MipamsException;
+
 }
