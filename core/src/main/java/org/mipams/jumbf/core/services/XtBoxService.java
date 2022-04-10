@@ -88,7 +88,7 @@ public abstract class XtBoxService<T extends XtBox> implements BoxServiceInterfa
             throws MipamsException;
 
     @Override
-    public final T parseFromJumbfFile(InputStream input) throws MipamsException {
+    public final T parseFromJumbfFile(InputStream input, long availableBytesForBox) throws MipamsException {
 
         logger.debug("Start parsing a new XTBox");
 

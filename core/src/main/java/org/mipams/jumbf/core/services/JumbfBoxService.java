@@ -2,12 +2,8 @@ package org.mipams.jumbf.core.services;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.List;
-import java.util.Iterator;
-import java.util.ArrayList;
 import java.util.UUID;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.springframework.stereotype.Service;
@@ -17,7 +13,6 @@ import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.ContentBoxDiscoveryManager;
 import org.mipams.jumbf.core.entities.ContentBox;
-import org.mipams.jumbf.core.entities.DescriptionBox;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 
@@ -53,26 +48,16 @@ public final class JumbfBoxService extends XtBoxService<JumbfBox> implements Con
 
         jumbfBox.setDescriptionBox(descriptionBoxService.discoverBoxFromRequest(descriptionNode));
 
-        JsonNode contentNodeList = input.get("contentList");
+        ObjectNode contentNode = (ObjectNode) input.get("content");
 
-        Iterator<JsonNode> contentIterator = contentNodeList.elements();
-        List<ContentBox> contentList = new ArrayList<>();
+        UUID contentTypeUuid = jumbfBox.getDescriptionBox().getUuid();
 
-        while (contentIterator.hasNext()) {
+        ContentBoxService contentBoxService = contentBoxDiscoveryManager
+                .getContentBoxServiceBasedOnContentUUID(contentTypeUuid);
 
-            ObjectNode contentNode = (ObjectNode) contentIterator.next();
+        ContentBox contentBox = contentBoxService.discoverBoxFromRequest(contentNode);
 
-            UUID contentTypeUuid = jumbfBox.getDescriptionBox().getUuid();
-
-            ContentBoxService contentBoxService = contentBoxDiscoveryManager
-                    .getContentBoxServiceBasedOnContentUUID(contentTypeUuid);
-
-            ContentBox contentBoxContent = contentBoxService.discoverBoxFromRequest(contentNode);
-
-            contentList.add(contentBoxContent);
-        }
-
-        jumbfBox.setContentList(contentList);
+        jumbfBox.setContentBox(contentBox);
     }
 
     @Override
@@ -81,13 +66,10 @@ public final class JumbfBoxService extends XtBoxService<JumbfBox> implements Con
 
         descriptionBoxService.writeToJumbfFile(jumbfBox.getDescriptionBox(), fileOutputStream);
 
-        for (ContentBox contentBox : jumbfBox.getContentList()) {
+        ContentBoxService contentBoxService = contentBoxDiscoveryManager
+                .generateContentBoxServiceBasedOnBoxWithId(jumbfBox.getContentBox().getTypeId());
+        contentBoxService.writeToJumbfFile(jumbfBox.getContentBox(), fileOutputStream);
 
-            ContentBoxService xtBoxService = contentBoxDiscoveryManager
-                    .generateContentBoxServiceBasedOnBoxWithId(contentBox.getTypeId());
-            xtBoxService.writeToJumbfFile(contentBox, fileOutputStream);
-
-        }
     }
 
     @Override
@@ -95,29 +77,28 @@ public final class JumbfBoxService extends XtBoxService<JumbfBox> implements Con
 
         logger.debug("Jumbf box");
 
+        final long nominalPayloadSize = jumbfBox.getPayloadSizeFromXTBoxHeaders();
         long actualSize = 0;
 
-        jumbfBox.setDescriptionBox((DescriptionBox) descriptionBoxService.parseFromJumbfFile(input));
+        jumbfBox.setDescriptionBox(descriptionBoxService.parseFromJumbfFile(input, nominalPayloadSize));
 
         actualSize += jumbfBox.getDescriptionBox().getBoxSizeFromXTBoxHeaders();
 
-        List<ContentBox> contentList = new ArrayList<>();
+        ContentBoxService contentBoxService = contentBoxDiscoveryManager
+                .getContentBoxServiceBasedOnContentUUID(jumbfBox.getDescriptionBox().getUuid());
 
-        do {
-            ContentBoxService contentBoxService = contentBoxDiscoveryManager
-                    .getContentBoxServiceBasedOnContentUUID(jumbfBox.getDescriptionBox().getUuid());
+        ContentBox contentBox = contentBoxService.parseFromJumbfFile(input, nominalPayloadSize - actualSize);
 
-            ContentBox contentBox = contentBoxService.parseFromJumbfFile(input);
+        actualSize += contentBox.getBoxSize();
 
-            actualSize += contentBox.calculateSizeFromBox();
-
-            contentList.add(contentBox);
-        } while (actualSize < jumbfBox.getPayloadSizeFromXTBoxHeaders());
-
-        jumbfBox.setContentList(contentList);
+        jumbfBox.setContentBox(contentBox);
 
         verifyBoxSize(jumbfBox, actualSize);
 
         logger.debug("Discovered box: " + jumbfBox.toString());
+    }
+
+    public JumbfBox parseSuperBox(InputStream input) throws MipamsException {
+        return super.parseFromJumbfFile(input, -1);
     }
 }

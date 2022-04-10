@@ -30,7 +30,7 @@ public class EmbeddedFileDescriptionBox extends XtBox {
     }
 
     @Override
-    public long calculatePayloadSize() throws MipamsException {
+    protected long calculatePayloadSize() throws MipamsException {
 
         long sum = getToggleSize();
 

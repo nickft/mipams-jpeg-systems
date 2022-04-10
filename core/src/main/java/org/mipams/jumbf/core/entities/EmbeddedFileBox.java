@@ -31,10 +31,10 @@ public class EmbeddedFileBox implements ContentBox {
     }
 
     @Override
-    public long calculateSizeFromBox() throws MipamsException {
-        long sum = getDescriptionBox().getBoxSizeFromXTBoxHeaders();
+    public long getBoxSize() throws MipamsException {
+        long sum = getDescriptionBox().getBoxSize();
 
-        sum += getBinaryDataBox().getBoxSizeFromXTBoxHeaders();
+        sum += getBinaryDataBox().getBoxSize();
 
         return sum;
     }

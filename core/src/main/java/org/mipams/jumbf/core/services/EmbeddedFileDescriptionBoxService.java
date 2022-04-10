@@ -98,12 +98,9 @@ public class EmbeddedFileDescriptionBoxService extends XtBoxService<EmbeddedFile
 
         try {
 
-            int toggleValue = 0;
-            if ((toggleValue = input.read()) == -1) {
-                throw new MipamsException();
-            }
-            actualSize++;
+            int toggleValue = CoreUtils.readIntFromInputStream(input);
             embeddedFileDescriptionBox.setToggle(toggleValue);
+            actualSize++;
 
             String mediaTypeAsString = CoreUtils.readStringFromInputStream(input);
 

@@ -13,7 +13,7 @@ import org.springframework.http.MediaType;
 public class CoreUtils {
     public static final int INT_BYTE_SIZE = 4;
 
-    public static final int LONG_BYTE_SIZE = 4;
+    public static final int LONG_BYTE_SIZE = 8;
 
     public static final int UUID_BYTE_SIZE = 16;
 
@@ -177,4 +177,34 @@ public class CoreUtils {
 
         return str.toString();
     }
+
+    public static int readIntFromInputStream(InputStream input) throws MipamsException {
+
+        int val;
+        try {
+            if ((val = input.read()) == -1) {
+                throw new MipamsException("Unable to read from input stream");
+            }
+        } catch (IOException e) {
+            throw new MipamsException(e);
+        }
+
+        return val;
+    }
+
+    public static long readLongFromInputStream(InputStream input) throws MipamsException {
+
+        byte[] buffer = new byte[8];
+
+        try {
+            if (input.read(buffer) == -1) {
+                throw new MipamsException("Unable to read from input stream");
+            }
+        } catch (IOException e) {
+            throw new MipamsException(e);
+        }
+
+        return convertByteArrayToLong(buffer);
+    }
+
 }

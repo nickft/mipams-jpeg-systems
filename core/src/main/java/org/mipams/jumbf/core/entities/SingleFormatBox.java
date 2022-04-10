@@ -12,7 +12,7 @@ public abstract class SingleFormatBox extends XtBox {
     protected @Getter @Setter String fileUrl;
 
     @Override
-    public long calculatePayloadSize() throws MipamsException {
+    protected long calculatePayloadSize() throws MipamsException {
         return CoreUtils.getFileSizeFromPath(fileUrl);
     }
 }

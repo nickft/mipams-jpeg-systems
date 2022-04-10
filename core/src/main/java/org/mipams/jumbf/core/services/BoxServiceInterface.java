@@ -17,6 +17,6 @@ public interface BoxServiceInterface<T extends BoxInterface> {
 
     public void writeToJumbfFile(T inputBox, FileOutputStream output) throws MipamsException;
 
-    public T parseFromJumbfFile(InputStream input) throws MipamsException;
+    public T parseFromJumbfFile(InputStream input, long availableBytesForBox) throws MipamsException;
 
 }

@@ -13,6 +13,6 @@ public interface ContentBoxService<T extends ContentBox> extends BoxServiceInter
     public T discoverBoxFromRequest(ObjectNode input) throws MipamsException;
 
     @Override
-    public T parseFromJumbfFile(InputStream input) throws MipamsException;
+    public T parseFromJumbfFile(InputStream input, long availableBytesForBox) throws MipamsException;
 
 }

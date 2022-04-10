@@ -4,7 +4,7 @@ import org.mipams.jumbf.core.util.MipamsException;
 
 public interface BoxInterface {
 
-    public long calculateSizeFromBox() throws MipamsException;
+    public long getBoxSize() throws MipamsException;
 
     public int getTypeId();
 }

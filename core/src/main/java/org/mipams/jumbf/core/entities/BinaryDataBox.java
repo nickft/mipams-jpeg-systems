@@ -21,7 +21,7 @@ public class BinaryDataBox extends SingleFormatBox {
     }
 
     @Override
-    public long calculatePayloadSize() throws MipamsException {
+    protected long calculatePayloadSize() throws MipamsException {
 
         long sum;
 

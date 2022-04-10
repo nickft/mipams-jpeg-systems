@@ -54,7 +54,7 @@ public final class DescriptionBoxService extends XtBoxService<DescriptionBox> {
         descriptionBox.setUuid(serviceMetadata.getContentTypeUuid());
 
         JsonNode node = input.get("requestable");
-        int toggle = (node == null) ? 0 : 1;
+        int toggle = (node == null || !node.asBoolean()) ? 0 : 1;
 
         node = input.get("label");
 
@@ -114,12 +114,9 @@ public final class DescriptionBoxService extends XtBoxService<DescriptionBox> {
 
             actualSize += CoreUtils.UUID_BYTE_SIZE;
 
-            int toggleValue = 0;
-            if ((toggleValue = input.read()) == -1) {
-                throw new MipamsException();
-            }
-            actualSize++;
+            int toggleValue = CoreUtils.readIntFromInputStream(input);
             descriptionBox.setToggle(toggleValue);
+            actualSize++;
 
             if (descriptionBox.labelExists()) {
 

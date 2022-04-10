@@ -16,6 +16,11 @@ public abstract class XtBox implements BoxInterface {
 
     private @Getter @Setter Long XBox;
 
+    @Override
+    public final long getBoxSize() {
+        return getBoxSizeFromXTBoxHeaders();
+    }
+
     public final long getPayloadSizeFromXTBoxHeaders() {
 
         long payloadSize = getBoxSizeFromXTBoxHeaders();
@@ -51,8 +56,7 @@ public abstract class XtBox implements BoxInterface {
         }
     }
 
-    @Override
-    public long calculateSizeFromBox() throws MipamsException {
+    private long calculateSizeFromBox() throws MipamsException {
         return getLBoxSize() + getTBoxSize() + calculatePayloadSize();
     }
 
@@ -68,6 +72,6 @@ public abstract class XtBox implements BoxInterface {
         return CoreUtils.LONG_BYTE_SIZE;
     }
 
-    public abstract long calculatePayloadSize() throws MipamsException;
+    protected abstract long calculatePayloadSize() throws MipamsException;
 
 }

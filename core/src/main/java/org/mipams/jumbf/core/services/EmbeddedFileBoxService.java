@@ -37,12 +37,14 @@ public class EmbeddedFileBoxService implements ContentBoxService<EmbeddedFileBox
     }
 
     @Override
-    public EmbeddedFileBox parseFromJumbfFile(InputStream inputStream) throws MipamsException {
+    public EmbeddedFileBox parseFromJumbfFile(InputStream inputStream, long availableBytesForBox)
+            throws MipamsException {
 
         EmbeddedFileBox embeddedFileBox = new EmbeddedFileBox();
 
-        embeddedFileBox.setDescriptionBox(embeddedFileDescriptionBoxService.parseFromJumbfFile(inputStream));
-        embeddedFileBox.setBinaryDataBox(binaryDataBoxService.parseFromJumbfFile(inputStream));
+        embeddedFileBox.setDescriptionBox(
+                embeddedFileDescriptionBoxService.parseFromJumbfFile(inputStream, availableBytesForBox));
+        embeddedFileBox.setBinaryDataBox(binaryDataBoxService.parseFromJumbfFile(inputStream, availableBytesForBox));
 
         return embeddedFileBox;
     }

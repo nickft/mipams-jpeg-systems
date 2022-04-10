@@ -82,20 +82,16 @@ The body of this request should be the following JSON document describing the JU
 
 ```
 {
-    "type": "jumb",
-    "description":
-    {
-    	"type": "jumd",
-        "contentType": "json",
-        "label": "This is an example JUMBF metadata format"
-    },
-    "contentList":
-    [
-        {
-            "type": "json",
-            "fileUrl":"/home/nikos/Desktop/test.json"
-        }
-    ]
+  "type": "jumb",
+  "description": {
+    "type": "jumd",
+    "contentType": "xml",
+    "label": "This is an example JUMBF metadata format"
+  },
+  "content": {
+    "type": "xml",
+    "fileUrl":"/home/nikos/policy.xml"
+  }	
 }
 ```
 
@@ -106,31 +102,23 @@ Provided that the request is well-formed, the POST request is a string  correspo
 Let's see a more complicated example where we can specify metadata consisting of three type of content boxes: A JSON, a XML and a Contiguous Codestream (Image file) Box. Below you can see the Request body that needs to be sent through the aforementioned URI:
 
 ```
-{
+[
+  {
     "type": "jumb",
-    "description": {
-        "type": "jumd",
-        "contentType": "jumb",
-        "label": "Superbox containing three children boxes"
-    },
-    "contentList": [
-        {
-            "type": "jumb",
-            "description": {"type": "jumd", "contentType":"json","label":"Box containing the JSON metadata"},
-            "contentList": [{"type":"json","fileUrl":"/home/nikos/Desktop/test.json"}]
-        },
-        {
-            "type": "jumb",
-            "description": {"type": "jumd", "contentType":"jp2c","label":"Box containing the Contiguous Codestream metadata"},
-            "contentList": [{"type":"jp2c","fileUrl":"/home/nikos/Desktop/test.jpeg"}]
-        },
-        {
-            "type": "jumb",
-            "description": {"type": "jumd", "contentType":"xml","label":"Box containing the Contiguous Codestream metadata"},
-            "contentList": [{"type":"xml","fileUrl":"/home/nikos/Desktop/test.xml"}]
-        }
-    ]
-}
+    "description": { "type": "jumd", "contentType": "xml", "label": "This is an example JUMBF metadata format" },
+    "content": { "type": "xml", "fileUrl":"/home/nikos/policy.xml" }	
+  },
+  {
+    "type": "jumb",
+    "description": { "type": "jumd", "contentType": "json", "label": "This is an example JUMBF metadata format" },
+    "content": { "type": "json", "fileUrl":"/home/nikos/test.json" }	
+  },
+  {
+    "type": "jumb",
+    "description": { "type": "jumd", "contentType": "jp2c", "label": "This is an example JUMBF metadata format" },
+    "content": { "type": "jp2c", "fileUrl":"/home/nikos/test.jpeg" }	
+  }
+]
 ```
 
 Example to define a Embedded File Jumbf Box is shown below:
@@ -138,25 +126,19 @@ Example to define a Embedded File Jumbf Box is shown below:
 ```
 {
   "type": "jumb",
-  "description": {
-    "type": "jumd",
-    "contentType": "bfbd",
-    "label": "This is an example JUMBF metadata format"
-  },
-  "contentList": [
-    {
-      "embeddedFileDescription": {
-        "type": "bfdb",
-        "mediaType": "image/jpeg",
-        "fileName": "test.jpeg",
-        "fileExternallyReferenced": "true"
-      },
-      "content": {
-        "type": "bidb",
-        "fileUrl": "http://example.org/test.png"
-      }
+  "description": { "type": "jumd", "contentType": "bfbd" },
+  "content": {
+    "embeddedFileDescription": {
+      "type": "bfdb",
+      "mediaType": "image/jpeg",
+      "fileName": "test.jpeg",
+      "fileExternallyReferenced": "true"
+    },
+    "content": {
+      "type": "bidb",
+      "fileUrl": "http://example.org/test.png"
     }
-  ]	
+  }
 }
 ```
 
@@ -165,18 +147,12 @@ Example to define a UUID Jumbf Box is shown below:
 ```
 {
   "type": "jumb",
-  "description": {
-    "type": "jumd",
-    "contentType": "uuid",
-    "label": "This is an example JUMBF metadata format"
-  },
-  "contentList": [
-    {
-      "type": "uuid",
-      "uuid": "645ba7a8-b7f4-11ec-b909-0242ac120002",
-      "fileUrl": "/home/nikos/file.enc"
-    }
-  ]	
+  "description": { "type": "jumd", "contentType": "uuid" },
+  "content": {
+    "type": "uuid",
+    "uuid": "645ba7a8-b7f4-11ec-b909-0242ac120002",
+    "fileUrl": "/home/nikos/file.enc"
+  }
 }
 ```
 

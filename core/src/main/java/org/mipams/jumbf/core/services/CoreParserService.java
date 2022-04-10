@@ -32,7 +32,7 @@ public class CoreParserService implements ParserInterface {
 
             while (input.available() > 0) {
 
-                JumbfBox jumbfBox = superBoxService.parseFromJumbfFile(input);
+                JumbfBox jumbfBox = superBoxService.parseSuperBox(input);
 
                 logger.debug("New box discovered: " + jumbfBox.toString());
 

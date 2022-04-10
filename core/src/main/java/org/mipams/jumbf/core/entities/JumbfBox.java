@@ -1,6 +1,5 @@
 package org.mipams.jumbf.core.entities;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,7 +16,7 @@ import lombok.ToString;
 public class JumbfBox extends XtBox implements ContentBox {
 
     protected @Getter @Setter DescriptionBox descriptionBox;
-    protected @Getter @Setter List<ContentBox> contentList;
+    protected @Getter @Setter ContentBox contentBox;
 
     @Override
     public int getTypeId() {
@@ -25,27 +24,17 @@ public class JumbfBox extends XtBox implements ContentBox {
     }
 
     @Override
-    public long calculatePayloadSize() throws MipamsException {
+    protected long calculatePayloadSize() throws MipamsException {
 
         long sum = descriptionBox.getBoxSizeFromXTBoxHeaders();
-
-        for (ContentBox content : getContentList()) {
-            sum += content.calculateSizeFromBox();
-        }
+        sum += contentBox.getBoxSize();
 
         return sum;
     }
 
     @Override
     public List<XtBox> getXtBoxes() {
-
-        List<XtBox> xtBoxes = new ArrayList<>();
-
-        for (ContentBox contentBox : contentList) {
-            xtBoxes.addAll(contentBox.getXtBoxes());
-        }
-
-        return xtBoxes;
+        return contentBox.getXtBoxes();
     }
 
     @Override
