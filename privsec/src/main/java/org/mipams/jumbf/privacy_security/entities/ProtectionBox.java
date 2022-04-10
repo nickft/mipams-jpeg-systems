@@ -29,7 +29,7 @@ public class ProtectionBox implements ContentBox {
     }
 
     @Override
-    public long calculateSizeFromBox() throws MipamsException {
+    public long getBoxSize() throws MipamsException {
         long sum = getProtectionDescriptionBox().getBoxSizeFromXTBoxHeaders();
 
         sum += getBinaryDataBox().getBoxSizeFromXTBoxHeaders();

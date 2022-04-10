@@ -83,24 +83,15 @@ The body of this request should be the following JSON document describing the Pr
 ```
 {
   "type": "jumb",
-  "description": {
-    "type": "jumd",
-    "contentType": "prtc",
-    "label": "This is an example JUMBF metadata format"
-  },
-  "contentList": [
-    {
-      "protectionDescription": {
-        "type": "pspd",
-      	"method": "aes-256-cbc-iv",
-      	"ivHexString": "D9BBA15016D876F67532FAFB8B851D24"
-      },
-      "content": {
-        "type": "bidb",
-        "fileUrl": "/home/nikos/file.enc"
-      }     
-    }
-  ]	
+  "description": { "type": "jumd", "contentType": "prtc" },
+  "content": {
+    "protectionDescription": {
+      "type": "pspd",
+      "method": "aes-256-cbc-iv",
+      "ivHexString": "D9BBA15016D876F67532FAFB8B851D24"
+    },
+    "content": { "type": "bidb", "fileUrl": "/home/nikos/file.enc" }     
+  }
 }
 ```
 
@@ -112,30 +103,20 @@ Let's see a more complicated example where the encryption is defined externally 
 [
   {
     "type": "jumb",
-    "description": { "type": "jumd", "contentType": "prtc"},
-    "contentList": [
-      {
-        "protectionDescription": {
-          "type": "pspd",
-          "method": "external",
-          "external-label": "json-encryption"
-        },
-        "content": { "type": "bidb", "fileUrl": "/home/nikos/file.enc" }     
-      }
-    ]	
+    "description": { "type": "jumd", "contentType": "prtc" },
+    "content": {
+      "protectionDescription": {
+        "type": "pspd",
+        "method": "external",
+        "external-label": "json-encryption"
+      },
+      "content": { "type": "bidb", "fileUrl": "/home/nikos/file.enc" }     
+    }
   },
   {
     "type": "jumb",
-    "description":
-    {
-    	"type": "jumd",
-      "contentType": "json",
-      "label": "json-encryption"
-    },
-    "contentList":
-    [
-      { "type": "json", "fileUrl":"/home/nikos/encryption-info.json" }
-    ]
+    "description": { "type": "jumd", "contentType": "json", "label": "json-encryption" },
+    "content": { "type": "json", "fileUrl":"/home/nikos/encryption-info.json" }
   }
 ]
 ```
@@ -146,41 +127,153 @@ Finally we shall see a similar example where we include access rules (which are 
 [
   {
     "type": "jumb",
-    "description": {
-      "type": "jumd",
-      "contentType": "prtc",
-      "label": "This is an example JUMBF metadata format"
-    },
-    "contentList": [
-      {
-        "protectionDescription": {
-          "type": "pspd",
-          "method": "aes-256-cbc-iv",
-          "ivHexString": "D9BBA15016D876F67532FAFB8B851D24",
-          "access-rules-label": "xaml-rules-box"
-        },
-        "content": {
-          "type": "bidb",
-          "fileUrl": "/home/nikos/file.enc"
-        }     
-      }
-    ]	
+    "description": { "type": "jumd", "contentType": "prtc" },
+    "content": {
+      "protectionDescription": {
+        "type": "pspd",
+        "method": "aes-256-cbc-iv",
+        "ivHexString": "D9BBA15016D876F67532FAFB8B851D24",
+        "access-rules-label": "xaml-rules-box"
+      },
+      "content": { "type": "bidb", "fileUrl": "/home/nikos/file.enc" }     
+    }
   },
   {
     "type": "jumb",
-    "description":
-    {
-    	"type": "jumd",
-        "contentType": "xml",
-        "label": "xacml-rules-box"
-    },
-    "contentList":
-    [
-        {
-            "type": "xml",
-            "fileUrl":"/home/nikos/policy.xml"
-        }
-    ]
+    "description": { "type": "jumd", "contentType": "xml", "label": "xacml-rules-box" },
+    "content":{ "type": "xml", "fileUrl":"/home/nikos/policy.xml" }
   }
 ]
+
+Examples using the Replacement Boxes
+
+1. App Replacement Type
+
+```
+{
+  "type": "jumb",
+  "description": { "type": "jumd", "contentType": "rplc", "label": "test" },
+  "content": {
+    "replacementDescription": 
+    {
+      "type": "psrd",
+      "replacementType": "app",
+      "auto-apply": false,
+      "offset": 123123123123
+  	},
+    "content": { "type": "bidb", "fileUrl":"/home/nikos/file.dec" }
+  }
+}
+```
+
+2. Roi Replacement Type
+```
+{
+  "type": "jumb",
+  "description": { "type": "jumd", "contentType": "rplc", "label": "test" },
+  "content": {
+    "replacementDescription": 
+    {
+      "type": "psrd",
+      "replacementType": "roi",
+      "auto-apply": false,
+      "offset-X": 12232,
+      "offset-Y": 21312
+  	},
+    "content": { "type": "jp2c", "fileUrl":"/home/nikos/file.dec" }
+  }
+}
+```
+
+3. File Replacement Type
+```
+{
+  "type": "jumb",
+  "description": { "type": "jumd", "contentType": "rplc", "label": "test" },
+  "content": {
+    "replacementDescription": 
+    {
+      "type": "psrd",
+      "replacementType": "file",
+      "auto-apply": false
+  	},
+    "content": { "type": "jp2c", "fileUrl":"/home/nikos/file.dec" }
+  }
+}
+```
+
+4. Box Replacement Type
+```
+{
+  "type": "jumb",
+  "description": { "type": "jumd", "contentType": "rplc", "label": "test" },
+  "content": {
+    "replacementDescription": 
+    {
+      "type": "psrd",
+      "replacementType": "box",
+      "auto-apply": false,
+      "offset": 123123123123
+  	},
+    "content": {
+      "type": "jumb",
+      "description": { "type": "jumd", "contentType": "jp2c" },
+      "content": { "type": "jp2c", "fileUrl":"/home/nikos/file.enc" }	
+    }
+  }
+}
+```
+
+5. Box Replacement Type with label
+```
+{
+  "type": "jumb",
+  "description": { "type": "jumd", "contentType": "rplc", "label": "test" },
+  "content": {
+    "replacementDescription": 
+    {
+      "type": "psrd",
+      "replacementType": "box",
+      "auto-apply": false,
+      "offset": 18446744073709551615,
+      "label": "reference-box"
+  	},
+    "content": {
+      "type": "jumb",
+      "description": { "type": "jumd", "contentType": "jp2c", "label": "The final reference" },
+      "content": { "type": "jp2c", "fileUrl":"/home/nikos/file.enc" }	
+    }
+  }
+}
+```
+
+6. Box Replacement Type with label and multiple Replacement Boxes
+
+```
+{
+  "type": "jumb",
+  "description": { "type": "jumd", "contentType": "rplc", "label": "test" },
+  "content": {
+    "replacementDescription": 
+    {
+      "type": "psrd",
+      "replacementType": "box",
+      "auto-apply": false,
+      "offset": 18446744073709551615,
+      "label": "reference-box"
+  	},
+    "content": [
+      {
+        "type": "jumb",
+        "description": { "type": "jumd", "contentType": "jp2c", "label": "The final reference" },
+        "content": { "type": "jp2c", "fileUrl":"/home/nikos/file.enc"} 
+      },
+      {
+        "type": "jumb",
+        "description": { "type": "jumd", "contentType": "xml", "label": "The final reference" },
+      	"content": { "type": "xml", "fileUrl":"/home/nikos/file.enc" }
+      }	
+    ]
+  }
+}
 ```

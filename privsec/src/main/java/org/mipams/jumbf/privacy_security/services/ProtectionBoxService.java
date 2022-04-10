@@ -55,13 +55,14 @@ public class ProtectionBoxService implements ContentBoxService<ProtectionBox> {
     }
 
     @Override
-    public ProtectionBox parseFromJumbfFile(InputStream input) throws MipamsException {
+    public ProtectionBox parseFromJumbfFile(InputStream input, long availableBytesForBox) throws MipamsException {
         ProtectionBox protectionBox = new ProtectionBox();
 
-        ProtectionDescriptionBox protectionDescriptionBox = protectionDescriptionBoxService.parseFromJumbfFile(input);
+        ProtectionDescriptionBox protectionDescriptionBox = protectionDescriptionBoxService.parseFromJumbfFile(input,
+                availableBytesForBox);
         protectionBox.setProtectionDescriptionBox(protectionDescriptionBox);
 
-        BinaryDataBox binaryDataBox = binaryDataBoxService.parseFromJumbfFile(input);
+        BinaryDataBox binaryDataBox = binaryDataBoxService.parseFromJumbfFile(input, availableBytesForBox);
         protectionBox.setBinaryDataBox(binaryDataBox);
 
         return protectionBox;
