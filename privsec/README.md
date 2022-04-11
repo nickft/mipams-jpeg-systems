@@ -153,6 +153,15 @@ The access rules information is assumed to be stored in the policy.xml file. An 
 ]
 ```
 
+The result of such requests is similar to the following:
+
+```
+Jumbf file is stored in location /home/nikos/Desktop/test.jumbf
+The JUMBF content is the following:
+
+ReplacementBox Content Type JUMBF box
+```
+
 #### Replacement boxes
 
 For this example we distinguish four cases, one for each type of replacement.
@@ -183,7 +192,7 @@ In the first example we specify the referenced box using the offset.
 }
 ```
 
-In the second example we specify the referenced box using the label.
+In the second example we specify the referenced box using the label instead of the offset option.
 
 ```
 { 

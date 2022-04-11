@@ -34,6 +34,7 @@ public class BoxParamHandler implements ParamHandlerInterface {
         JsonNode labelNode = input.get("label");
 
         if (labelNode != null) {
+            setOffset(getMaxLongValue());
             setLabel(labelNode.asText());
         }
     }
@@ -101,9 +102,13 @@ public class BoxParamHandler implements ParamHandlerInterface {
     }
 
     private boolean offsetHasMaxValue() {
+        return getOffset() == getMaxLongValue();
+    }
+
+    private long getMaxLongValue() {
         String maxLongAsHex = "FFFFFFFFFFFFFFFF";
         BigInteger maxValue = new BigInteger(maxLongAsHex, 16);
-        return getOffset() == maxValue.longValue();
+        return maxValue.longValue();
     }
 
     public String getLabelWithEscapeCharacter() {

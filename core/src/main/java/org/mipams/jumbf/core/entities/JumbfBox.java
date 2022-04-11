@@ -42,7 +42,7 @@ public class JumbfBox extends XtBox implements ContentBox {
 
     @Override
     public String toString() {
-        return String.format("%s Content Type JUMBF box \n", getContentBox().getClass().getSimpleName());
+        return String.format("\n%s Content Type JUMBF box \n", getContentBox().getClass().getSimpleName());
     }
 
 }

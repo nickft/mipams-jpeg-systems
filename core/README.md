@@ -142,6 +142,15 @@ Example to define an Embedded File JUMBF Box is shown below:
 }
 ```
 
+The result of the aforementioned example requests is similar to the following:
+
+```
+Jumbf file is stored in location /home/nikos/Desktop/test.jumbf
+The JUMBF content is the following:
+
+XmlBox Content Type JUMBF box
+```
+
 ### Parse a JUBMF file
 Now that we have generated JUMBF files, let's parse on of them and see its contents. For this, we need to execute the following GET request:
 
@@ -152,5 +161,7 @@ http://localhost:8080/core/v1/parseMetadata?path=/home/nikos/Desktop/test.jumbf
 Provided that the JUMBF file is well-formed, the GET response shall be a brief string describing the structure of the parsed file. An example of this description is depicted below:
 
 ```
-JumbfBox(descriptionBox=DescriptionBox(uuid=6a736f6e-0011-0010-8000-00aa00389b71, toggle=2, label=This is an example JUMBF metadata format, id=null, signature=null), contentList=[JsonBox(jsonContent={"test":1})])
+[
+XmlBox Content Type JUMBF box 
+]
 ```
