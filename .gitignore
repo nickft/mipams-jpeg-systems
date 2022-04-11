@@ -19,6 +19,10 @@
 *.tar.gz
 *.rar
 
+.settings/
+.vscode/
+.project
+
 core/.factorypath
 provenance/.factorypath
 privsec/.factorypath
