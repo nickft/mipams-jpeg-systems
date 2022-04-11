@@ -13,7 +13,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @NoArgsConstructor
-@ToString(callSuper = true)
+@ToString
 public class JsonBox extends SingleFormatBox implements ContentBox {
 
     private @Getter @Setter ObjectNode jsonContent;

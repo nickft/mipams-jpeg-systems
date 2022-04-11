@@ -11,6 +11,6 @@ public class JumbfApplication {
 
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(JumbfApplication.class, args);
-		logger.info("Application is up and running");
+		logger.info("JUMBF core module is up and running");
 	}
 }

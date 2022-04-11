@@ -13,7 +13,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @NoArgsConstructor
-@ToString(callSuper = true)
+@ToString
 public class EmbeddedFileDescriptionBox extends XtBox {
 
     private static final Logger logger = LoggerFactory.getLogger(EmbeddedFileDescriptionBox.class);

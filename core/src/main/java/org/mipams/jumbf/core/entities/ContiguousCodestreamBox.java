@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor
-@ToString(callSuper = true)
+@ToString
 public class ContiguousCodestreamBox extends SingleFormatBox implements ContentBox {
 
     @Override

@@ -13,7 +13,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @NoArgsConstructor
-@ToString(callSuper = true)
+@ToString
 public class UuidBox extends XtBox implements ContentBox {
 
     private @Getter @Setter UUID uuid;

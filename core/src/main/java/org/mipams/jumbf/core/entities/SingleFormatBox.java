@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@ToString(callSuper = true)
+@ToString
 public abstract class SingleFormatBox extends XtBox {
     protected @Getter @Setter String fileUrl;
 

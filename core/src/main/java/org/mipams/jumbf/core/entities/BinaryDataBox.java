@@ -10,7 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @NoArgsConstructor
-@ToString(callSuper = true)
+@ToString
 public class BinaryDataBox extends SingleFormatBox {
 
     private @Getter @Setter boolean referencedExternally = false;

@@ -11,6 +11,6 @@ public interface GeneratorInterface {
 
     public List<JumbfBox> generateBoxFromRequest(JsonNode input) throws MipamsException;
 
-    public String generateJumbfFileFromBox(List<JumbfBox> xtBoxList) throws MipamsException;
+    public String generateJumbfFileFromBox(List<JumbfBox> jumbfBoxList, String fileName) throws MipamsException;
 
 }

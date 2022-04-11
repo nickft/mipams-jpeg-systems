@@ -9,10 +9,8 @@ import org.mipams.jumbf.core.util.MipamsException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @NoArgsConstructor
-@ToString(callSuper = true)
 public class JumbfBox extends XtBox implements ContentBox {
 
     protected @Getter @Setter DescriptionBox descriptionBox;
@@ -40,6 +38,11 @@ public class JumbfBox extends XtBox implements ContentBox {
     @Override
     public UUID getContentTypeUUID() {
         return BoxTypeEnum.JumbfBox.getContentUuid();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s Content Type JUMBF box \n", getContentBox().getClass().getSimpleName());
     }
 
 }

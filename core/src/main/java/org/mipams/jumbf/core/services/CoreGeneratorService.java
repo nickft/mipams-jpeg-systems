@@ -63,23 +63,36 @@ public class CoreGeneratorService implements GeneratorInterface {
     }
 
     @Override
-    public String generateJumbfFileFromBox(List<JumbfBox> xtBoxList) throws MipamsException {
-        String path = CoreUtils.getFullPath(IMAGE_FOLDER, "test.jumbf");
+    public String generateJumbfFileFromBox(List<JumbfBox> jumbfBoxList, String fileName) throws MipamsException {
+
+        String path = CoreUtils.getFullPath(IMAGE_FOLDER, fileName);
 
         try (FileOutputStream fileOutputStream = new FileOutputStream(path)) {
 
-            for (JumbfBox jumbfBox : xtBoxList) {
-
+            for (JumbfBox jumbfBox : jumbfBoxList) {
                 superBoxService.writeToJumbfFile(jumbfBox, fileOutputStream);
-
-                logger.debug("Write box: " + jumbfBox.toString() + " to file");
             }
 
-            return "JUMBF file is stored in the following location: " + path;
+            return generateResultMessage(jumbfBoxList, path);
         } catch (FileNotFoundException e) {
             throw new BadRequestException("File {" + path + "} does not exist", e);
         } catch (IOException e) {
             throw new BadRequestException("Could not open file: " + path, e);
         }
+    }
+
+    private String generateResultMessage(List<JumbfBox> jumbfBoxList, String path) {
+
+        StringBuilder result = new StringBuilder("Jumbf file is stored in location ");
+
+        result.append(path).append("\n");
+
+        result.append("The JUMBF content is the following: \n");
+
+        for (JumbfBox jumbfBox : jumbfBoxList) {
+            result.append(jumbfBox.toString());
+        }
+
+        return result.toString();
     }
 }

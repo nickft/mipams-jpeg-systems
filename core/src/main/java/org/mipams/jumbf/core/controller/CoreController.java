@@ -40,15 +40,17 @@ public class CoreController {
     }
 
     @PostMapping("/generateBox")
-    public ResponseEntity<?> generateJumbfBytes(@RequestBody JsonNode requestBody) {
+    public ResponseEntity<?> generateJumbfBytes(@RequestParam(required = false) String targetFile,
+            @RequestBody JsonNode requestBody) {
         try {
             List<JumbfBox> boxList = generatorService.generateBoxFromRequest(requestBody);
 
-            String result = generatorService.generateJumbfFileFromBox(boxList);
+            String outputFileName = targetFile == null ? "test.jumbf" : targetFile;
+
+            String result = generatorService.generateJumbfFileFromBox(boxList, outputFileName);
             return ResponseEntity.ok().body(result);
         } catch (MipamsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-
     }
 }
