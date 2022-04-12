@@ -1,6 +1,6 @@
-![coverage](../.github/badges/jacoco-privsec.svg)
-![branches coverage](../.github/badges/branches-privsec.svg)
-
+[![Tests](https://github.com/nickft/mipams-jumbf/actions/workflows/maven.yml/badge.svg)](https://github.com/nickft/mipams-jumbf/actions/workflows/maven.yml)
+[![coverage](../.github/badges/jacoco-privsec.svg)](https://github.com/nickft/mipams-jumbf/actions/workflows/maven.yml)
+[![branches coverage](../.github/badges/branches-privsec.svg)](https://github.com/nickft/mipams-jumbf/actions/workflows/maven.yml)
 # JUMBF Reference software: Privacy & Security submodule
 
 ## Table of Contents

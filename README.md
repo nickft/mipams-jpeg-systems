@@ -1,7 +1,7 @@
 
-![build](https://github.com/nickft/mipams-jumbf/actions/workflows/maven.yml/badge.svg?branch=testing-framework)
-![coverage](.github/badges/jacoco.svg)
-![branches coverage](.github/badges/branches.svg)
+[![Tests](https://github.com/nickft/mipams-jumbf/actions/workflows/maven.yml/badge.svg)](https://github.com/nickft/mipams-jumbf/actions/workflows/maven.yml)
+[![coverage](.github/badges/jacoco.svg)](https://github.com/nickft/mipams-jumbf/actions/workflows/maven.yml)
+[![branches coverage](.github/badges/branches.svg)](https://github.com/nickft/mipams-jumbf/actions/workflows/maven.yml)
 
 # JUMBF Reference software
 

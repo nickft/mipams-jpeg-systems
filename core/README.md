@@ -1,5 +1,6 @@
-![coverage](../.github/badges/jacoco-core.svg)
-![branches coverage](../.github/badges/branches-core.svg)
+[![Tests](https://github.com/nickft/mipams-jumbf/actions/workflows/maven.yml/badge.svg)](https://github.com/nickft/mipams-jumbf/actions/workflows/maven.yml)
+[![coverage](../.github/badges/jacoco-core.svg)](https://github.com/nickft/mipams-jumbf/actions/workflows/maven.yml)
+[![branches coverage](../.github/badges/branches-core.svg)](https://github.com/nickft/mipams-jumbf/actions/workflows/maven.yml)
 
 # JUMBF Reference software: Core submodule
 
