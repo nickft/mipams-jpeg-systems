@@ -238,7 +238,7 @@ In the third example we specify the referenced box using the label and we provid
       },
       { 
         "type": "jumb", 
-        "description": { "type": "jumd", "contentType": "xml", "label": "label": "One of the content which replaces the referenced box" }, 
+        "description": { "type": "jumd", "contentType": "xml", "label": "One of the content which replaces the referenced box" }, 
         "content": { "type": "xml", "fileUrl":"/home/nikos/test.xml" } 
       }
     ]  

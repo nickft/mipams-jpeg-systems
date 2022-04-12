@@ -134,11 +134,9 @@ public class ProtectionDescriptionBoxService extends XtBoxService<ProtectionDesc
 
             int methodToggle = CoreUtils.readSingleByteAsIntFromInputStream(input);
             actualSize++;
-            
+
             protectionDescriptionBox.setMethodToggle(methodToggle);
-
             if (protectionDescriptionBox.isProtectionExternallyReferenced()) {
-
                 String label = CoreUtils.readStringFromInputStream(input);
 
                 // +1 for the null terminating character
