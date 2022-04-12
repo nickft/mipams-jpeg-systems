@@ -33,7 +33,7 @@ public class BadRequestIntegrationTests {
                 .append("    \"id\": 4334431")
                 .append("  },")
                 .append("  \"content\": {")
-                .append("    \"fileUrl\":\"/home/nikos/Desktop/test.jpeg\"")
+                .append("    \"fileUrl\":\"/tmp/test1.jpeg\"")
                 .append("  }")
                 .append("}");
 

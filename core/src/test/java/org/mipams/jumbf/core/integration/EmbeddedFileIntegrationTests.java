@@ -1,5 +1,8 @@
 package org.mipams.jumbf.core.integration;
 
+import java.io.IOException;
+
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,6 +36,11 @@ public class EmbeddedFileIntegrationTests extends AbstractIntegrationTests {
                 .append("}");
 
         REQUEST_BODY = request.toString();
+    }
+
+    @AfterAll
+    public static void cleanUp() throws IOException {
+        fileCleanUp(JUMBF_FILE_PATH);
     }
 
     @Override

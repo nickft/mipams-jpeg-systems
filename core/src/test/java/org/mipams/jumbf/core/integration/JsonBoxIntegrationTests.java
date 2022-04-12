@@ -1,5 +1,6 @@
 package org.mipams.jumbf.core.integration;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -9,6 +10,8 @@ import org.springframework.http.MediaType;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.io.IOException;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
@@ -16,7 +19,7 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
     private static String REQUEST_BODY;
 
     @BeforeAll
-    static void initUseCase() {
+    static void initRequest() throws IOException {
 
         StringBuilder request = new StringBuilder();
 
@@ -30,11 +33,19 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
                 .append("  },")
                 .append("  \"content\": {")
                 .append("    \"type\": \"json\",")
-                .append("    \"fileUrl\":\"/home/nikos/Desktop/test.jpeg\"")
+                .append("    \"fileUrl\":\"").append(TEST_FILE_PATH).append("\"")
                 .append("  }")
                 .append("}");
 
         REQUEST_BODY = request.toString();
+
+        generateFile();
+    }
+
+    @AfterAll
+    public static void cleanUp() throws IOException {
+        fileCleanUp(TEST_FILE_PATH);
+        fileCleanUp(JUMBF_FILE_PATH);
     }
 
     @Override

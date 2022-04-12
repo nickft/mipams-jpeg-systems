@@ -9,12 +9,37 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 public abstract class AbstractIntegrationTests {
 
     @Autowired
     protected MockMvc mockMvc;
 
     protected abstract String getRequestBody();
+
+    protected static String TEST_FILE_PATH = "/tmp/test.jpeg";
+    protected static String JUMBF_FILE_PATH = "/tmp/test.jumbf";
+
+    static void generateFile() throws IOException {
+        File file = new File(TEST_FILE_PATH);
+        if (file.exists()) {
+            return;
+        }
+
+        try (FileOutputStream fos = new FileOutputStream(TEST_FILE_PATH)) {
+            fos.write("Hello world".getBytes());
+        }
+    }
+
+    static void fileCleanUp(String fileName) throws IOException {
+        File file = new File(TEST_FILE_PATH);
+        if (file.exists()) {
+            file.delete();
+        }
+    }
 
     @Test
     void generateBoxRequest() throws Exception {
