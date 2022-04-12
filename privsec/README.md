@@ -1,3 +1,6 @@
+![coverage](.github/badges/jacoco-privsec.svg)
+![branches coverage](.github/badges/branches-privsec.svg)
+
 # JUMBF Reference software: Privacy & Security submodule
 
 ## Table of Contents

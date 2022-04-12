@@ -1,3 +1,6 @@
+![coverage](.github/badges/jacoco-core.svg)
+![branches coverage](.github/badges/branches-core.svg)
+
 # JUMBF Reference software: Core submodule
 
 ## Table of Contents

@@ -1,3 +1,6 @@
+![coverage](.github/badges/jacoco.svg)
+![branches coverage](.github/badges/branches.svg)
+
 # JUMBF Reference software
 
 ## Table of Contents
