@@ -1,5 +1,5 @@
-![coverage](.github/badges/jacoco-privsec.svg)
-![branches coverage](.github/badges/branches-privsec.svg)
+![coverage](../.github/badges/jacoco-privsec.svg)
+![branches coverage](../.github/badges/branches-privsec.svg)
 
 # JUMBF Reference software: Privacy & Security submodule
 
