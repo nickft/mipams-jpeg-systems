@@ -48,7 +48,7 @@ public class ContentBoxDiscoveryManager {
         throw new MipamsException("Box " + type + " is not supported yet");
     }
 
-    public ContentBoxService generateContentBoxServiceBasedOnBoxWithId(int boxId) throws MipamsException {
+    public ContentBoxService getContentBoxServiceBasedOnBoxWithId(int boxId) throws MipamsException {
 
         for (ContentBoxService service : contentBoxServiceList) {
 

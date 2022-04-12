@@ -2,17 +2,16 @@ package org.mipams.jumbf.core.services;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.mipams.jumbf.core.util.MipamsException;
+import org.mipams.jumbf.core.util.Properties;
 import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.CoreUtils;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,8 +29,8 @@ public class CoreGeneratorService implements GeneratorInterface {
     @Autowired
     JumbfBoxService superBoxService;
 
-    @Value("${org.mipams.core.image_folder}")
-    private String IMAGE_FOLDER;
+    @Autowired
+    Properties properties;
 
     @Override
     public List<JumbfBox> generateBoxFromRequest(JsonNode inputNode) throws MipamsException {
@@ -65,7 +64,7 @@ public class CoreGeneratorService implements GeneratorInterface {
     @Override
     public String generateJumbfFileFromBox(List<JumbfBox> jumbfBoxList, String fileName) throws MipamsException {
 
-        String path = CoreUtils.getFullPath(IMAGE_FOLDER, fileName);
+        String path = CoreUtils.getFullPath(properties.getFileDirectory(), fileName);
 
         try (FileOutputStream fileOutputStream = new FileOutputStream(path)) {
 
@@ -74,8 +73,6 @@ public class CoreGeneratorService implements GeneratorInterface {
             }
 
             return generateResultMessage(jumbfBoxList, path);
-        } catch (FileNotFoundException e) {
-            throw new BadRequestException("File {" + path + "} does not exist", e);
         } catch (IOException e) {
             throw new BadRequestException("Could not open file: " + path, e);
         }

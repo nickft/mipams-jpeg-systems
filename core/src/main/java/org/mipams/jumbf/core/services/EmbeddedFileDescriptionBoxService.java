@@ -98,7 +98,7 @@ public class EmbeddedFileDescriptionBoxService extends XtBoxService<EmbeddedFile
 
         try {
 
-            int toggleValue = CoreUtils.readIntFromInputStream(input);
+            int toggleValue = CoreUtils.readSingleByteAsIntFromInputStream(input);
             embeddedFileDescriptionBox.setToggle(toggleValue);
             actualSize++;
 

@@ -1,11 +1,9 @@
 package org.mipams.jumbf.core.util;
 
-@SuppressWarnings("serial")  
-public class BadRequestException extends MipamsException{
+public class BadRequestException extends MipamsException {
 
-    private static final String DISPLAY_TEXT = "Bad request: ";
-    
     public BadRequestException() {
+        super();
     }
 
     public BadRequestException(String message) {
@@ -18,14 +16,5 @@ public class BadRequestException extends MipamsException{
 
     public BadRequestException(Throwable cause) {
         super(cause);
-    }
-
-    @Override
-    public String toString(){
-        if(getMessage() == null){
-            return (DISPLAY_TEXT + getMessage());
-        } else {
-            return (DISPLAY_TEXT);
-        }
     }
 }

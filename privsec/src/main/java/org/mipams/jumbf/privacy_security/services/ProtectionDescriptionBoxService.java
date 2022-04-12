@@ -132,12 +132,9 @@ public class ProtectionDescriptionBoxService extends XtBoxService<ProtectionDesc
 
         try {
 
-            int methodToggle = 0;
-            if ((methodToggle = input.read()) == -1) {
-                throw new MipamsException();
-            }
-
+            int methodToggle = CoreUtils.readSingleByteAsIntFromInputStream(input);
             actualSize++;
+            
             protectionDescriptionBox.setMethodToggle(methodToggle);
 
             if (protectionDescriptionBox.isProtectionExternallyReferenced()) {

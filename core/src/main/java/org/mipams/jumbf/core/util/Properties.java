@@ -13,8 +13,8 @@ public class Properties {
     private long MAX_FILE_SIZE;
 
     public void checkIfFileSizeExceedApplicationLimits(String filePath) throws MipamsException {
-        double size = CoreUtils.getFileSizeFromPath(filePath);
-        if (size > MAX_FILE_SIZE || size > Long.MAX_VALUE) {
+        long size = CoreUtils.getFileSizeFromPath(filePath);
+        if (size > MAX_FILE_SIZE) {
             throw new MipamsException("File is too large for the application. Check the available limits.");
         }
     }

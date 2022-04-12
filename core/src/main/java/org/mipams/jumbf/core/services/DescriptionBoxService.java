@@ -114,7 +114,7 @@ public final class DescriptionBoxService extends XtBoxService<DescriptionBox> {
 
             actualSize += CoreUtils.UUID_BYTE_SIZE;
 
-            int toggleValue = CoreUtils.readIntFromInputStream(input);
+            int toggleValue = CoreUtils.readSingleByteAsIntFromInputStream(input);
             descriptionBox.setToggle(toggleValue);
             actualSize++;
 

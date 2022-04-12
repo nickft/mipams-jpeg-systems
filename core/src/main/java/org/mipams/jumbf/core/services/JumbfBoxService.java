@@ -67,7 +67,7 @@ public final class JumbfBoxService extends XtBoxService<JumbfBox> implements Con
         descriptionBoxService.writeToJumbfFile(jumbfBox.getDescriptionBox(), fileOutputStream);
 
         ContentBoxService contentBoxService = contentBoxDiscoveryManager
-                .generateContentBoxServiceBasedOnBoxWithId(jumbfBox.getContentBox().getTypeId());
+                .getContentBoxServiceBasedOnBoxWithId(jumbfBox.getContentBox().getTypeId());
         contentBoxService.writeToJumbfFile(jumbfBox.getContentBox(), fileOutputStream);
 
     }

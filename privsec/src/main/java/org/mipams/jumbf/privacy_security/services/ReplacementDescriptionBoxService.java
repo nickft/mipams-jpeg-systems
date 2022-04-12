@@ -71,10 +71,10 @@ public class ReplacementDescriptionBoxService extends XtBoxService<ReplacementDe
     protected final void populatePayloadFromJumbfFile(ReplacementDescriptionBox box, InputStream input)
             throws MipamsException {
 
-        int value = CoreUtils.readIntFromInputStream(input);
+        int value = CoreUtils.readSingleByteAsIntFromInputStream(input);
         box.setReplacementTypeId(value);
 
-        value = CoreUtils.readIntFromInputStream(input);
+        value = CoreUtils.readSingleByteAsIntFromInputStream(input);
         box.setToggle(value);
 
         ReplacementType replacementType = ReplacementType.getTypeFromId(box.getReplacementTypeId());

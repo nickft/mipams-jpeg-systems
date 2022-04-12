@@ -10,14 +10,10 @@ import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.core.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class BinaryDataBoxService extends SingleFormatBoxService<BinaryDataBox> {
-
-    @Value("${org.mipams.core.image_folder}")
-    private String IMAGE_FOLDER;
 
     @Autowired
     Properties properties;

@@ -30,9 +30,9 @@ public class CoreController {
     CoreGeneratorService generatorService;
 
     @GetMapping("/parseMetadata")
-    public ResponseEntity<?> parseJumbfMetadataFromPath(@RequestParam String path) {
+    public ResponseEntity<?> parseJumbfMetadataFromPath(@RequestParam String fileName) {
         try {
-            List<JumbfBox> boxList = parserService.parseMetadataFromJumbfFile(path);
+            List<JumbfBox> boxList = parserService.parseMetadataFromJumbfFile(fileName);
             return ResponseEntity.ok().body(boxList.toString());
         } catch (MipamsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

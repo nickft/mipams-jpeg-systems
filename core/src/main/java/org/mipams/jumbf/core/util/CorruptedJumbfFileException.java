@@ -1,11 +1,9 @@
 package org.mipams.jumbf.core.util;
 
-public class CorruptedJumbfFileException extends MipamsException{
-    
-    private static final long serialVersionUID=10l;
-    private static final String DISPLAY_TEXT = "Jumbf file is corrupted: ";
+public class CorruptedJumbfFileException extends MipamsException {
 
     public CorruptedJumbfFileException() {
+        super();
     }
 
     public CorruptedJumbfFileException(String message) {
@@ -18,14 +16,5 @@ public class CorruptedJumbfFileException extends MipamsException{
 
     public CorruptedJumbfFileException(Throwable cause) {
         super(cause);
-    }
-
-    @Override
-    public String toString(){
-        if(getMessage() == null){
-            return (DISPLAY_TEXT + getMessage());
-        } else {
-            return (DISPLAY_TEXT);
-        }
     }
 }

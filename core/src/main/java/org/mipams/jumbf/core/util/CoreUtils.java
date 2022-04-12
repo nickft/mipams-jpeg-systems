@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 import org.springframework.http.MediaType;
@@ -41,16 +42,65 @@ public class CoreUtils {
         return text.getBytes();
     }
 
-    public static UUID readUuidFromInputStream(InputStream input) throws MipamsException {
-        try {
-            byte[] uuidTemp = new byte[16];
+    public static String parseStringFromFile(String fileUrl) throws MipamsException {
 
-            if (input.read(uuidTemp, 0, 16) == -1) {
+        try (InputStream inputStream = new FileInputStream(fileUrl)) {
+            return readStringFromInputStream(inputStream);
+        } catch (IOException e) {
+            throw new MipamsException(e);
+        }
+    }
+
+    public static String readStringFromInputStream(InputStream input) throws IOException {
+        char charVal;
+        StringBuilder str = new StringBuilder();
+
+        int n;
+
+        while ((n = input.read()) != -1) {
+
+            charVal = (char) n;
+
+            if (charVal == '\0') {
+                break;
+            }
+
+            str.append(charVal);
+        }
+
+        return str.toString();
+    }
+
+    public static int readSingleByteAsIntFromInputStream(InputStream input) throws MipamsException {
+        byte[] intBuffer = readBytesFromInputStream(input, 1);
+        return (int) intBuffer[0];
+    }
+
+    public static int readIntFromInputStream(InputStream input) throws MipamsException {
+        byte[] intBuffer = readBytesFromInputStream(input, INT_BYTE_SIZE);
+        return convertByteArrayToInt(intBuffer);
+    }
+
+    public static long readLongFromInputStream(InputStream input) throws MipamsException {
+        byte[] longBuffer = readBytesFromInputStream(input, LONG_BYTE_SIZE);
+        return convertByteArrayToLong(longBuffer);
+    }
+
+    public static UUID readUuidFromInputStream(InputStream input) throws MipamsException {
+        byte[] uuidTemp = readBytesFromInputStream(input, UUID_BYTE_SIZE);
+        return convertByteArrayToUUID(uuidTemp);
+    }
+
+    public static byte[] readBytesFromInputStream(InputStream input, int numberOfBytes) throws MipamsException {
+        try {
+
+            byte[] buffer = new byte[numberOfBytes % 256];
+
+            if (input.read(buffer) == -1) {
                 throw new MipamsException();
             }
 
-            UUID uuidVal = convertByteArrayToUUID(uuidTemp);
-            return uuidVal;
+            return buffer;
         } catch (IOException e) {
             throw new MipamsException(e);
         }
@@ -85,14 +135,8 @@ public class CoreUtils {
     }
 
     public static long getFileSizeFromPath(String filePath) throws MipamsException {
-        try {
-            File f = new File(filePath);
-            return f.length();
-        } catch (SecurityException e) {
-            throw new MipamsException(e.getMessage());
-        } catch (NullPointerException e) {
-            throw new MipamsException(e.getMessage());
-        }
+        File f = new File(filePath);
+        return f.length();
     }
 
     public static String randomStringGenerator() {
@@ -114,12 +158,12 @@ public class CoreUtils {
         return text + "\0";
     }
 
-    public static void writeFileContentToOutput(String path, FileOutputStream fileOutputStream) throws MipamsException {
+    public static void writeFileContentToOutput(String path, OutputStream outputStream) throws MipamsException {
 
         try (FileInputStream inputStream = new FileInputStream(path)) {
             int n;
             while ((n = inputStream.read()) != -1) {
-                fileOutputStream.write(n);
+                outputStream.write(n);
             }
         } catch (FileNotFoundException e) {
             throw new MipamsException("Could not locate file", e);
@@ -141,70 +185,12 @@ public class CoreUtils {
             }
 
         } catch (IOException e) {
-            throw new MipamsException("Coulnd not read content", e);
+            throw new MipamsException("Could not read content", e);
         }
     }
 
     public static MediaType getMediaTypeFromString(String input) throws IllegalArgumentException {
-        MediaType mediaType;
-
-        mediaType = MediaType.valueOf(input);
-
-        if (mediaType.getSubtype() == null) {
-            throw new IllegalArgumentException("Subtype needs to be specified.");
-        }
-
+        MediaType mediaType = MediaType.valueOf(input);
         return mediaType;
     }
-
-    public static String parseStringFromFile(String fileUrl) throws MipamsException {
-
-        try (InputStream inputStream = new FileInputStream(fileUrl)) {
-            String result = readStringFromInputStream(inputStream);
-            return result;
-        } catch (IOException e) {
-            throw new MipamsException(e);
-        }
-    }
-
-    public static String readStringFromInputStream(InputStream input) throws IOException {
-        char charVal;
-        StringBuilder str = new StringBuilder();
-
-        while ((charVal = (char) input.read()) != '\0') {
-            str.append(charVal);
-        }
-
-        return str.toString();
-    }
-
-    public static int readIntFromInputStream(InputStream input) throws MipamsException {
-
-        int val;
-        try {
-            if ((val = input.read()) == -1) {
-                throw new MipamsException("Unable to read from input stream");
-            }
-        } catch (IOException e) {
-            throw new MipamsException(e);
-        }
-
-        return val;
-    }
-
-    public static long readLongFromInputStream(InputStream input) throws MipamsException {
-
-        byte[] buffer = new byte[8];
-
-        try {
-            if (input.read(buffer) == -1) {
-                throw new MipamsException("Unable to read from input stream");
-            }
-        } catch (IOException e) {
-            throw new MipamsException(e);
-        }
-
-        return convertByteArrayToLong(buffer);
-    }
-
 }

@@ -95,6 +95,7 @@ public class UuidBoxService extends XtBoxService<UuidBox> implements ContentBoxS
             long nominalTotalSizeInBytes = uuidBox.getPayloadSizeFromXTBoxHeaders();
             CoreUtils.writeBytesFromInputStreamToFile(input, nominalTotalSizeInBytes, uuidBox.getFileUrl());
 
+            actualSize += CoreUtils.getFileSizeFromPath(uuidBox.getFileUrl());
         } catch (MipamsException e) {
             throw new CorruptedJumbfFileException(
                     "Failed to read UUID box after {" + Long.toString(actualSize) + "} bytes.", e);
