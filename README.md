@@ -1,3 +1,5 @@
+
+![build](https://github.com/nickft/mipams-jumbf/actions/workflows/maven.yml/badge.svg)
 ![coverage](.github/badges/jacoco.svg)
 ![branches coverage](.github/badges/branches.svg)
 
