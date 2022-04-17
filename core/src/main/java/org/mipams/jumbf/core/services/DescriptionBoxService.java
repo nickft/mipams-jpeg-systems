@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
+import javax.xml.bind.DatatypeConverter;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -57,14 +59,12 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
         int toggle = (node == null || !node.asBoolean()) ? 0 : 1;
 
         node = input.get("label");
-
         if (node != null) {
             descriptionBox.setLabel(node.asText());
             toggle = toggle | 2;
         }
 
         node = input.get("id");
-
         if (node != null) {
             descriptionBox.setId(node.asInt());
             toggle = toggle | 4;
@@ -72,7 +72,13 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
 
         descriptionBox.setToggle(toggle);
 
-        logger.debug("Signature is not supported");
+        node = input.get("sha256Hash");
+        if (node != null) {
+            byte[] sha256Hash = DatatypeConverter.parseHexBinary(node.asText());
+            descriptionBox.setSha256Hash(sha256Hash);
+
+            toggle = toggle | 8;
+        }
     }
 
     @Override
@@ -93,16 +99,17 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
             }
 
             if (descriptionBox.signatureExists()) {
-                fileOutputStream.write(descriptionBox.getSignature());
+                fileOutputStream.write(descriptionBox.getSha256Hash());
             }
+
         } catch (IOException e) {
             throw new MipamsException("Could not write to file.", e);
         }
     }
 
     @Override
-    protected void populatePayloadFromJumbfFile(DescriptionBox descriptionBox, InputStream input)
-            throws MipamsException {
+    protected void populatePayloadFromJumbfFile(DescriptionBox descriptionBox, long availableBytesForBox,
+            InputStream input) throws MipamsException {
 
         logger.debug("Description box");
 
@@ -142,13 +149,13 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
             }
 
             if (descriptionBox.signatureExists()) {
-                byte[] signatureVal = new byte[32];
+                byte[] sha256Hash = new byte[32];
 
-                if (input.read(signatureVal, 0, 32) == -1) {
+                if (input.read(sha256Hash, 0, 32) == -1) {
                     throw new MipamsException();
                 }
 
-                descriptionBox.setSignature(signatureVal);
+                descriptionBox.setSha256Hash(sha256Hash);
                 actualSize += 32;
             }
         } catch (IOException e) {

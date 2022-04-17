@@ -91,7 +91,7 @@ public class EmbeddedFileDescriptionBoxService extends BmffBoxService<EmbeddedFi
 
     @Override
     protected void populatePayloadFromJumbfFile(EmbeddedFileDescriptionBox embeddedFileDescriptionBox,
-            InputStream input) throws MipamsException {
+            long availableBytesForBox, InputStream input) throws MipamsException {
         logger.debug("Embedded File Description box");
 
         long actualSize = 0;

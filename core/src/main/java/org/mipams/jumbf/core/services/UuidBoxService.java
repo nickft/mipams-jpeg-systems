@@ -75,7 +75,8 @@ public class UuidBoxService extends BmffBoxService<UuidBox> implements ContentBo
     }
 
     @Override
-    protected void populatePayloadFromJumbfFile(UuidBox uuidBox, InputStream input) throws MipamsException {
+    protected void populatePayloadFromJumbfFile(UuidBox uuidBox, long availableBytesForBox, InputStream input)
+            throws MipamsException {
         logger.debug("UUID box");
 
         long actualSize = 0;

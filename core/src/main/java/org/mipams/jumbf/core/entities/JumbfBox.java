@@ -9,12 +9,15 @@ import org.mipams.jumbf.core.util.MipamsException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @NoArgsConstructor
+@ToString
 public class JumbfBox extends BmffBox implements ContentBox {
 
     protected @Getter @Setter DescriptionBox descriptionBox;
     protected @Getter @Setter ContentBox contentBox;
+    protected @Getter @Setter PaddingBox paddingBox;
 
     @Override
     public int getTypeId() {
@@ -23,10 +26,9 @@ public class JumbfBox extends BmffBox implements ContentBox {
 
     @Override
     protected long calculatePayloadSize() throws MipamsException {
-
-        long sum = descriptionBox.getBoxSizeFromBmffHeaders();
-        sum += contentBox.getBoxSize();
-
+        long sum = getDescriptionBox().getBoxSizeFromBmffHeaders();
+        sum += getContentBox().getBoxSize();
+        sum += (getPaddingBox() != null) ? getPaddingBox().getBoxSize() : 0;
         return sum;
     }
 
@@ -39,10 +41,4 @@ public class JumbfBox extends BmffBox implements ContentBox {
     public UUID getContentTypeUUID() {
         return BoxTypeEnum.JumbfBox.getContentUuid();
     }
-
-    @Override
-    public String toString() {
-        return String.format("--> %s Content Type JUMBF box \n", getContentBox().getClass().getSimpleName());
-    }
-
 }

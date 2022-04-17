@@ -38,7 +38,8 @@ public abstract class SingleFormatBoxService<T extends SingleFormatBox> extends 
     }
 
     @Override
-    protected void populatePayloadFromJumbfFile(T singleFormatBox, InputStream input) throws MipamsException {
+    protected void populatePayloadFromJumbfFile(T singleFormatBox, long availableBytesForBox, InputStream input)
+            throws MipamsException {
 
         String fileName = getFileName();
 

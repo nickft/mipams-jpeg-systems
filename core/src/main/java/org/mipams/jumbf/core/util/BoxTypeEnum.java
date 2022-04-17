@@ -10,6 +10,7 @@ import lombok.Setter;
 public enum BoxTypeEnum {
 
     JumbfBox("jumb", 0x6A756D62, "6A756D62-0011-0010-8000-00AA00389B71"),
+    PaddingBox("free", 0x66726565, null),
     DescriptionBox("jumd", 0x6A756D64, null),
     JsonBox("json", 0x6A736F6E, "6A736F6E-0011-0010-8000-00AA00389B71"),
     XmlBox("xml", 0x786D6C20, "786D6C20-0011-0010-8000-00AA00389B71"),

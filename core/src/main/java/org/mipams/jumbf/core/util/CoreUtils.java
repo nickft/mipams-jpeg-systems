@@ -7,8 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import java.nio.ByteBuffer;
+
 import java.util.UUID;
+
 import org.springframework.http.MediaType;
 
 public class CoreUtils {
@@ -192,5 +195,42 @@ public class CoreUtils {
     public static MediaType getMediaTypeFromString(String input) throws IllegalArgumentException {
         MediaType mediaType = MediaType.valueOf(input);
         return mediaType;
+    }
+
+    public static void writePaddingToOutputStream(long numberOfBytes, int paddingValue,
+            OutputStream outputStream)
+            throws MipamsException {
+
+        try {
+            int i = 0;
+            while (i < numberOfBytes) {
+                outputStream.write(paddingValue);
+                i++;
+            }
+        } catch (FileNotFoundException e) {
+            throw new MipamsException("Could not locate file", e);
+        } catch (IOException e) {
+            throw new MipamsException("Could not write to file", e);
+        }
+
+    }
+
+    public static long parsePaddingFromInputStream(InputStream input, int paddingValue, long availableBytesForBox)
+            throws MipamsException {
+        try {
+
+            int actualBytes = 0, n;
+
+            while ((actualBytes < availableBytesForBox) && ((n = input.read()) != -1)) {
+                if (n != paddingValue) {
+                    throw new MipamsException("Padding is corrupted. It should be contain only values of 0x00");
+                }
+                actualBytes++;
+            }
+
+            return actualBytes;
+        } catch (IOException e) {
+            throw new MipamsException("Could not read content", e);
+        }
     }
 }

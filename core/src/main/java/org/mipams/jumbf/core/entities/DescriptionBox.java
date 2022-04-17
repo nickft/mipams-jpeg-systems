@@ -23,7 +23,7 @@ public class DescriptionBox extends BmffBox {
 
     protected @Getter @Setter Integer id;
 
-    protected @Getter @Setter byte[] signature;
+    protected @Getter @Setter byte[] sha256Hash;
 
     @Override
     public int getTypeId() {
@@ -36,14 +36,17 @@ public class DescriptionBox extends BmffBox {
 
         sum += getToggleSize();
 
-        if (labelExists())
+        if (labelExists()) {
             sum += getLabelSize();
+        }
 
-        if (idExists())
+        if (idExists()) {
             sum += getIdSize();
+        }
 
-        if (signatureExists())
+        if (signatureExists()) {
             sum += getSignatureSize();
+        }
 
         return sum;
     }

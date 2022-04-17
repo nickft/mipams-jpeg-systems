@@ -96,7 +96,7 @@ public abstract class BmffBoxService<T extends BmffBox> implements BoxServiceInt
 
         populateHeadersFromJumbfFile(bmffBox, input);
 
-        populatePayloadFromJumbfFile(bmffBox, input);
+        populatePayloadFromJumbfFile(bmffBox, availableBytesForBox, input);
 
         logger.debug("The box " + BoxTypeEnum.getBoxTypeAsStringFromId(bmffBox.getTypeId()) + " has a total length of "
                 + bmffBox.getBoxSizeFromBmffHeaders());
@@ -155,11 +155,16 @@ public abstract class BmffBoxService<T extends BmffBox> implements BoxServiceInt
     }
 
     protected void verifyBoxSize(T box, long actualSize) throws MipamsException {
-        if (box.getPayloadSizeFromBmffHeaders() != actualSize) {
+        if (!sizeEqualsToBmffHeaderLength(actualSize, box)) {
             throw new MipamsException("Mismatch in the byte counting(Nominal: " + box.getPayloadSizeFromBmffHeaders()
                     + ", Actual: " + Long.toString(actualSize) + ") of the Box: " + box.toString());
         }
     }
 
-    protected abstract void populatePayloadFromJumbfFile(T box, InputStream input) throws MipamsException;
+    public boolean sizeEqualsToBmffHeaderLength(long size, T box) {
+        return box.getPayloadSizeFromBmffHeaders() == size;
+    }
+
+    protected abstract void populatePayloadFromJumbfFile(T box, long availableBytesForBox, InputStream input)
+            throws MipamsException;
 }

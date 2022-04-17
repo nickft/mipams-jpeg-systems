@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.IOException;
@@ -76,6 +77,42 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(request.toString()))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testJsonBoxWithPadding() throws Exception {
+
+        String paddingSize = "10";
+
+        StringBuilder request = new StringBuilder();
+
+        request.append("{")
+                .append("  \"type\": \"jumb\",")
+                .append("  \"description\": {")
+                .append("    \"type\": \"jumd\",")
+                .append("    \"contentType\": \"json\"")
+                .append("  },")
+                .append("  \"content\": {")
+                .append("    \"type\": \"json\",")
+                .append("    \"fileUrl\":\"").append(TEST_FILE_PATH).append("\"")
+                .append("  },")
+                .append("  \"padding\": {")
+                .append("    \"type\": \"free\",")
+                .append("    \"size\": ").append(paddingSize)
+                .append("  }")
+                .append("}");
+
+        request.toString();
+
+        mockMvc.perform(post("/core/v1/generateBox")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request.toString()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void parseJsonBoxWithPaddingFromMetadata() throws Exception {
+        mockMvc.perform(get("/core/v1/parseMetadata?fileName=test.jumbf")).andExpect(status().isOk());
     }
 
 }
