@@ -68,8 +68,8 @@ public class ReplacementDescriptionBoxService extends BmffBoxService<Replacement
     }
 
     @Override
-    protected final void populatePayloadFromJumbfFile(ReplacementDescriptionBox box, InputStream input)
-            throws MipamsException {
+    protected final void populatePayloadFromJumbfFile(ReplacementDescriptionBox box, long availableBytesForBox,
+            InputStream input) throws MipamsException {
 
         int value = CoreUtils.readSingleByteAsIntFromInputStream(input);
         box.setReplacementTypeId(value);

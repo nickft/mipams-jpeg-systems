@@ -123,7 +123,8 @@ public class ProtectionDescriptionBoxService extends BmffBoxService<ProtectionDe
     }
 
     @Override
-    protected void populatePayloadFromJumbfFile(ProtectionDescriptionBox protectionDescriptionBox, InputStream input)
+    protected void populatePayloadFromJumbfFile(ProtectionDescriptionBox protectionDescriptionBox,
+            long availableBytesForBox, InputStream input)
             throws MipamsException {
 
         logger.debug("Protection Description box");
