@@ -17,7 +17,8 @@ public enum BoxTypeEnum {
     UuidBox("uuid", 0x75756964, "75756964-0011-0010-8000-00AA00389B71"),
     EmbeddedFileBox("bfbd", 0x6266264, "40CB0C32-BB8A-489D-A70B-2AD6F47F4369"),
     EmbeddedFileDescriptionBox("bfdb", 0x62666462, null),
-    BinaryDataBox("bidb", 0x62696462, null);
+    BinaryDataBox("bidb", 0x62696462, null),
+    CborBox("cbor", 0x63626F72, "63626F72-0011-0010-8000-00AA00389B71");
 
     private @Getter @Setter String type;
     private @Getter @Setter int typeId;
