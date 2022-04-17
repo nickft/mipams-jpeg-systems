@@ -14,7 +14,7 @@ import lombok.ToString;
 
 @NoArgsConstructor
 @ToString
-public class UuidBox extends XtBox implements ContentBox {
+public class UuidBox extends BmffBox implements ContentBox {
 
     private @Getter @Setter UUID uuid;
     private @Getter @Setter String fileUrl;
@@ -34,7 +34,7 @@ public class UuidBox extends XtBox implements ContentBox {
     }
 
     @Override
-    public List<XtBox> getXtBoxes() {
+    public List<BmffBox> getBmffBoxes() {
         return List.of(this);
     }
 

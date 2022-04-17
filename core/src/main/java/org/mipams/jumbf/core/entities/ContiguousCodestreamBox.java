@@ -18,7 +18,7 @@ public class ContiguousCodestreamBox extends SingleFormatBox implements ContentB
     }
 
     @Override
-    public List<XtBox> getXtBoxes() {
+    public List<BmffBox> getBmffBoxes() {
         return List.of(this);
     }
 

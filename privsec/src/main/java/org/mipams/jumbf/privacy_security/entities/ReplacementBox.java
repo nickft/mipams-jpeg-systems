@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.mipams.jumbf.core.entities.ContentBox;
-import org.mipams.jumbf.core.entities.XtBox;
+import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.privacy_security.entities.replacement.ReplacementType;
 import org.mipams.jumbf.privacy_security.util.BoxTypeEnum;
@@ -19,7 +19,7 @@ import lombok.ToString;
 public final class ReplacementBox implements ContentBox {
 
     protected @Getter @Setter ReplacementDescriptionBox descriptionBox;
-    protected @Getter @Setter List<XtBox> replacementDataBoxList;
+    protected @Getter @Setter List<BmffBox> replacementDataBoxList;
 
     @Override
     public int getTypeId() {
@@ -36,7 +36,7 @@ public final class ReplacementBox implements ContentBox {
 
         long sum = getDescriptionBox().getBoxSize();
 
-        for (XtBox contentBox : getReplacementDataBoxList()) {
+        for (BmffBox contentBox : getReplacementDataBoxList()) {
             sum += contentBox.getBoxSize();
         }
 
@@ -44,7 +44,7 @@ public final class ReplacementBox implements ContentBox {
     }
 
     @Override
-    public List<XtBox> getXtBoxes() {
+    public List<BmffBox> getBmffBoxes() {
         return getReplacementDataBoxList();
     }
 

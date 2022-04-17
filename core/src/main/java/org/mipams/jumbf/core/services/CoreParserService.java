@@ -34,7 +34,7 @@ public class CoreParserService implements ParserInterface {
 
         try (InputStream input = new FileInputStream(path)) {
 
-            List<JumbfBox> xtBoxList = new ArrayList<>();
+            List<JumbfBox> bmffBoxList = new ArrayList<>();
 
             while (input.available() > 0) {
 
@@ -42,10 +42,10 @@ public class CoreParserService implements ParserInterface {
 
                 logger.debug("New box discovered: " + jumbfBox.toString());
 
-                xtBoxList.add(jumbfBox);
+                bmffBoxList.add(jumbfBox);
             }
 
-            return xtBoxList;
+            return bmffBoxList;
         } catch (IOException e) {
             throw new CorruptedJumbfFileException("Could not open file: " + path, e);
         }

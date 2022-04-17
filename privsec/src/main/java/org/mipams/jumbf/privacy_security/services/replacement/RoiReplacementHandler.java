@@ -7,7 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.mipams.jumbf.core.entities.ContiguousCodestreamBox;
-import org.mipams.jumbf.core.entities.XtBox;
+import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.services.ContiguousCodestreamBoxService;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class RoiReplacementHandler implements DataBoxHandler {
     ContiguousCodestreamBoxService contiguousCodestreamBoxService;
 
     @Override
-    public List<XtBox> discoverDataBoxFromRequest(ObjectNode inputNode) throws MipamsException {
+    public List<BmffBox> discoverDataBoxFromRequest(ObjectNode inputNode) throws MipamsException {
 
         ObjectNode contentNode = (ObjectNode) inputNode.get("content");
 
@@ -31,7 +31,7 @@ public class RoiReplacementHandler implements DataBoxHandler {
     }
 
     @Override
-    public void writeDataBoxToJumbfFile(List<XtBox> replacementDataBoxList, FileOutputStream fileOutputStream)
+    public void writeDataBoxToJumbfFile(List<BmffBox> replacementDataBoxList, FileOutputStream fileOutputStream)
             throws MipamsException {
 
         ContiguousCodestreamBox contiguousCodestreamBox = (ContiguousCodestreamBox) replacementDataBoxList.get(0);
@@ -39,7 +39,7 @@ public class RoiReplacementHandler implements DataBoxHandler {
     }
 
     @Override
-    public List<XtBox> parseDataBoxFromJumbfFile(InputStream inputStream, long availableBytesForBox)
+    public List<BmffBox> parseDataBoxFromJumbfFile(InputStream inputStream, long availableBytesForBox)
             throws MipamsException {
 
         ContiguousCodestreamBox contiguousCodestreamBox = contiguousCodestreamBoxService.parseFromJumbfFile(inputStream,

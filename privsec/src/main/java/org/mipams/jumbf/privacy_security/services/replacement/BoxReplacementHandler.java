@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.mipams.jumbf.core.entities.JumbfBox;
-import org.mipams.jumbf.core.entities.XtBox;
+import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.services.JumbfBoxService;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +23,15 @@ public class BoxReplacementHandler implements DataBoxHandler {
     JumbfBoxService jumbfBoxService;
 
     @Override
-    public List<XtBox> discoverDataBoxFromRequest(ObjectNode inputNode) throws MipamsException {
+    public List<BmffBox> discoverDataBoxFromRequest(ObjectNode inputNode) throws MipamsException {
         JsonNode contentNode = inputNode.get("content");
 
-        List<XtBox> contentList = new ArrayList<>();
+        List<BmffBox> contentList = new ArrayList<>();
 
         if (!contentNode.isArray()) {
 
             ObjectNode contentBoxNode = (ObjectNode) contentNode;
-            XtBox jumbfBox = jumbfBoxService.discoverBoxFromRequest(contentBoxNode);
+            BmffBox jumbfBox = jumbfBoxService.discoverBoxFromRequest(contentBoxNode);
             contentList.add(jumbfBox);
         } else {
             Iterator<JsonNode> contentIterator = contentNode.elements();
@@ -39,7 +39,7 @@ public class BoxReplacementHandler implements DataBoxHandler {
             while (contentIterator.hasNext()) {
                 ObjectNode jumbfBoxNode = (ObjectNode) contentIterator.next();
 
-                XtBox jumbfBox = jumbfBoxService.discoverBoxFromRequest(jumbfBoxNode);
+                BmffBox jumbfBox = jumbfBoxService.discoverBoxFromRequest(jumbfBoxNode);
                 contentList.add(jumbfBox);
             }
         }
@@ -48,10 +48,10 @@ public class BoxReplacementHandler implements DataBoxHandler {
     }
 
     @Override
-    public void writeDataBoxToJumbfFile(List<XtBox> replacementDataBoxList, FileOutputStream fileOutputStream)
+    public void writeDataBoxToJumbfFile(List<BmffBox> replacementDataBoxList, FileOutputStream fileOutputStream)
             throws MipamsException {
 
-        for (XtBox contentBox : replacementDataBoxList) {
+        for (BmffBox contentBox : replacementDataBoxList) {
             JumbfBox jumbfBox = (JumbfBox) contentBox;
             jumbfBoxService.writeToJumbfFile(jumbfBox, fileOutputStream);
         }
@@ -59,9 +59,9 @@ public class BoxReplacementHandler implements DataBoxHandler {
     }
 
     @Override
-    public List<XtBox> parseDataBoxFromJumbfFile(InputStream inputStream, long availableBytesForBox)
+    public List<BmffBox> parseDataBoxFromJumbfFile(InputStream inputStream, long availableBytesForBox)
             throws MipamsException {
-        List<XtBox> contentBoxList = new ArrayList<>();
+        List<BmffBox> contentBoxList = new ArrayList<>();
 
         while (availableBytesForBox > 0) {
 

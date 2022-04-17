@@ -12,7 +12,7 @@ import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.core.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public abstract class SingleFormatBoxService<T extends SingleFormatBox> extends XtBoxService<T> {
+public abstract class SingleFormatBoxService<T extends SingleFormatBox> extends BmffBoxService<T> {
 
     @Autowired
     Properties properties;
@@ -29,7 +29,7 @@ public abstract class SingleFormatBoxService<T extends SingleFormatBox> extends 
     }
 
     @Override
-    protected void writeXtBoxPayloadToJumbfFile(T singleFormatBox, FileOutputStream fileOutputStream)
+    protected void writeBmffPayloadToJumbfFile(T singleFormatBox, FileOutputStream fileOutputStream)
             throws MipamsException {
 
         properties.checkIfFileSizeExceedApplicationLimits(singleFormatBox.getFileUrl());
@@ -46,7 +46,7 @@ public abstract class SingleFormatBoxService<T extends SingleFormatBox> extends 
 
         singleFormatBox.setFileUrl(fullPath);
 
-        long nominalTotalSizeInBytes = singleFormatBox.getPayloadSizeFromXTBoxHeaders();
+        long nominalTotalSizeInBytes = singleFormatBox.getPayloadSizeFromBmffHeaders();
 
         CoreUtils.writeBytesFromInputStreamToFile(input, nominalTotalSizeInBytes, singleFormatBox.getFileUrl());
     }

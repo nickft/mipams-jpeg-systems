@@ -19,7 +19,7 @@ public class BinaryDataBoxService extends SingleFormatBoxService<BinaryDataBox> 
     Properties properties;
 
     @Override
-    protected void writeXtBoxPayloadToJumbfFile(BinaryDataBox binaryDataBox, FileOutputStream fileOutputStream)
+    protected void writeBmffPayloadToJumbfFile(BinaryDataBox binaryDataBox, FileOutputStream fileOutputStream)
             throws MipamsException {
 
         if (binaryDataBox.isReferencedExternally()) {

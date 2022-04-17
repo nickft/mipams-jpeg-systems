@@ -7,7 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.mipams.jumbf.core.entities.BinaryDataBox;
-import org.mipams.jumbf.core.entities.XtBox;
+import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.services.BinaryDataBoxService;
 import org.mipams.jumbf.core.util.MipamsException;
 
@@ -21,7 +21,7 @@ public class AppReplacementHandler implements DataBoxHandler {
     BinaryDataBoxService binaryDataBoxService;
 
     @Override
-    public List<XtBox> discoverDataBoxFromRequest(ObjectNode inputNode) throws MipamsException {
+    public List<BmffBox> discoverDataBoxFromRequest(ObjectNode inputNode) throws MipamsException {
 
         ObjectNode contentNode = (ObjectNode) inputNode.get("content");
 
@@ -30,7 +30,7 @@ public class AppReplacementHandler implements DataBoxHandler {
     }
 
     @Override
-    public void writeDataBoxToJumbfFile(List<XtBox> replacementDataBoxList, FileOutputStream fileOutputStream)
+    public void writeDataBoxToJumbfFile(List<BmffBox> replacementDataBoxList, FileOutputStream fileOutputStream)
             throws MipamsException {
 
         BinaryDataBox binaryDataBox = (BinaryDataBox) replacementDataBoxList.get(0);
@@ -38,7 +38,7 @@ public class AppReplacementHandler implements DataBoxHandler {
     }
 
     @Override
-    public List<XtBox> parseDataBoxFromJumbfFile(InputStream inputStream, long availableBytesForBox)
+    public List<BmffBox> parseDataBoxFromJumbfFile(InputStream inputStream, long availableBytesForBox)
             throws MipamsException {
 
         BinaryDataBox binaryDataBox = binaryDataBoxService.parseFromJumbfFile(inputStream, availableBytesForBox);

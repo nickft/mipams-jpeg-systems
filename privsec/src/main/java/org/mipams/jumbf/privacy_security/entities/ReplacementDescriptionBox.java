@@ -1,6 +1,6 @@
 package org.mipams.jumbf.privacy_security.entities;
 
-import org.mipams.jumbf.core.entities.XtBox;
+import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.privacy_security.entities.replacement.ParamHandlerInterface;
@@ -9,7 +9,7 @@ import org.mipams.jumbf.privacy_security.util.BoxTypeEnum;
 import lombok.Getter;
 import lombok.Setter;
 
-public class ReplacementDescriptionBox extends XtBox {
+public class ReplacementDescriptionBox extends BmffBox {
 
     protected @Getter @Setter int replacementTypeId;
     protected @Getter @Setter int toggle;

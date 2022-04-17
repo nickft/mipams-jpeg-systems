@@ -7,7 +7,7 @@ import java.io.InputStream;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import org.mipams.jumbf.core.entities.XtBox;
+import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
@@ -17,24 +17,24 @@ import org.mipams.jumbf.core.util.CorruptedJumbfFileException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class XtBoxService<T extends XtBox> implements BoxServiceInterface<T> {
+public abstract class BmffBoxService<T extends BmffBox> implements BoxServiceInterface<T> {
 
-    private static final Logger logger = LoggerFactory.getLogger(XtBoxService.class);
+    private static final Logger logger = LoggerFactory.getLogger(BmffBoxService.class);
 
     @Override
     public final T discoverBoxFromRequest(ObjectNode inputNode) throws MipamsException {
-        T xtBox = initializeBox();
+        T bmffBox = initializeBox();
 
         try {
             validateRequestType(inputNode);
-            populateBox(xtBox, inputNode);
+            populateBox(bmffBox, inputNode);
         } catch (NullPointerException e) {
             throw new MipamsException("Error while parsing the request for box: " + getServiceMetadata().toString(), e);
         }
 
-        xtBox.updateXTHeadersBasedOnBox();
+        bmffBox.updateBmffHeadersBasedOnBox();
 
-        return xtBox;
+        return bmffBox;
     }
 
     private void validateRequestType(ObjectNode inputNode) throws BadRequestException {
@@ -65,12 +65,12 @@ public abstract class XtBoxService<T extends XtBox> implements BoxServiceInterfa
     protected abstract void populateBox(T box, ObjectNode input) throws MipamsException;
 
     @Override
-    public void writeToJumbfFile(T box, FileOutputStream fileOutputStream) throws MipamsException {
-        writeXtBoxHeadersToJumbfFile(box, fileOutputStream);
-        writeXtBoxPayloadToJumbfFile(box, fileOutputStream);
+    public void writeToJumbfFile(T bmffBox, FileOutputStream fileOutputStream) throws MipamsException {
+        writeBmffHeadersToJumbfFile(bmffBox, fileOutputStream);
+        writeBmffPayloadToJumbfFile(bmffBox, fileOutputStream);
     }
 
-    private final void writeXtBoxHeadersToJumbfFile(T box, FileOutputStream fileOutputStream) throws MipamsException {
+    private final void writeBmffHeadersToJumbfFile(T box, FileOutputStream fileOutputStream) throws MipamsException {
         try {
 
             fileOutputStream.write(CoreUtils.convertIntToByteArray(box.getLBox()));
@@ -84,24 +84,24 @@ public abstract class XtBoxService<T extends XtBox> implements BoxServiceInterfa
         }
     }
 
-    protected abstract void writeXtBoxPayloadToJumbfFile(T box, FileOutputStream fileOutputStream)
+    protected abstract void writeBmffPayloadToJumbfFile(T box, FileOutputStream fileOutputStream)
             throws MipamsException;
 
     @Override
     public final T parseFromJumbfFile(InputStream input, long availableBytesForBox) throws MipamsException {
 
-        logger.debug("Start parsing a new XTBox");
+        logger.debug("Start parsing a new BMFF Box");
 
-        T xtBox = initializeBox();
+        T bmffBox = initializeBox();
 
-        populateHeadersFromJumbfFile(xtBox, input);
+        populateHeadersFromJumbfFile(bmffBox, input);
 
-        populatePayloadFromJumbfFile(xtBox, input);
+        populatePayloadFromJumbfFile(bmffBox, input);
 
-        logger.debug("The box " + BoxTypeEnum.getBoxTypeAsStringFromId(xtBox.getTypeId()) + " has a total length of "
-                + xtBox.getBoxSizeFromXTBoxHeaders());
+        logger.debug("The box " + BoxTypeEnum.getBoxTypeAsStringFromId(bmffBox.getTypeId()) + " has a total length of "
+                + bmffBox.getBoxSizeFromBmffHeaders());
 
-        return xtBox;
+        return bmffBox;
     }
 
     protected abstract T initializeBox() throws MipamsException;
@@ -150,13 +150,13 @@ public abstract class XtBoxService<T extends XtBox> implements BoxServiceInterfa
                 box.setXBox(longVal);
             }
         } catch (IOException e) {
-            throw new MipamsException("Could not read XTBox values", e);
+            throw new MipamsException("Could not read BMFF Box fields", e);
         }
     }
 
     protected void verifyBoxSize(T box, long actualSize) throws MipamsException {
-        if (box.getPayloadSizeFromXTBoxHeaders() != actualSize) {
-            throw new MipamsException("Mismatch in the byte counting(Nominal: " + box.getPayloadSizeFromXTBoxHeaders()
+        if (box.getPayloadSizeFromBmffHeaders() != actualSize) {
+            throw new MipamsException("Mismatch in the byte counting(Nominal: " + box.getPayloadSizeFromBmffHeaders()
                     + ", Actual: " + Long.toString(actualSize) + ") of the Box: " + box.toString());
         }
     }

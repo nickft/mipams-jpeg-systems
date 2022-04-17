@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import org.mipams.jumbf.core.entities.BinaryDataBox;
 import org.mipams.jumbf.core.entities.ContentBox;
-import org.mipams.jumbf.core.entities.XtBox;
+import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.privacy_security.util.BoxTypeEnum;
 
@@ -30,9 +30,9 @@ public class ProtectionBox implements ContentBox {
 
     @Override
     public long getBoxSize() throws MipamsException {
-        long sum = getProtectionDescriptionBox().getBoxSizeFromXTBoxHeaders();
+        long sum = getProtectionDescriptionBox().getBoxSizeFromBmffHeaders();
 
-        sum += getBinaryDataBox().getBoxSizeFromXTBoxHeaders();
+        sum += getBinaryDataBox().getBoxSizeFromBmffHeaders();
 
         return sum;
     }
@@ -43,8 +43,8 @@ public class ProtectionBox implements ContentBox {
     }
 
     @Override
-    public List<XtBox> getXtBoxes() {
-        List<XtBox> result = new ArrayList<>();
+    public List<BmffBox> getBmffBoxes() {
+        List<BmffBox> result = new ArrayList<>();
 
         result.add(getProtectionDescriptionBox());
         result.add(getBinaryDataBox());

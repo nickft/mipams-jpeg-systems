@@ -13,7 +13,7 @@ import lombok.ToString;
 
 @NoArgsConstructor
 @ToString
-public class DescriptionBox extends XtBox {
+public class DescriptionBox extends BmffBox {
 
     protected @Getter @Setter UUID uuid;
 

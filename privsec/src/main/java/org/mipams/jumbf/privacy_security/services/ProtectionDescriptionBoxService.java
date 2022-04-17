@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.mipams.jumbf.core.entities.ServiceMetadata;
-import org.mipams.jumbf.core.services.XtBoxService;
+import org.mipams.jumbf.core.services.BmffBoxService;
 import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.CorruptedJumbfFileException;
@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ProtectionDescriptionBoxService extends XtBoxService<ProtectionDescriptionBox> {
+public class ProtectionDescriptionBoxService extends BmffBoxService<ProtectionDescriptionBox> {
 
     private static final Logger logger = LoggerFactory.getLogger(ProtectionDescriptionBoxService.class);
 
@@ -92,7 +92,7 @@ public class ProtectionDescriptionBoxService extends XtBoxService<ProtectionDesc
     }
 
     @Override
-    protected void writeXtBoxPayloadToJumbfFile(ProtectionDescriptionBox protectionDescriptionBox,
+    protected void writeBmffPayloadToJumbfFile(ProtectionDescriptionBox protectionDescriptionBox,
             FileOutputStream fileOutputStream)
             throws MipamsException {
 

@@ -18,7 +18,7 @@ public class XmlBox extends SingleFormatBox implements ContentBox {
     }
 
     @Override
-    public List<XtBox> getXtBoxes() {
+    public List<BmffBox> getBmffBoxes() {
         return List.of(this);
     }
 

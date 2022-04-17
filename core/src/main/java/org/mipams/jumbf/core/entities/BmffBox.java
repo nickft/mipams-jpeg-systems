@@ -8,7 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @ToString
-public abstract class XtBox implements BoxInterface {
+public abstract class BmffBox implements BoxInterface {
 
     private @Getter @Setter int LBox;
 
@@ -18,12 +18,12 @@ public abstract class XtBox implements BoxInterface {
 
     @Override
     public final long getBoxSize() {
-        return getBoxSizeFromXTBoxHeaders();
+        return getBoxSizeFromBmffHeaders();
     }
 
-    public final long getPayloadSizeFromXTBoxHeaders() {
+    public final long getPayloadSizeFromBmffHeaders() {
 
-        long payloadSize = getBoxSizeFromXTBoxHeaders();
+        long payloadSize = getBoxSizeFromBmffHeaders();
 
         payloadSize -= getLBoxSize() + getTBoxSize();
 
@@ -33,7 +33,7 @@ public abstract class XtBox implements BoxInterface {
         return payloadSize;
     }
 
-    public final long getBoxSizeFromXTBoxHeaders() {
+    public final long getBoxSizeFromBmffHeaders() {
         return isXBoxEnabled() ? getXBox() : getLBox();
     }
 
@@ -41,7 +41,7 @@ public abstract class XtBox implements BoxInterface {
         return LBox == 1 && (XBox != null);
     }
 
-    public final void updateXTHeadersBasedOnBox() throws MipamsException {
+    public final void updateBmffHeadersBasedOnBox() throws MipamsException {
 
         setTBox(getTypeId());
 

@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 @Service
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public final class JumbfBoxService extends XtBoxService<JumbfBox> implements ContentBoxService<JumbfBox> {
+public final class JumbfBoxService extends BmffBoxService<JumbfBox> implements ContentBoxService<JumbfBox> {
 
     private static final Logger logger = LoggerFactory.getLogger(JumbfBoxService.class);
 
@@ -61,7 +61,7 @@ public final class JumbfBoxService extends XtBoxService<JumbfBox> implements Con
     }
 
     @Override
-    protected void writeXtBoxPayloadToJumbfFile(JumbfBox jumbfBox, FileOutputStream fileOutputStream)
+    protected void writeBmffPayloadToJumbfFile(JumbfBox jumbfBox, FileOutputStream fileOutputStream)
             throws MipamsException {
 
         descriptionBoxService.writeToJumbfFile(jumbfBox.getDescriptionBox(), fileOutputStream);
@@ -77,12 +77,12 @@ public final class JumbfBoxService extends XtBoxService<JumbfBox> implements Con
 
         logger.debug("Jumbf box");
 
-        final long nominalPayloadSize = jumbfBox.getPayloadSizeFromXTBoxHeaders();
+        final long nominalPayloadSize = jumbfBox.getPayloadSizeFromBmffHeaders();
         long actualSize = 0;
 
         jumbfBox.setDescriptionBox(descriptionBoxService.parseFromJumbfFile(input, nominalPayloadSize));
 
-        actualSize += jumbfBox.getDescriptionBox().getBoxSizeFromXTBoxHeaders();
+        actualSize += jumbfBox.getDescriptionBox().getBoxSizeFromBmffHeaders();
 
         ContentBoxService contentBoxService = contentBoxDiscoveryManager
                 .getContentBoxServiceBasedOnContentUUID(jumbfBox.getDescriptionBox().getUuid());

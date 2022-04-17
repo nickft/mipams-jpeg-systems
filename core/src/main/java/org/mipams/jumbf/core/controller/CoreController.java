@@ -33,10 +33,18 @@ public class CoreController {
     public ResponseEntity<?> parseJumbfMetadataFromPath(@RequestParam String fileName) {
         try {
             List<JumbfBox> boxList = parserService.parseMetadataFromJumbfFile(fileName);
-            return ResponseEntity.ok().body(boxList.toString());
+            return ResponseEntity.ok().body(prepareResponse(boxList));
         } catch (MipamsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    private String prepareResponse(List<JumbfBox> boxList) {
+        StringBuilder result = new StringBuilder("This .jumbf file contains the following boxes:\n");
+        for (JumbfBox jumbfBox : boxList) {
+            result.append(jumbfBox.toString());
+        }
+        return result.toString();
     }
 
     @PostMapping("/generateBox")

@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UuidBoxService extends XtBoxService<UuidBox> implements ContentBoxService<UuidBox> {
+public class UuidBoxService extends BmffBoxService<UuidBox> implements ContentBoxService<UuidBox> {
 
     private static final Logger logger = LoggerFactory.getLogger(UuidBoxService.class);
 
@@ -55,7 +55,7 @@ public class UuidBoxService extends XtBoxService<UuidBox> implements ContentBoxS
     }
 
     @Override
-    protected void writeXtBoxPayloadToJumbfFile(UuidBox uuidBox, FileOutputStream fileOutputStream)
+    protected void writeBmffPayloadToJumbfFile(UuidBox uuidBox, FileOutputStream fileOutputStream)
             throws MipamsException {
         try {
             fileOutputStream.write(CoreUtils.convertUUIDToByteArray(uuidBox.getUuid()));
@@ -92,7 +92,7 @@ public class UuidBoxService extends XtBoxService<UuidBox> implements ContentBoxS
 
             uuidBox.setFileUrl(fullPath);
 
-            long nominalTotalSizeInBytes = uuidBox.getPayloadSizeFromXTBoxHeaders();
+            long nominalTotalSizeInBytes = uuidBox.getPayloadSizeFromBmffHeaders();
             CoreUtils.writeBytesFromInputStreamToFile(input, nominalTotalSizeInBytes, uuidBox.getFileUrl());
 
             actualSize += CoreUtils.getFileSizeFromPath(uuidBox.getFileUrl());

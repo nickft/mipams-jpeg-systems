@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @NoArgsConstructor
-public class JumbfBox extends XtBox implements ContentBox {
+public class JumbfBox extends BmffBox implements ContentBox {
 
     protected @Getter @Setter DescriptionBox descriptionBox;
     protected @Getter @Setter ContentBox contentBox;
@@ -24,15 +24,15 @@ public class JumbfBox extends XtBox implements ContentBox {
     @Override
     protected long calculatePayloadSize() throws MipamsException {
 
-        long sum = descriptionBox.getBoxSizeFromXTBoxHeaders();
+        long sum = descriptionBox.getBoxSizeFromBmffHeaders();
         sum += contentBox.getBoxSize();
 
         return sum;
     }
 
     @Override
-    public List<XtBox> getXtBoxes() {
-        return contentBox.getXtBoxes();
+    public List<BmffBox> getBmffBoxes() {
+        return contentBox.getBmffBoxes();
     }
 
     @Override
@@ -42,7 +42,7 @@ public class JumbfBox extends XtBox implements ContentBox {
 
     @Override
     public String toString() {
-        return String.format("\n%s Content Type JUMBF box \n", getContentBox().getClass().getSimpleName());
+        return String.format("--> %s Content Type JUMBF box \n", getContentBox().getClass().getSimpleName());
     }
 
 }

@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmbeddedFileDescriptionBoxService extends XtBoxService<EmbeddedFileDescriptionBox> {
+public class EmbeddedFileDescriptionBoxService extends BmffBoxService<EmbeddedFileDescriptionBox> {
 
     private static final Logger logger = LoggerFactory.getLogger(EmbeddedFileDescriptionBoxService.class);
 
@@ -70,7 +70,7 @@ public class EmbeddedFileDescriptionBoxService extends XtBoxService<EmbeddedFile
     }
 
     @Override
-    protected void writeXtBoxPayloadToJumbfFile(EmbeddedFileDescriptionBox embeddedFileDescriptionBox,
+    protected void writeBmffPayloadToJumbfFile(EmbeddedFileDescriptionBox embeddedFileDescriptionBox,
             FileOutputStream fileOutputStream) throws MipamsException {
 
         try {

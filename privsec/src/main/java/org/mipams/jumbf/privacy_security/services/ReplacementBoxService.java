@@ -7,7 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.mipams.jumbf.core.entities.ServiceMetadata;
-import org.mipams.jumbf.core.entities.XtBox;
+import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.services.ContentBoxService;
 import org.mipams.jumbf.core.util.MipamsException;
 
@@ -48,7 +48,7 @@ public class ReplacementBoxService implements ContentBoxService<ReplacementBox> 
         ReplacementType replacementType = replacementBox.getReplacementType();
         DataBoxHandler dataBoxHandler = dataBoxHandlerFactory.getDataBoxHandlerFromType(replacementType);
 
-        List<XtBox> contentBoxList = dataBoxHandler.discoverDataBoxFromRequest(inputNode);
+        List<BmffBox> contentBoxList = dataBoxHandler.discoverDataBoxFromRequest(inputNode);
 
         replacementBox.setReplacementDataBoxList(contentBoxList);
 
@@ -82,7 +82,7 @@ public class ReplacementBoxService implements ContentBoxService<ReplacementBox> 
         ReplacementType replacementType = replacementBox.getReplacementType();
         DataBoxHandler dataBoxHandler = dataBoxHandlerFactory.getDataBoxHandlerFromType(replacementType);
 
-        List<XtBox> contentBoxList = dataBoxHandler.parseDataBoxFromJumbfFile(inputStream, availableBytesForBox);
+        List<BmffBox> contentBoxList = dataBoxHandler.parseDataBoxFromJumbfFile(inputStream, availableBytesForBox);
         replacementBox.setReplacementDataBoxList(contentBoxList);
 
         return replacementBox;

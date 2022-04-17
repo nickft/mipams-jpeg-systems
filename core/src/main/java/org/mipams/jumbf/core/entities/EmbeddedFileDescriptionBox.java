@@ -14,7 +14,7 @@ import lombok.ToString;
 
 @NoArgsConstructor
 @ToString
-public class EmbeddedFileDescriptionBox extends XtBox {
+public class EmbeddedFileDescriptionBox extends BmffBox {
 
     private static final Logger logger = LoggerFactory.getLogger(EmbeddedFileDescriptionBox.class);
 

@@ -40,8 +40,8 @@ public class EmbeddedFileBox implements ContentBox {
     }
 
     @Override
-    public List<XtBox> getXtBoxes() {
-        List<XtBox> result = new ArrayList<>();
+    public List<BmffBox> getBmffBoxes() {
+        List<BmffBox> result = new ArrayList<>();
 
         result.add(getDescriptionBox());
         result.add(getBinaryDataBox());

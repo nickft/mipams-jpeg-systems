@@ -71,7 +71,7 @@ public class EmbeddedFileBoxService implements ContentBoxService<EmbeddedFileBox
         BinaryDataBox binaryDataBox = binaryDataBoxService.discoverBoxFromRequest(binaryDataNode);
 
         binaryDataBox.setReferencedExternally(embeddedFileDescriptionBox.isContentReferencedExternally());
-        binaryDataBox.updateXTHeadersBasedOnBox();
+        binaryDataBox.updateBmffHeadersBasedOnBox();
 
         embeddedFileBox.setDescriptionBox(embeddedFileDescriptionBox);
         embeddedFileBox.setBinaryDataBox(binaryDataBox);

@@ -7,7 +7,7 @@ import java.io.InputStream;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.mipams.jumbf.core.entities.ServiceMetadata;
-import org.mipams.jumbf.core.services.XtBoxService;
+import org.mipams.jumbf.core.services.BmffBoxService;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.privacy_security.entities.ReplacementDescriptionBox;
@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ReplacementDescriptionBoxService extends XtBoxService<ReplacementDescriptionBox> {
+public class ReplacementDescriptionBoxService extends BmffBoxService<ReplacementDescriptionBox> {
 
     @Autowired
     ParamHandlerFactory paramHandlerFactory;
@@ -53,7 +53,7 @@ public class ReplacementDescriptionBoxService extends XtBoxService<ReplacementDe
     }
 
     @Override
-    protected final void writeXtBoxPayloadToJumbfFile(ReplacementDescriptionBox box, FileOutputStream fileOutputStream)
+    protected final void writeBmffPayloadToJumbfFile(ReplacementDescriptionBox box, FileOutputStream fileOutputStream)
             throws MipamsException {
 
         try {
