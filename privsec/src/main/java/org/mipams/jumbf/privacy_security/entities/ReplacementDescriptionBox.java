@@ -6,13 +6,21 @@ import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.privacy_security.entities.replacement.ParamHandlerInterface;
 import org.mipams.jumbf.privacy_security.util.BoxTypeEnum;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode(callSuper = true)
 public class ReplacementDescriptionBox extends BmffBox {
 
     protected @Getter @Setter int replacementTypeId;
     protected @Getter @Setter int toggle;
+
+    @EqualsAndHashCode.Exclude
     protected @Getter @Setter ParamHandlerInterface paramHandler;
 
     @Override

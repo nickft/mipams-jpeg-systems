@@ -42,20 +42,6 @@ public class EmbeddedFileDescriptionBox extends BmffBox {
         return sum;
     }
 
-    public void computeAndSetToggleBasedOnFields() {
-        int toggle = 0;
-
-        if (fileNameExists()) {
-            toggle = 1;
-        }
-
-        if (isContentReferencedExternally()) {
-            toggle = toggle | 2;
-        }
-
-        setToggle(toggle);
-    }
-
     public int getToggleSize() {
         return 1;
     }
@@ -76,15 +62,25 @@ public class EmbeddedFileDescriptionBox extends BmffBox {
         return CoreUtils.isBitAtGivenPositionSet(toggle, 1);
     }
 
+    public void computeAndSetToggleBasedOnFields() {
+        int toggle = getToggle();
+
+        if (getFileName() != null) {
+            toggle = toggle | 1;
+        }
+
+        setToggle(toggle);
+    }
+
     public void markFileAsExternallyReferenced() {
         int value = 1;
-        int updatedToggle = CoreUtils.setBitValueAtGivenPosition(toggle, 1, value);
+        int updatedToggle = CoreUtils.setBitValueAtGivenPosition(getToggle(), 1, value);
         setToggle(updatedToggle);
     }
 
     public void markFileAsInternallyReferenced() {
         int value = 0;
-        int updatedToggle = CoreUtils.setBitValueAtGivenPosition(toggle, 1, value);
+        int updatedToggle = CoreUtils.setBitValueAtGivenPosition(getToggle(), 1, value);
         setToggle(updatedToggle);
     }
 

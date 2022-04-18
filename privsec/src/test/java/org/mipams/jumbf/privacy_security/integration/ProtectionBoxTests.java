@@ -1,10 +1,24 @@
 package org.mipams.jumbf.privacy_security.integration;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.IOException;
+import java.util.List;
+
+import javax.xml.bind.DatatypeConverter;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mipams.jumbf.core.entities.BinaryDataBox;
+import org.mipams.jumbf.core.entities.DescriptionBox;
+import org.mipams.jumbf.core.entities.JsonBox;
+import org.mipams.jumbf.core.entities.JumbfBox;
+import org.mipams.jumbf.core.entities.XmlBox;
+import org.mipams.jumbf.core.util.MipamsException;
+import org.mipams.jumbf.privacy_security.entities.ProtectionBox;
+import org.mipams.jumbf.privacy_security.entities.ProtectionDescriptionBox;
+import org.mipams.jumbf.privacy_security.util.BoxTypeEnum;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -15,154 +29,109 @@ import org.springframework.test.context.ActiveProfiles;
 public class ProtectionBoxTests extends AbstractIntegrationTests {
 
     @BeforeAll
-    static void initTest() throws IOException {
+    static void initRequest() throws IOException {
         generateFile();
     }
 
     @AfterAll
     public static void cleanUp() throws IOException {
-        fileCleanUp(TEST_FILE_PATH);
-        fileCleanUp(JUMBF_FILE_PATH);
+        fileCleanUp();
     }
 
     @Test
-    void testGenerateProtectionBoxAesRequest() throws Exception {
-        testGenerateBoxEndpoint(getAesRequest());
+    void testProtectionBoxAes() throws Exception {
+
+        ProtectionDescriptionBox protectionDescriptionBox = new ProtectionDescriptionBox();
+        protectionDescriptionBox.setAes256CbcProtection();
+        protectionDescriptionBox.updateBmffHeadersBasedOnBox();
+
+        JumbfBox givenJumbfBox = getProtectionJumbfBoxBasedOnProtectionDescriptionBox(protectionDescriptionBox);
+        JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
+
+        assertEquals(givenJumbfBox, parsedJumbfBox);
     }
 
     @Test
-    void testParseProtectionBoxAesRequest() throws Exception {
-        testParseBoxFromFile(JUMBF_FILE_NAME);
+    void testProtectionBoxAesWithIv() throws Exception {
+        ProtectionDescriptionBox protectionDescriptionBox = new ProtectionDescriptionBox();
+        protectionDescriptionBox.setAes256CbcWithIvProtection();
+        byte[] iv = DatatypeConverter.parseHexBinary("D9BBA15016D876F67532FAFB8B851D24");
+        protectionDescriptionBox.setIv(iv);
+        protectionDescriptionBox.updateBmffHeadersBasedOnBox();
+
+        JumbfBox givenJumbfBox = getProtectionJumbfBoxBasedOnProtectionDescriptionBox(protectionDescriptionBox);
+        JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
+
+        assertEquals(givenJumbfBox, parsedJumbfBox);
     }
 
     @Test
-    void testProtectionBoxAesRequest() throws Exception {
-        testGenerateBoxEndpoint(getAesRequest());
+    void testProtectionBoxWithExternalEncryption() throws Exception {
+        ProtectionDescriptionBox protectionDescriptionBox = new ProtectionDescriptionBox();
+        protectionDescriptionBox.setProtectionMethodAsExternallyReferenced();
+        protectionDescriptionBox.setEncLabel("encryption-reference");
+        protectionDescriptionBox.updateBmffHeadersBasedOnBox();
+
+        JumbfBox protectionJumbfBox = getProtectionJumbfBoxBasedOnProtectionDescriptionBox(protectionDescriptionBox);
+
+        DescriptionBox dBox = new DescriptionBox();
+        dBox.setUuid(org.mipams.jumbf.core.util.BoxTypeEnum.JsonBox.getContentUuid());
+        dBox.setLabel("encryption-reference");
+        dBox.computeAndSetToggleBasedOnFields();
+        dBox.updateBmffHeadersBasedOnBox();
+
+        JsonBox jsonBox = new JsonBox();
+        jsonBox.setFileUrl(TEST_FILE_PATH);
+        jsonBox.updateBmffHeadersBasedOnBox();
+
+        JumbfBox jsonJumbfBox = MockJumbfBox.generateJumbfBox(dBox, jsonBox);
+
+        List<JumbfBox> givenJumbfBoxList = List.of(protectionJumbfBox, jsonJumbfBox);
+        List<JumbfBox> parsedJumbfBoxList = generateJumbfFileAndParseBox(givenJumbfBoxList);
+
+        assertEquals(givenJumbfBoxList, parsedJumbfBoxList);
     }
 
     @Test
-    void testGenerateProtectionBoxAesWithIVRequest() throws Exception {
-        testGenerateBoxEndpoint(getAesWithIVRequest());
+    void testProtectionBoxWithAccessRules() throws Exception {
+        ProtectionDescriptionBox protectionDescriptionBox = new ProtectionDescriptionBox();
+        protectionDescriptionBox.setAes256CbcProtection();
+        protectionDescriptionBox.setArLabel("access-rules-reference");
+        protectionDescriptionBox.includeAccessRulesInToggle();
+        protectionDescriptionBox.updateBmffHeadersBasedOnBox();
+        JumbfBox protectionJumbfBox = getProtectionJumbfBoxBasedOnProtectionDescriptionBox(protectionDescriptionBox);
+
+        DescriptionBox dBox = new DescriptionBox();
+        dBox.setUuid(org.mipams.jumbf.core.util.BoxTypeEnum.XmlBox.getContentUuid());
+        dBox.setLabel("access-rules-reference");
+        dBox.computeAndSetToggleBasedOnFields();
+        dBox.updateBmffHeadersBasedOnBox();
+
+        XmlBox xmlBox = new XmlBox();
+        xmlBox.setFileUrl(TEST_FILE_PATH);
+        xmlBox.updateBmffHeadersBasedOnBox();
+
+        JumbfBox xmlJumbfBox = MockJumbfBox.generateJumbfBox(dBox, xmlBox);
+
+        List<JumbfBox> givenJumbfBoxList = List.of(protectionJumbfBox, xmlJumbfBox);
+        List<JumbfBox> parsedJumbfBoxList = generateJumbfFileAndParseBox(givenJumbfBoxList);
+
+        assertEquals(givenJumbfBoxList, parsedJumbfBoxList);
     }
 
-    @Test
-    void testParseProtectionBoxAesWithIVRequest() throws Exception {
-        testParseBoxFromFile(JUMBF_FILE_NAME);
+    JumbfBox getProtectionJumbfBoxBasedOnProtectionDescriptionBox(ProtectionDescriptionBox pdBox)
+            throws MipamsException {
+
+        BinaryDataBox binaryDataBox = new BinaryDataBox();
+        binaryDataBox.setFileUrl(TEST_FILE_PATH);
+        binaryDataBox.updateBmffHeadersBasedOnBox();
+
+        ProtectionBox protectionBox = new ProtectionBox();
+        protectionBox.setProtectionDescriptionBox(pdBox);
+        protectionBox.setBinaryDataBox(binaryDataBox);
+
+        return MockJumbfBox.generateJumbfBoxWithContent(protectionBox,
+                BoxTypeEnum.ProtectionBox.getContentUuid());
+
     }
-
-    @Test
-    void testGenerateProtectionBoxRequestWithExternalEncryption() throws Exception {
-        testGenerateBoxEndpoint(getRequestWithExternalEncryption());
-    }
-
-    @Test
-    void testParseProtectionBoxAesWithExternalEncryption() throws Exception {
-        testParseBoxFromFile(JUMBF_FILE_NAME);
-    }
-
-    @Test
-    void testGenerateProtectionBoxRequestWithAccessRules() throws Exception {
-        testGenerateBoxEndpoint(getRequestWithAccessRules());
-    }
-
-    @Test
-    void testParseProtectionBoxAesWithAccessRules() throws Exception {
-        testParseBoxFromFile(JUMBF_FILE_NAME);
-    }
-
-    String getAesRequest() throws IOException {
-
-        StringBuilder requestBody = new StringBuilder();
-
-        requestBody.append("{")
-                .append("  \"type\": \"jumb\",")
-                .append("  \"description\": { \"type\": \"jumd\", \"contentType\": \"prtc\" },")
-                .append("  \"content\": {")
-                .append("    \"protectionDescription\": {")
-                .append("      \"type\": \"pspd\",")
-                .append("      \"method\": \"aes-256-cbc\"")
-                .append("    },")
-                .append("    \"content\": { \"type\": \"bidb\", \"fileUrl\": \"").append(TEST_FILE_PATH).append("\" }")
-                .append("  }")
-                .append("}");
-
-        return requestBody.toString();
-    }
-
-    String getAesWithIVRequest() throws IOException {
-
-        StringBuilder requestBody = new StringBuilder();
-
-        requestBody.append("{")
-                .append("  \"type\": \"jumb\",")
-                .append("  \"description\": { \"type\": \"jumd\", \"contentType\": \"prtc\" },")
-                .append("  \"content\": {")
-                .append("    \"protectionDescription\": {")
-                .append("      \"type\": \"pspd\",")
-                .append("      \"method\": \"aes-256-cbc-iv\",")
-                .append("      \"ivHexString\": \"D9BBA15016D876F67532FAFB8B851D24\"")
-                .append("    },")
-                .append("    \"content\": { \"type\": \"bidb\", \"fileUrl\": \"").append(TEST_FILE_PATH).append("\" }")
-                .append("  }")
-                .append("}");
-
-        return requestBody.toString();
-    }
-
-    String getRequestWithExternalEncryption() throws IOException {
-
-        StringBuilder requestBody = new StringBuilder();
-
-        requestBody.append("[")
-                .append("  {")
-                .append("    \"type\": \"jumb\",")
-                .append("    \"description\": { \"type\": \"jumd\", \"contentType\": \"prtc\" },")
-                .append("    \"content\": {")
-                .append("      \"protectionDescription\": {")
-                .append("        \"type\": \"pspd\",")
-                .append("        \"method\": \"external\",")
-                .append("        \"external-label\": \"json-encryption\"")
-                .append("      },")
-                .append("      \"content\": { \"type\": \"bidb\", \"fileUrl\": \"").append(TEST_FILE_PATH)
-                .append("\" }")
-                .append("    }")
-                .append("  },")
-                .append("  {")
-                .append("    \"type\": \"jumb\",")
-                .append("    \"description\": { \"type\": \"jumd\", \"contentType\": \"json\", \"label\": \"json-encryption\" },")
-                .append("    \"content\": { \"type\": \"json\", \"fileUrl\":\"").append(TEST_FILE_PATH).append("\" }")
-                .append("  }")
-                .append("]");
-
-        return requestBody.toString();
-    }
-
-    private String getRequestWithAccessRules() {
-        StringBuilder requestBody = new StringBuilder();
-
-        requestBody.append("[")
-                .append("  {")
-                .append("    \"type\": \"jumb\",")
-                .append("    \"description\": { \"type\": \"jumd\", \"contentType\": \"prtc\" },")
-                .append("    \"content\": {")
-                .append("      \"protectionDescription\": {")
-                .append("        \"type\": \"pspd\",")
-                .append("        \"method\": \"aes-256-cbc-iv\",")
-                .append("        \"ivHexString\": \"D9BBA15016D876F67532FAFB8B851D24\",")
-                .append("        \"access-rules-label\": \"xaml-rules-box\"")
-                .append("      },")
-                .append("      \"content\": { \"type\": \"bidb\", \"fileUrl\": \"").append(TEST_FILE_PATH)
-                .append("\" }")
-                .append("    }")
-                .append("  },")
-                .append("  {")
-                .append("    \"type\": \"jumb\",")
-                .append("    \"description\": { \"type\": \"jumd\", \"contentType\": \"xml\", \"label\": \"xacml-rules-box\" },")
-                .append("    \"content\":{ \"type\": \"xml\", \"fileUrl\": \"").append(TEST_FILE_PATH).append("\" }")
-                .append("  }")
-                .append("]");
-
-        return requestBody.toString();
-    }
-
 }

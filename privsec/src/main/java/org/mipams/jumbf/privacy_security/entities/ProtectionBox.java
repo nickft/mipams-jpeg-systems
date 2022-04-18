@@ -10,13 +10,15 @@ import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.privacy_security.util.BoxTypeEnum;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @NoArgsConstructor
-@ToString(callSuper = true)
+@ToString
+@EqualsAndHashCode
 public class ProtectionBox implements ContentBox {
 
     private @Getter @Setter ProtectionDescriptionBox protectionDescriptionBox;

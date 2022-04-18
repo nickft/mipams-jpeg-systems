@@ -18,6 +18,7 @@ import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.privacy_security.entities.ProtectionDescriptionBox;
 import org.mipams.jumbf.privacy_security.entities.ProtectionDescriptionBox.MethodType;
 import org.mipams.jumbf.privacy_security.util.BoxTypeEnum;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -5,6 +5,7 @@ import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import lombok.ToString;
 
 @NoArgsConstructor
 @ToString
+@EqualsAndHashCode(callSuper = true)
 public class ProtectionDescriptionBox extends BmffBox {
 
     private @Getter @Setter int methodToggle;

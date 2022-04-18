@@ -105,7 +105,7 @@ public class BoxParamHandler implements ParamHandlerInterface {
         return getOffset() == getMaxLongValue();
     }
 
-    private long getMaxLongValue() {
+    public long getMaxLongValue() {
         String maxLongAsHex = "FFFFFFFFFFFFFFFF";
         BigInteger maxValue = new BigInteger(maxLongAsHex, 16);
         return maxValue.longValue();

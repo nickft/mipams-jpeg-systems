@@ -73,29 +73,6 @@ public class DescriptionBox extends BmffBox {
         return CoreUtils.addEscapeCharacterToText(getLabel()).length();
     }
 
-    public void computeAndSetToggleBasedOnFields() {
-
-        int toggle = 0;
-
-        if (isRequestable()) {
-            toggle = 3;
-        }
-
-        if (labelExists()) {
-            toggle = toggle | 2;
-        }
-
-        if (idExists()) {
-            toggle = toggle | 4;
-        }
-
-        if (sha256HashExists()) {
-            toggle = toggle | 8;
-        }
-
-        setToggle(toggle);
-    }
-
     public boolean isRequestable() {
         return CoreUtils.isBitAtGivenPositionSet(toggle, 0);
     }
@@ -110,6 +87,25 @@ public class DescriptionBox extends BmffBox {
 
     public boolean sha256HashExists() {
         return CoreUtils.isBitAtGivenPositionSet(toggle, 3);
+    }
+
+    public void computeAndSetToggleBasedOnFields() {
+
+        int toggle = 0;
+
+        if (getLabel() != null) {
+            toggle = 3;
+        }
+
+        if (getId() != null) {
+            toggle = toggle | 4;
+        }
+
+        if (getSha256Hash() != null) {
+            toggle = toggle | 8;
+        }
+
+        setToggle(toggle);
     }
 
     public String getLabelWithEscapeCharacter() {
