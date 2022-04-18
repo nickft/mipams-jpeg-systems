@@ -9,6 +9,8 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mipams.jumbf.core.entities.JsonBox;
+import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.services.ContentBoxService;
 import org.mipams.jumbf.core.services.JsonBoxService;
 import org.mipams.jumbf.core.util.CoreUtils;
@@ -29,6 +31,9 @@ public class ContentBoxDiscoveryManagerTests {
         List<ContentBoxService> mockContentBoxServiceList = new ArrayList<>();
 
         JsonBoxService service = new JsonBoxService();
+        JsonBox jsonBox = new JsonBox();
+        ReflectionTestUtils.setField(service, "serviceMetadata",
+                new ServiceMetadata(jsonBox.getTypeId(), jsonBox.getType(), jsonBox.getContentTypeUUID()));
         mockContentBoxServiceList.add(service);
 
         manager = new ContentBoxDiscoveryManager();
@@ -41,7 +46,7 @@ public class ContentBoxDiscoveryManagerTests {
         UUID randomInput = UUID.randomUUID();
 
         Exception exception = assertThrows(MipamsException.class, () -> {
-            manager.getContentBoxServiceBasedOnContentUUID(randomInput);
+            manager.getContentBoxServiceBasedOnContentUUID(randomInput.toString());
         });
 
         String expectedMessage = String.format("Box with uuid %s is not a Content Box", randomInput.toString());

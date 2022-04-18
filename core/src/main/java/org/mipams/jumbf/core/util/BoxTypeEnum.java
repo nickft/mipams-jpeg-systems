@@ -23,14 +23,12 @@ public enum BoxTypeEnum {
 
     private @Getter @Setter String type;
     private @Getter @Setter int typeId;
-    private @Getter @Setter UUID contentUuid;
+    private @Getter @Setter String contentUuid;
 
     BoxTypeEnum(String type, int typeId, String uuidAsString) {
         setTypeId(typeId);
         setType(type);
-        if (uuidAsString != null) {
-            setContentUuid(UUID.fromString(uuidAsString));
-        }
+        setContentUuid(uuidAsString);
     }
 
     public static String getBoxTypeAsStringFromId(int boxId) {

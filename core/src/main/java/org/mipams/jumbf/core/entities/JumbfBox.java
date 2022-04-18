@@ -1,9 +1,7 @@
 package org.mipams.jumbf.core.entities;
 
 import java.util.List;
-import java.util.UUID;
 
-import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.MipamsException;
 
 import lombok.EqualsAndHashCode;
@@ -23,7 +21,17 @@ public class JumbfBox extends BmffBox implements ContentBox {
 
     @Override
     public int getTypeId() {
-        return BoxTypeEnum.JumbfBox.getTypeId();
+        return 0x6A756D62;
+    }
+
+    @Override
+    public String getType() {
+        return "jumb";
+    }
+
+    @Override
+    public String getContentTypeUUID() {
+        return "6A756D62-0011-0010-8000-00AA00389B71";
     }
 
     @Override
@@ -37,10 +45,5 @@ public class JumbfBox extends BmffBox implements ContentBox {
     @Override
     public List<BmffBox> getBmffBoxes() {
         return contentBox.getBmffBoxes();
-    }
-
-    @Override
-    public UUID getContentTypeUUID() {
-        return BoxTypeEnum.JumbfBox.getContentUuid();
     }
 }

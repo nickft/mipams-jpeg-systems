@@ -1,16 +1,15 @@
 package org.mipams.jumbf.core.services;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.UUID;
+
+import javax.annotation.PostConstruct;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.entities.UuidBox;
 import org.mipams.jumbf.core.util.BadRequestException;
-import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.CorruptedJumbfFileException;
 import org.mipams.jumbf.core.util.MipamsException;
@@ -29,17 +28,30 @@ public class UuidBoxService extends BmffBoxService<UuidBox> implements ContentBo
     @Autowired
     Properties properties;
 
+    ServiceMetadata serviceMetadata;
+
+    @PostConstruct
+    void init() {
+        UuidBox box = initializeBox();
+        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType(), box.getContentTypeUUID());
+    }
+
+    @Override
+    protected UuidBox initializeBox() {
+        return new UuidBox();
+    }
+
     @Override
     public ServiceMetadata getServiceMetadata() {
-        return BoxTypeEnum.UuidBox.getServiceMetadata();
+        return serviceMetadata;
     }
 
     @Override
     protected void populateBox(UuidBox uuidBox, ObjectNode input) throws MipamsException {
-        String uuidAsString = input.get("uuid").asText();
+        String uuid = input.get("uuid").asText();
 
         try {
-            uuidBox.setUuid(UUID.fromString(uuidAsString));
+            uuidBox.setUuid(uuid);
         } catch (IllegalArgumentException e) {
             throw new BadRequestException("Invalid UUID format: ", e);
 
@@ -57,21 +69,11 @@ public class UuidBoxService extends BmffBoxService<UuidBox> implements ContentBo
     @Override
     protected void writeBmffPayloadToJumbfFile(UuidBox uuidBox, FileOutputStream fileOutputStream)
             throws MipamsException {
-        try {
-            fileOutputStream.write(CoreUtils.convertUUIDToByteArray(uuidBox.getUuid()));
 
-            properties.checkIfFileSizeExceedApplicationLimits(uuidBox.getFileUrl());
-            CoreUtils.writeFileContentToOutput(uuidBox.getFileUrl(), fileOutputStream);
+        CoreUtils.writeUuidToOutputStream(uuidBox.getUuid(), fileOutputStream);
 
-        } catch (IOException e) {
-            throw new MipamsException("Could not write to file.", e);
-        }
-
-    }
-
-    @Override
-    protected UuidBox initializeBox() throws MipamsException {
-        return new UuidBox();
+        properties.checkIfFileSizeExceedApplicationLimits(uuidBox.getFileUrl());
+        CoreUtils.writeFileContentToOutput(uuidBox.getFileUrl(), fileOutputStream);
     }
 
     @Override
@@ -83,8 +85,8 @@ public class UuidBoxService extends BmffBoxService<UuidBox> implements ContentBo
 
         try {
 
-            UUID uuidVal = CoreUtils.readUuidFromInputStream(input);
-            uuidBox.setUuid(uuidVal);
+            String uuid = CoreUtils.readUuidFromInputStream(input);
+            uuidBox.setUuid(uuid);
             nominalTotalSizeInBytes -= CoreUtils.UUID_BYTE_SIZE;
 
             String fileName = CoreUtils.randomStringGenerator();

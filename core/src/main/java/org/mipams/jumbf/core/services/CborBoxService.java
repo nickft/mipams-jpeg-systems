@@ -1,23 +1,32 @@
 package org.mipams.jumbf.core.services;
 
 import org.mipams.jumbf.core.entities.ServiceMetadata;
+
+import javax.annotation.PostConstruct;
+
 import org.mipams.jumbf.core.entities.CborBox;
-import org.mipams.jumbf.core.util.BoxTypeEnum;
-import org.mipams.jumbf.core.util.MipamsException;
 
 import org.springframework.stereotype.Service;
 
 @Service
 public class CborBoxService extends SingleFormatBoxService<CborBox> implements ContentBoxService<CborBox> {
 
+    ServiceMetadata serviceMetadata;
+
+    @PostConstruct
+    void init() {
+        CborBox box = initializeBox();
+        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType(), box.getContentTypeUUID());
+    }
+
     @Override
-    protected CborBox initializeBox() throws MipamsException {
+    protected CborBox initializeBox() {
         return new CborBox();
     }
 
     @Override
     public ServiceMetadata getServiceMetadata() {
-        return BoxTypeEnum.CborBox.getServiceMetadata();
+        return serviceMetadata;
     }
 
     @Override

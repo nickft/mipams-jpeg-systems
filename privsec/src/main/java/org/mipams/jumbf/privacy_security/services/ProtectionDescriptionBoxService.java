@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.annotation.PostConstruct;
 import javax.xml.bind.DatatypeConverter;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,7 +18,6 @@ import org.mipams.jumbf.core.util.CorruptedJumbfFileException;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.privacy_security.entities.ProtectionDescriptionBox;
 import org.mipams.jumbf.privacy_security.entities.ProtectionDescriptionBox.MethodType;
-import org.mipams.jumbf.privacy_security.util.BoxTypeEnum;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,14 +29,22 @@ public class ProtectionDescriptionBoxService extends BmffBoxService<ProtectionDe
 
     private static final Logger logger = LoggerFactory.getLogger(ProtectionDescriptionBoxService.class);
 
+    ServiceMetadata serviceMetadata;
+
+    @PostConstruct
+    void init() {
+        ProtectionDescriptionBox box = initializeBox();
+        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType());
+    }
+
     @Override
-    protected ProtectionDescriptionBox initializeBox() throws MipamsException {
+    protected ProtectionDescriptionBox initializeBox() {
         return new ProtectionDescriptionBox();
     }
 
     @Override
     public ServiceMetadata getServiceMetadata() {
-        return BoxTypeEnum.ProtectionDescriptionBox.getServiceMetadata();
+        return serviceMetadata;
     }
 
     @Override

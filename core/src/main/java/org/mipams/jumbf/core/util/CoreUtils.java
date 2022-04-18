@@ -3,7 +3,6 @@ package org.mipams.jumbf.core.util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -20,6 +19,46 @@ public class CoreUtils {
     public static final int LONG_BYTE_SIZE = 8;
 
     public static final int UUID_BYTE_SIZE = 16;
+
+    public static void writeFileContentToOutput(String path, OutputStream outputStream) throws MipamsException {
+
+        try (FileInputStream inputStream = new FileInputStream(path)) {
+            int n;
+            while ((n = inputStream.read()) != -1) {
+                outputStream.write(n);
+            }
+        } catch (IOException e) {
+            throw new MipamsException("Could not write to file", e);
+        }
+    }
+
+    public static void writeIntToOutputStream(int val, OutputStream outputStream) throws MipamsException {
+        writeByteArrayToOutputStream(convertIntToByteArray(val), outputStream);
+    }
+
+    public static void writeIntAsSingleByteToOutputStream(int val, OutputStream outputStream) throws MipamsException {
+        writeByteArrayToOutputStream(convertIntToSingleElementByteArray(val), outputStream);
+    }
+
+    public static void writeLongToOutputStream(long val, OutputStream outputStream) throws MipamsException {
+        writeByteArrayToOutputStream(convertLongToByteArray(val), outputStream);
+    }
+
+    public static void writeTextToOutputStream(String text, OutputStream outputStream) throws MipamsException {
+        writeByteArrayToOutputStream(convertStringToByteArray(text), outputStream);
+    }
+
+    public static void writeUuidToOutputStream(String uuid, OutputStream outputStream) throws MipamsException {
+        writeByteArrayToOutputStream(convertUUIDToByteArray(uuid), outputStream);
+    }
+
+    public static void writeByteArrayToOutputStream(byte[] input, OutputStream outputStream) throws MipamsException {
+        try {
+            outputStream.write(input);
+        } catch (IOException e) {
+            throw new MipamsException("Could not write to file", e);
+        }
+    }
 
     public static int convertByteArrayToInt(byte[] bytes) {
         return ByteBuffer.wrap(bytes).getInt();
@@ -46,29 +85,35 @@ public class CoreUtils {
     }
 
     public static String parseStringFromFile(String fileUrl) throws MipamsException {
-
-        try (InputStream inputStream = new FileInputStream(fileUrl)) {
-            return readStringFromInputStream(inputStream);
+        try {
+            try (InputStream inputStream = new FileInputStream(fileUrl)) {
+                return readStringFromInputStream(inputStream);
+            }
         } catch (IOException e) {
-            throw new MipamsException(e);
+            throw new MipamsException("Could not close input stream", e);
         }
+
     }
 
-    public static String readStringFromInputStream(InputStream input) throws IOException {
+    public static String readStringFromInputStream(InputStream input) throws MipamsException {
         char charVal;
         StringBuilder str = new StringBuilder();
 
         int n;
 
-        while ((n = input.read()) != -1) {
+        try {
+            while ((n = input.read()) != -1) {
 
-            charVal = (char) n;
+                charVal = (char) n;
 
-            if (charVal == '\0') {
-                break;
+                if (charVal == '\0') {
+                    break;
+                }
+
+                str.append(charVal);
             }
-
-            str.append(charVal);
+        } catch (IOException e) {
+            throw new MipamsException("Could not read from file", e);
         }
 
         return str.toString();
@@ -89,9 +134,9 @@ public class CoreUtils {
         return convertByteArrayToLong(longBuffer);
     }
 
-    public static UUID readUuidFromInputStream(InputStream input) throws MipamsException {
+    public static String readUuidFromInputStream(InputStream input) throws MipamsException {
         byte[] uuidTemp = readBytesFromInputStream(input, UUID_BYTE_SIZE);
-        return convertByteArrayToUUID(uuidTemp);
+        return convertByteArrayToUUID(uuidTemp).toString().toUpperCase();
     }
 
     public static byte[] readBytesFromInputStream(InputStream input, int numberOfBytes) throws MipamsException {
@@ -117,11 +162,14 @@ public class CoreUtils {
         return uuid;
     }
 
-    public static byte[] convertUUIDToByteArray(UUID uuid) {
+    public static byte[] convertUUIDToByteArray(String uuid) {
+
+        UUID uuidVal = UUID.fromString(uuid);
+
         ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
 
-        bb.putLong(uuid.getMostSignificantBits());
-        bb.putLong(uuid.getLeastSignificantBits());
+        bb.putLong(uuidVal.getMostSignificantBits());
+        bb.putLong(uuidVal.getLeastSignificantBits());
 
         return bb.array();
     }
@@ -161,20 +209,6 @@ public class CoreUtils {
         return text + "\0";
     }
 
-    public static void writeFileContentToOutput(String path, OutputStream outputStream) throws MipamsException {
-
-        try (FileInputStream inputStream = new FileInputStream(path)) {
-            int n;
-            while ((n = inputStream.read()) != -1) {
-                outputStream.write(n);
-            }
-        } catch (FileNotFoundException e) {
-            throw new MipamsException("Could not locate file", e);
-        } catch (IOException e) {
-            throw new MipamsException("Could not write to file", e);
-        }
-    }
-
     public static void writeBytesFromInputStreamToFile(InputStream input, long nominalTotalSizeInBytes,
             String fileUrl) throws MipamsException {
 
@@ -207,8 +241,6 @@ public class CoreUtils {
                 outputStream.write(paddingValue);
                 i++;
             }
-        } catch (FileNotFoundException e) {
-            throw new MipamsException("Could not locate file", e);
         } catch (IOException e) {
             throw new MipamsException("Could not write to file", e);
         }

@@ -2,13 +2,11 @@ package org.mipams.jumbf.privacy_security.entities;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.mipams.jumbf.core.entities.BinaryDataBox;
 import org.mipams.jumbf.core.entities.ContentBox;
 import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.util.MipamsException;
-import org.mipams.jumbf.privacy_security.util.BoxTypeEnum;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -27,7 +25,17 @@ public class ProtectionBox implements ContentBox {
 
     @Override
     public int getTypeId() {
-        return BoxTypeEnum.ProtectionBox.getTypeId();
+        return 0x74B11BBF;
+    }
+
+    @Override
+    public String getType() {
+        return "prtc";
+    }
+
+    @Override
+    public String getContentTypeUUID() {
+        return "74B11BBF-F21D-4EEA-98C1-0BEBF23AEFD3";
     }
 
     @Override
@@ -37,11 +45,6 @@ public class ProtectionBox implements ContentBox {
         sum += getBinaryDataBox().getBoxSizeFromBmffHeaders();
 
         return sum;
-    }
-
-    @Override
-    public UUID getContentTypeUUID() {
-        return BoxTypeEnum.ProtectionBox.getContentUuid();
     }
 
     @Override

@@ -4,6 +4,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.mipams.jumbf.core.entities.ServiceMetadata;
@@ -16,7 +18,6 @@ import org.mipams.jumbf.privacy_security.entities.ReplacementDescriptionBox;
 import org.mipams.jumbf.privacy_security.entities.replacement.ReplacementType;
 import org.mipams.jumbf.privacy_security.services.replacement.DataBoxHandler;
 import org.mipams.jumbf.privacy_security.services.replacement.DataBoxHandlerFactory;
-import org.mipams.jumbf.privacy_security.util.BoxTypeEnum;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,9 +31,17 @@ public class ReplacementBoxService implements ContentBoxService<ReplacementBox> 
     @Autowired
     DataBoxHandlerFactory dataBoxHandlerFactory;
 
+    ServiceMetadata serviceMetadata;
+
+    @PostConstruct
+    void init() {
+        ReplacementBox box = new ReplacementBox();
+        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType(), box.getContentTypeUUID());
+    }
+
     @Override
     public ServiceMetadata getServiceMetadata() {
-        return BoxTypeEnum.ReplacementBox.getServiceMetadata();
+        return serviceMetadata;
     }
 
     @Override

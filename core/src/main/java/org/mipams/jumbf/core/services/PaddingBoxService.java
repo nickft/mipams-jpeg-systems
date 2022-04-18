@@ -3,6 +3,8 @@ package org.mipams.jumbf.core.services;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+import javax.annotation.PostConstruct;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.mipams.jumbf.core.ContentBoxDiscoveryManager;
 import org.mipams.jumbf.core.entities.PaddingBox;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
-import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
@@ -25,14 +26,22 @@ public final class PaddingBoxService extends BmffBoxService<PaddingBox> {
     @Autowired
     ContentBoxDiscoveryManager contentBoxDiscoveryManager;
 
-    @Override
-    public ServiceMetadata getServiceMetadata() {
-        return BoxTypeEnum.PaddingBox.getServiceMetadata();
+    ServiceMetadata serviceMetadata;
+
+    @PostConstruct
+    void init() {
+        PaddingBox box = initializeBox();
+        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType());
     }
 
     @Override
-    protected PaddingBox initializeBox() throws MipamsException {
+    protected PaddingBox initializeBox() {
         return new PaddingBox();
+    }
+
+    @Override
+    public ServiceMetadata getServiceMetadata() {
+        return serviceMetadata;
     }
 
     @Override

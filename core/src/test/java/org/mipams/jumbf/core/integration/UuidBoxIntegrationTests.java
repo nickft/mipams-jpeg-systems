@@ -10,15 +10,13 @@ import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.entities.UuidBox;
 import org.mipams.jumbf.core.services.CoreGeneratorService;
 import org.mipams.jumbf.core.services.CoreParserService;
-import org.mipams.jumbf.core.util.BoxTypeEnum;
-
+import org.mipams.jumbf.core.util.CoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @ActiveProfiles("test")
@@ -44,12 +42,11 @@ public class UuidBoxIntegrationTests extends AbstractIntegrationTests {
     void testUuidBox() throws Exception {
 
         UuidBox uuidBox = new UuidBox();
-        uuidBox.setUuid(UUID.randomUUID());
+        uuidBox.setUuid(CoreUtils.randomStringGenerator().toUpperCase());
         uuidBox.setFileUrl(TEST_FILE_PATH);
         uuidBox.updateBmffHeadersBasedOnBox();
 
-        JumbfBox givenJumbfBox = MockJumbfBoxCreation.generateJumbfBoxWithContent(uuidBox,
-                BoxTypeEnum.UuidBox.getContentUuid(), 10);
+        JumbfBox givenJumbfBox = MockJumbfBoxCreation.generateJumbfBoxWithContent(uuidBox, 10);
 
         JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 

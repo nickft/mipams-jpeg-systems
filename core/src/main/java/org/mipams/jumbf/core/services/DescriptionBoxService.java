@@ -1,10 +1,9 @@
 package org.mipams.jumbf.core.services;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.UUID;
 
+import javax.annotation.PostConstruct;
 import javax.xml.bind.DatatypeConverter;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -15,9 +14,7 @@ import org.springframework.stereotype.Service;
 import org.mipams.jumbf.core.ContentBoxDiscoveryManager;
 import org.mipams.jumbf.core.entities.DescriptionBox;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
-import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
-import org.mipams.jumbf.core.util.CorruptedJumbfFileException;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.core.util.BadRequestException;
 
@@ -32,14 +29,22 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
     @Autowired
     ContentBoxDiscoveryManager contentBoxDiscoveryManager;
 
-    @Override
-    public ServiceMetadata getServiceMetadata() {
-        return BoxTypeEnum.DescriptionBox.getServiceMetadata();
+    ServiceMetadata serviceMetadata;
+
+    @PostConstruct
+    void init() {
+        DescriptionBox box = initializeBox();
+        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType());
     }
 
     @Override
-    protected DescriptionBox initializeBox() throws MipamsException {
+    protected DescriptionBox initializeBox() {
         return new DescriptionBox();
+    }
+
+    @Override
+    public ServiceMetadata getServiceMetadata() {
+        return serviceMetadata;
     }
 
     @Override
@@ -80,26 +85,21 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
     protected void writeBmffPayloadToJumbfFile(DescriptionBox descriptionBox, FileOutputStream fileOutputStream)
             throws MipamsException {
 
-        try {
-            fileOutputStream.write(CoreUtils.convertUUIDToByteArray(descriptionBox.getUuid()));
-            fileOutputStream.write(CoreUtils.convertIntToSingleElementByteArray(descriptionBox.getToggle()));
+        CoreUtils.writeUuidToOutputStream(descriptionBox.getUuid(), fileOutputStream);
+        CoreUtils.writeIntAsSingleByteToOutputStream(descriptionBox.getToggle(), fileOutputStream);
 
-            if (descriptionBox.labelExists()) {
-                fileOutputStream
-                        .write(CoreUtils.convertStringToByteArray(descriptionBox.getLabelWithEscapeCharacter()));
-            }
-
-            if (descriptionBox.idExists()) {
-                fileOutputStream.write(CoreUtils.convertIntToByteArray(descriptionBox.getId()));
-            }
-
-            if (descriptionBox.sha256HashExists()) {
-                fileOutputStream.write(descriptionBox.getSha256Hash());
-            }
-
-        } catch (IOException e) {
-            throw new MipamsException("Could not write to file.", e);
+        if (descriptionBox.labelExists()) {
+            CoreUtils.writeTextToOutputStream(descriptionBox.getLabelWithEscapeCharacter(), fileOutputStream);
         }
+
+        if (descriptionBox.idExists()) {
+            CoreUtils.writeIntToOutputStream(descriptionBox.getId(), fileOutputStream);
+        }
+
+        if (descriptionBox.sha256HashExists()) {
+            CoreUtils.writeByteArrayToOutputStream(descriptionBox.getSha256Hash(), fileOutputStream);
+        }
+
     }
 
     @Override
@@ -108,54 +108,26 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
 
         logger.debug("Description box");
 
-        long actualSize = 0;
+        String uuid = CoreUtils.readUuidFromInputStream(input);
+        descriptionBox.setUuid(uuid);
 
-        try {
-            UUID uuidVal = CoreUtils.readUuidFromInputStream(input);
-            descriptionBox.setUuid(uuidVal);
+        int toggleValue = CoreUtils.readSingleByteAsIntFromInputStream(input);
+        descriptionBox.setToggle(toggleValue);
 
-            actualSize += CoreUtils.UUID_BYTE_SIZE;
+        if (descriptionBox.labelExists()) {
+            String label = CoreUtils.readStringFromInputStream(input);
 
-            int toggleValue = CoreUtils.readSingleByteAsIntFromInputStream(input);
-            descriptionBox.setToggle(toggleValue);
-            actualSize++;
+            descriptionBox.setLabel(label);
+        }
 
-            if (descriptionBox.labelExists()) {
+        if (descriptionBox.idExists()) {
+            int idVal = CoreUtils.readIntFromInputStream(input);
+            descriptionBox.setId(idVal);
+        }
 
-                String label = CoreUtils.readStringFromInputStream(input);
-
-                // +1 for the null terminating character
-                actualSize += CoreUtils.addEscapeCharacterToText(label).length();
-
-                descriptionBox.setLabel(label);
-            }
-
-            if (descriptionBox.idExists()) {
-
-                byte[] temp = new byte[4];
-
-                if (input.read(temp, 0, 4) == -1) {
-                    throw new MipamsException();
-                }
-
-                int idVal = CoreUtils.convertByteArrayToInt(temp);
-                descriptionBox.setId(idVal);
-                actualSize += 4;
-            }
-
-            if (descriptionBox.sha256HashExists()) {
-                byte[] sha256Hash = new byte[32];
-
-                if (input.read(sha256Hash, 0, 32) == -1) {
-                    throw new MipamsException();
-                }
-
-                descriptionBox.setSha256Hash(sha256Hash);
-                actualSize += 32;
-            }
-        } catch (IOException e) {
-            throw new CorruptedJumbfFileException(
-                    "Failed to read description box after {" + Long.toString(actualSize) + "} bytes.", e);
+        if (descriptionBox.sha256HashExists()) {
+            byte[] sha256Hash = CoreUtils.readBytesFromInputStream(input, 32);
+            descriptionBox.setSha256Hash(sha256Hash);
         }
 
         logger.debug("Discovered box: " + descriptionBox.toString());

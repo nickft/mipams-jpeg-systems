@@ -18,7 +18,6 @@ import org.mipams.jumbf.core.entities.XmlBox;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.privacy_security.entities.ProtectionBox;
 import org.mipams.jumbf.privacy_security.entities.ProtectionDescriptionBox;
-import org.mipams.jumbf.privacy_security.util.BoxTypeEnum;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -130,8 +129,7 @@ public class ProtectionBoxTests extends AbstractIntegrationTests {
         protectionBox.setProtectionDescriptionBox(pdBox);
         protectionBox.setBinaryDataBox(binaryDataBox);
 
-        return MockJumbfBox.generateJumbfBoxWithContent(protectionBox,
-                BoxTypeEnum.ProtectionBox.getContentUuid());
+        return MockJumbfBox.generateJumbfBoxWithContent(protectionBox);
 
     }
 }

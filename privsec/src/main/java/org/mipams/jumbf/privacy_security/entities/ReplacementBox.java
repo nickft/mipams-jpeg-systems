@@ -1,13 +1,11 @@
 package org.mipams.jumbf.privacy_security.entities;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.mipams.jumbf.core.entities.ContentBox;
 import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.privacy_security.entities.replacement.ReplacementType;
-import org.mipams.jumbf.privacy_security.util.BoxTypeEnum;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -25,12 +23,17 @@ public final class ReplacementBox implements ContentBox {
 
     @Override
     public int getTypeId() {
-        return BoxTypeEnum.ReplacementBox.getTypeId();
+        return 0xDC28B95F;
     }
 
     @Override
-    public UUID getContentTypeUUID() {
-        return BoxTypeEnum.ReplacementBox.getContentUuid();
+    public String getType() {
+        return "rplc";
+    }
+
+    @Override
+    public String getContentTypeUUID() {
+        return "DC28B95F-B68A-498E-8064-0FCA845D6B0E";
     }
 
     @Override

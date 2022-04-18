@@ -1,7 +1,5 @@
 package org.mipams.jumbf.core.integration;
 
-import java.util.UUID;
-
 import org.mipams.jumbf.core.entities.ContentBox;
 import org.mipams.jumbf.core.entities.DescriptionBox;
 import org.mipams.jumbf.core.entities.JumbfBox;
@@ -10,30 +8,42 @@ import org.mipams.jumbf.core.util.MipamsException;
 
 public class MockJumbfBoxCreation {
 
-    public static JumbfBox generateJumbfBoxWithContent(ContentBox contentBox, UUID contentTypeUuid)
+    public static JumbfBox generateJumbfBoxWithContent(ContentBox contentBox)
             throws MipamsException {
 
-        return generateJumbfBoxWithContent(contentBox, contentTypeUuid, 0);
+        return generateJumbfBoxWithContent(contentBox, 0);
     }
 
-    public static JumbfBox generateJumbfBoxWithContent(ContentBox contentBox, UUID contentTypeUuid, long paddingSize)
+    public static JumbfBox generateJumbfBoxWithContent(ContentBox contentBox, long paddingSize)
             throws MipamsException {
 
         DescriptionBox dBox = new DescriptionBox();
 
-        dBox.setUuid(contentTypeUuid);
+        dBox.setUuid(contentBox.getContentTypeUUID());
         dBox.setLabel("This is a test");
         dBox.computeAndSetToggleBasedOnFields();
         dBox.updateBmffHeadersBasedOnBox();
 
-        PaddingBox paddingBox = null;
+        return generateJumbfBox(dBox, contentBox, paddingSize);
+    }
+
+    public static JumbfBox generateJumbfBox(DescriptionBox descriptionBox, ContentBox contentBox)
+            throws MipamsException {
+        return generateJumbfBox(descriptionBox, contentBox, 0);
+    }
+
+    public static JumbfBox generateJumbfBox(DescriptionBox descriptionBox, ContentBox contentBox,
+            long paddingSize)
+            throws MipamsException {
 
         JumbfBox jumbfBox = new JumbfBox();
 
-        jumbfBox.setDescriptionBox(dBox);
+        jumbfBox.setDescriptionBox(descriptionBox);
         jumbfBox.setContentBox(contentBox);
 
         if (paddingSize > 0) {
+            PaddingBox paddingBox = null;
+
             paddingBox = new PaddingBox();
             paddingBox.setPaddingSize(paddingSize);
             paddingBox.updateBmffHeadersBasedOnBox();

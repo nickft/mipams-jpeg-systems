@@ -4,6 +4,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.annotation.PostConstruct;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.mipams.jumbf.core.entities.ServiceMetadata;
@@ -14,7 +16,6 @@ import org.mipams.jumbf.privacy_security.entities.ReplacementDescriptionBox;
 import org.mipams.jumbf.privacy_security.entities.replacement.ParamHandlerInterface;
 import org.mipams.jumbf.privacy_security.entities.replacement.ReplacementType;
 import org.mipams.jumbf.privacy_security.services.replacement.ParamHandlerFactory;
-import org.mipams.jumbf.privacy_security.util.BoxTypeEnum;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,14 +26,22 @@ public class ReplacementDescriptionBoxService extends BmffBoxService<Replacement
     @Autowired
     ParamHandlerFactory paramHandlerFactory;
 
-    @Override
-    public ServiceMetadata getServiceMetadata() {
-        return BoxTypeEnum.ReplacementDescriptionBox.getServiceMetadata();
+    ServiceMetadata serviceMetadata;
+
+    @PostConstruct
+    void init() {
+        ReplacementDescriptionBox box = initializeBox();
+        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType());
     }
 
     @Override
-    protected ReplacementDescriptionBox initializeBox() throws MipamsException {
+    protected ReplacementDescriptionBox initializeBox() {
         return new ReplacementDescriptionBox();
+    }
+
+    @Override
+    public ServiceMetadata getServiceMetadata() {
+        return serviceMetadata;
     }
 
     @Override

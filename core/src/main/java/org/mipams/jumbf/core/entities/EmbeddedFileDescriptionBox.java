@@ -1,6 +1,5 @@
 package org.mipams.jumbf.core.entities;
 
-import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
@@ -26,7 +25,12 @@ public class EmbeddedFileDescriptionBox extends BmffBox {
 
     @Override
     public int getTypeId() {
-        return BoxTypeEnum.EmbeddedFileDescriptionBox.getTypeId();
+        return 0x62666462;
+    }
+
+    @Override
+    public String getType() {
+        return "bfdb";
     }
 
     @Override

@@ -7,4 +7,6 @@ public interface BoxInterface {
     public long getBoxSize() throws MipamsException;
 
     public int getTypeId();
+
+    public String getType();
 }

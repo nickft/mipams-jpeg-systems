@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,36 +29,74 @@ import org.springframework.http.MediaType;
 @SpringBootTest
 public class CoreUtilsTests {
 
-    @BeforeAll
-    static void initUseCase() throws IOException {
+    protected static String TEST_DIRECTORY = "/tmp/jumbf-tests/";
+    protected static String TEST_FILE_NAME = "test.jpeg";
+    protected static String TEST_FILE_PATH = TEST_DIRECTORY + TEST_FILE_NAME;
 
-        File file = new File(getTestFilePath());
+    @BeforeAll
+    static void generateFile() throws IOException {
+        File file = new File(TEST_DIRECTORY);
         if (file.exists()) {
             return;
         }
 
-        try (FileOutputStream fos = new FileOutputStream(getTestFilePath())) {
+        file.mkdir();
+
+        file = new File(TEST_DIRECTORY);
+
+        try (FileOutputStream fos = new FileOutputStream(TEST_FILE_PATH)) {
             fos.write("Hello world".getBytes());
         }
     }
 
     @AfterAll
-    static void cleanUp() throws IOException {
+    static void fileCleanUp() throws IOException {
 
-        File file = new File(getTestFilePath());
-        if (file.exists()) {
+        File dir = new File(TEST_DIRECTORY);
+        if (!dir.exists()) {
+            return;
+        }
+
+        File[] directoryListing = dir.listFiles();
+
+        for (File file : directoryListing) {
             file.delete();
         }
+
+        dir.delete();
     }
 
     static String getTestFilePath() {
-        return CoreUtils.getFullPath("/tmp", "test");
+        return TEST_FILE_PATH;
     }
 
     @Test
     void testClassInit() {
         CoreUtils utils = new CoreUtils();
         assertNotNull(utils);
+    }
+
+    @Test
+    void testWriteLongToOutputStream() throws MipamsException, FileNotFoundException, IOException {
+        String outputFileName = CoreUtils.getFullPath(TEST_DIRECTORY, CoreUtils.randomStringGenerator());
+
+        try (FileOutputStream os = new FileOutputStream(outputFileName);) {
+
+            CoreUtils.writeLongToOutputStream(Long.valueOf(5), os);
+
+            File temporaryFile = new File(outputFileName);
+
+            assertEquals(8, temporaryFile.length());
+        }
+    }
+
+    @Test
+    void testWriteByteArrayToFailingOutputStream() throws MipamsException, FileNotFoundException, IOException {
+        try (FailingOutputStream os = new FailingOutputStream();) {
+            assertThrows(MipamsException.class, () -> {
+                CoreUtils.writeByteArrayToOutputStream("test".getBytes(), os);
+            });
+        }
     }
 
     @Test
@@ -122,7 +161,7 @@ public class CoreUtilsTests {
 
         UUID input = UUID.randomUUID();
 
-        byte[] resultByteArray = CoreUtils.convertUUIDToByteArray(input);
+        byte[] resultByteArray = CoreUtils.convertUUIDToByteArray(input.toString());
 
         byte[] expectedByteArray = convertUuidToByteArray(input);
 
@@ -140,17 +179,18 @@ public class CoreUtilsTests {
     }
 
     @Test
-    void testParseStringFromNonExistentFile() {
+    void testParseStringFromNonExistentFile() throws MipamsException {
 
-        String nonExistentFileName = CoreUtils.randomStringGenerator();
+        String nonExistentFileName = UUID.randomUUID().toString();
 
         assertThrows(MipamsException.class, () -> {
             CoreUtils.parseStringFromFile(nonExistentFileName);
         });
+
     }
 
     @Test
-    void testReadStringFromInputStream() throws IOException {
+    void testReadStringFromInputStream() throws MipamsException, IOException {
         try (ByteArrayInputStream is = new ByteArrayInputStream("Hello\0".getBytes());) {
             String result = CoreUtils.readStringFromInputStream(is);
             assertEquals("Hello", result);
@@ -158,7 +198,7 @@ public class CoreUtilsTests {
     }
 
     @Test
-    void testReadStringWithoutNullTerminationFromInputStream() throws IOException {
+    void testReadStringWithoutNullTerminationFromInputStream() throws MipamsException, IOException {
         try (ByteArrayInputStream is = new ByteArrayInputStream("Hello".getBytes());) {
             String result = CoreUtils.readStringFromInputStream(is);
             assertEquals("Hello", result);
@@ -168,7 +208,7 @@ public class CoreUtilsTests {
     @Test
     void testReadStringFromFailingInputStream() throws IOException {
         try (FailingInputStream is = new FailingInputStream();) {
-            assertThrows(IOException.class, () -> {
+            assertThrows(MipamsException.class, () -> {
                 CoreUtils.readStringFromInputStream(is);
             });
         }
@@ -239,8 +279,8 @@ public class CoreUtilsTests {
 
         try (ByteArrayInputStream is = new ByteArrayInputStream(inputUuid);) {
 
-            UUID result = CoreUtils.readUuidFromInputStream(is);
-            assertEquals(input, result);
+            String result = CoreUtils.readUuidFromInputStream(is);
+            assertEquals(input.toString().toUpperCase(), result);
         }
     }
 
@@ -322,7 +362,7 @@ public class CoreUtilsTests {
     void testWriteFileContentToOutput() throws MipamsException, FileNotFoundException, IOException {
 
         String inputFileName = getTestFilePath();
-        String outputFileName = CoreUtils.getFullPath("/tmp", CoreUtils.randomStringGenerator());
+        String outputFileName = CoreUtils.getFullPath(TEST_DIRECTORY, CoreUtils.randomStringGenerator());
 
         File inputFile = new File(inputFileName);
         File outputFile = new File(outputFileName);
@@ -331,29 +371,6 @@ public class CoreUtilsTests {
             CoreUtils.writeFileContentToOutput(inputFileName, os);
 
             assertEquals(inputFile.length(), outputFile.length());
-        } finally {
-            outputFile.delete();
-        }
-    }
-
-    @Test
-    void testWriteFileContentToNonExistentOutput() throws MipamsException, FileNotFoundException, IOException {
-
-        String nonExistentInput = CoreUtils.getFullPath("/tmp", CoreUtils.randomStringGenerator());
-        String outputFileName = CoreUtils.getFullPath("/tmp", CoreUtils.randomStringGenerator());
-
-        try (FileOutputStream os = new FileOutputStream(outputFileName);) {
-
-            Exception e = assertThrows(MipamsException.class, () -> {
-                CoreUtils.writeFileContentToOutput(nonExistentInput, os);
-            });
-
-            String actualMessage = e.getMessage();
-
-            assertEquals("Could not locate file", actualMessage);
-        } finally {
-            File test = new File(outputFileName);
-            test.delete();
         }
     }
 
@@ -382,7 +399,7 @@ public class CoreUtilsTests {
 
         byte[] inputUuid = convertUuidToByteArray(input);
 
-        String absoluteFilePath = CoreUtils.getFullPath("/tmp", CoreUtils.randomStringGenerator());
+        String absoluteFilePath = CoreUtils.getFullPath(TEST_DIRECTORY, CoreUtils.randomStringGenerator());
 
         File temporaryFile = new File(absoluteFilePath);
 
@@ -402,12 +419,11 @@ public class CoreUtilsTests {
 
         byte[] inputUuid = convertUuidToByteArray(input);
 
-        String absoluteFilePath = CoreUtils.getFullPath("/tmp", CoreUtils.randomStringGenerator());
+        String absoluteFilePath = CoreUtils.getFullPath(TEST_DIRECTORY, CoreUtils.randomStringGenerator());
 
         File temporaryFile = new File(absoluteFilePath);
 
         try (ByteArrayInputStream is = new ByteArrayInputStream(inputUuid);) {
-
             CoreUtils.writeBytesFromInputStreamToFile(is, 17, absoluteFilePath);
             assertEquals(16, temporaryFile.length());
         } finally {
@@ -417,7 +433,7 @@ public class CoreUtilsTests {
 
     @Test
     void testWriteBytesFromFailingInputStreamToFile() throws MipamsException, FileNotFoundException, IOException {
-        String absoluteFilePath = CoreUtils.getFullPath("/tmp", CoreUtils.randomStringGenerator());
+        String absoluteFilePath = CoreUtils.getFullPath(TEST_DIRECTORY, CoreUtils.randomStringGenerator());
 
         try (FailingInputStream is = new FailingInputStream();) {
             Exception exception = assertThrows(MipamsException.class, () -> {
@@ -462,4 +478,52 @@ public class CoreUtilsTests {
             CoreUtils.getMediaTypeFromString(null);
         });
     }
+
+    @Test
+    void testWritePaddingToFailingOutputStream() throws IOException {
+        try (FailingOutputStream os = new FailingOutputStream();) {
+            assertThrows(MipamsException.class, () -> {
+                CoreUtils.writePaddingToOutputStream(10, 00, os);
+            });
+        }
+    }
+
+    @Test
+    void testParsePaddingFromInputStream() throws IOException {
+        try (InputStream is = new FailingInputStream();) {
+            assertThrows(MipamsException.class, () -> {
+                CoreUtils.parsePaddingFromInputStream(is, 10, 10);
+            });
+        }
+    }
+
+    @Test
+    void testParseWrongPaddingFromInputStream() throws IOException {
+        try (InputStream is = new FileInputStream(TEST_FILE_PATH);) {
+            Exception exception = assertThrows(MipamsException.class, () -> {
+                CoreUtils.parsePaddingFromInputStream(is, 10, 10);
+            });
+
+            assertEquals("Padding is corrupted. It should be contain only values of 0x00", exception.getMessage());
+        }
+    }
+
+    @Test
+    void testParsePaddingFromEmptyInputStream() throws IOException, MipamsException {
+        try (InputStream is = new ByteArrayInputStream(new byte[0]);) {
+            CoreUtils.parsePaddingFromInputStream(is, 10, 5);
+        }
+    }
+
+    @Test
+    void testParse1LessPaddingThanSpecifiedByHeaderFromInputStream() throws IOException {
+        try (InputStream is = new ByteArrayInputStream(new byte[10]);) {
+            Exception exception = assertThrows(MipamsException.class, () -> {
+                CoreUtils.parsePaddingFromInputStream(is, 10, 5);
+            });
+
+            assertEquals("Padding is corrupted. It should be contain only values of 0x00", exception.getMessage());
+        }
+    }
+
 }

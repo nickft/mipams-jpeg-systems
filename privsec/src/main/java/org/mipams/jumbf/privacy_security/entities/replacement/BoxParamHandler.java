@@ -56,18 +56,13 @@ public class BoxParamHandler implements ParamHandlerInterface {
 
     @Override
     public void populateParamFromBytes(InputStream inputStream) throws MipamsException {
-        try {
-            long offset = CoreUtils.readLongFromInputStream(inputStream);
-            setOffset(offset);
+        long offset = CoreUtils.readLongFromInputStream(inputStream);
+        setOffset(offset);
 
-            if (labelExists()) {
-                String label = CoreUtils.readStringFromInputStream(inputStream);
-                setLabel(label);
-            }
-        } catch (IOException e) {
-            throw new MipamsException("Failed to read parameter for box replacement type");
+        if (labelExists()) {
+            String label = CoreUtils.readStringFromInputStream(inputStream);
+            setLabel(label);
         }
-
     }
 
     @Override

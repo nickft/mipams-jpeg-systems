@@ -12,7 +12,6 @@ import org.mipams.jumbf.core.entities.EmbeddedFileDescriptionBox;
 import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.services.CoreGeneratorService;
 import org.mipams.jumbf.core.services.CoreParserService;
-import org.mipams.jumbf.core.util.BoxTypeEnum;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,8 +46,8 @@ public class EmbeddedFileBoxIntegrationTests extends AbstractIntegrationTests {
         EmbeddedFileDescriptionBox embeddedFileDescriptionBox = new EmbeddedFileDescriptionBox();
         embeddedFileDescriptionBox.setFileName(TEST_FILE_NAME);
         embeddedFileDescriptionBox.setMediaTypeFromString("image/jpeg");
-        embeddedFileDescriptionBox.markFileAsExternallyReferenced();
         embeddedFileDescriptionBox.computeAndSetToggleBasedOnFields();
+        embeddedFileDescriptionBox.markFileAsExternallyReferenced();
         embeddedFileDescriptionBox.updateBmffHeadersBasedOnBox();
 
         BinaryDataBox binaryDataBox = new BinaryDataBox();
@@ -60,8 +59,7 @@ public class EmbeddedFileBoxIntegrationTests extends AbstractIntegrationTests {
         embeddedFileBox.setDescriptionBox(embeddedFileDescriptionBox);
         embeddedFileBox.setBinaryDataBox(binaryDataBox);
 
-        JumbfBox givenJumbfBox = MockJumbfBoxCreation.generateJumbfBoxWithContent(embeddedFileBox,
-                BoxTypeEnum.EmbeddedFileBox.getContentUuid(), 10);
+        JumbfBox givenJumbfBox = MockJumbfBoxCreation.generateJumbfBoxWithContent(embeddedFileBox, 10);
 
         JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 
@@ -86,8 +84,7 @@ public class EmbeddedFileBoxIntegrationTests extends AbstractIntegrationTests {
         embeddedFileBox.setDescriptionBox(embeddedFileDescriptionBox);
         embeddedFileBox.setBinaryDataBox(binaryDataBox);
 
-        JumbfBox givenJumbfBox = MockJumbfBoxCreation.generateJumbfBoxWithContent(embeddedFileBox,
-                BoxTypeEnum.EmbeddedFileBox.getContentUuid(), 10);
+        JumbfBox givenJumbfBox = MockJumbfBoxCreation.generateJumbfBoxWithContent(embeddedFileBox, 10);
 
         JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 

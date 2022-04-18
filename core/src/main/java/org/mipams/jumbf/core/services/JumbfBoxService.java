@@ -2,7 +2,8 @@ package org.mipams.jumbf.core.services;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.UUID;
+
+import javax.annotation.PostConstruct;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -15,7 +16,6 @@ import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.ContentBoxDiscoveryManager;
 import org.mipams.jumbf.core.entities.ContentBox;
 import org.mipams.jumbf.core.util.MipamsException;
-import org.mipams.jumbf.core.util.BoxTypeEnum;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,14 +35,22 @@ public final class JumbfBoxService extends BmffBoxService<JumbfBox> implements C
     @Autowired
     PaddingBoxService paddingBoxService;
 
+    ServiceMetadata serviceMetadata;
+
+    @PostConstruct
+    void init() {
+        JumbfBox box = initializeBox();
+        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType(), box.getContentTypeUUID());
+    }
+
     @Override
-    protected JumbfBox initializeBox() throws MipamsException {
+    protected JumbfBox initializeBox() {
         return new JumbfBox();
     }
 
     @Override
     public ServiceMetadata getServiceMetadata() {
-        return BoxTypeEnum.JumbfBox.getServiceMetadata();
+        return serviceMetadata;
     }
 
     @Override
@@ -54,7 +62,7 @@ public final class JumbfBoxService extends BmffBoxService<JumbfBox> implements C
 
         ObjectNode contentNode = (ObjectNode) input.get("content");
 
-        UUID contentTypeUuid = jumbfBox.getDescriptionBox().getUuid();
+        String contentTypeUuid = jumbfBox.getDescriptionBox().getUuid();
 
         ContentBoxService contentBoxService = contentBoxDiscoveryManager
                 .getContentBoxServiceBasedOnContentUUID(contentTypeUuid);

@@ -1,7 +1,6 @@
 package org.mipams.jumbf.core.services;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -9,7 +8,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.util.BadRequestException;
-import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.core.util.CorruptedJumbfFileException;
@@ -71,17 +69,14 @@ public abstract class BmffBoxService<T extends BmffBox> implements BoxServiceInt
     }
 
     private final void writeBmffHeadersToJumbfFile(T box, FileOutputStream fileOutputStream) throws MipamsException {
-        try {
 
-            fileOutputStream.write(CoreUtils.convertIntToByteArray(box.getLBox()));
-            fileOutputStream.write(CoreUtils.convertIntToByteArray(box.getTBox()));
+        CoreUtils.writeIntToOutputStream(box.getLBox(), fileOutputStream);
+        CoreUtils.writeIntToOutputStream(box.getTBox(), fileOutputStream);
 
-            if (box.isXBoxEnabled()) {
-                fileOutputStream.write(CoreUtils.convertLongToByteArray(box.getXBox()));
-            }
-        } catch (IOException e) {
-            throw new MipamsException("Could not write to file", e);
+        if (box.isXBoxEnabled()) {
+            CoreUtils.writeLongToOutputStream(box.getXBox(), fileOutputStream);
         }
+
     }
 
     protected abstract void writeBmffPayloadToJumbfFile(T box, FileOutputStream fileOutputStream)
@@ -101,34 +96,24 @@ public abstract class BmffBoxService<T extends BmffBox> implements BoxServiceInt
 
         verifyBoxSizeEqualsToSizeSpecifiedInBmffHeaders(bmffBox);
 
-        logger.debug("The box " + BoxTypeEnum.getBoxTypeAsStringFromId(bmffBox.getTypeId()) + " has a total length of "
+        logger.debug("The box " + Integer.toHexString(bmffBox.getTypeId()) + " has a total length of "
                 + bmffBox.getBoxSizeFromBmffHeaders());
 
         return bmffBox;
     }
 
-    protected abstract T initializeBox() throws MipamsException;
+    protected abstract T initializeBox();
 
     private void populateHeadersFromJumbfFile(T box, InputStream input) throws MipamsException {
-
-        try {
-            if (input.available() == 0) {
-                return;
-            }
-        } catch (IOException e) {
-            throw new MipamsException("Could not check for remaining input bytes");
-        }
 
         int lBox = CoreUtils.readIntFromInputStream(input);
         box.setLBox(lBox);
 
         int tBox = CoreUtils.readIntFromInputStream(input);
 
-        BoxTypeEnum boxType = BoxTypeEnum.getBoxTypeFromIdOrNull(tBox);
-
-        if (boxType != null && box.getTypeId() != boxType.getTypeId()) {
+        if (getServiceMetadata().getBoxTypeId() != tBox) {
             throw new CorruptedJumbfFileException("TBox Id " + Integer.toHexString(tBox) + " does not match with box "
-                    + BoxTypeEnum.getBoxTypeAsStringFromId(box.getTypeId()));
+                    + getServiceMetadata().getBoxTypeId());
         }
 
         box.setTBox(tBox);

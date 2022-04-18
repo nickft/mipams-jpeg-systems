@@ -1,6 +1,5 @@
 package org.mipams.jumbf.privacy_security.entities;
 
-import org.mipams.jumbf.privacy_security.util.BoxTypeEnum;
 import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
@@ -26,7 +25,12 @@ public class ProtectionDescriptionBox extends BmffBox {
 
     @Override
     public int getTypeId() {
-        return BoxTypeEnum.ProtectionDescriptionBox.getTypeId();
+        return 0x70737064;
+    }
+
+    @Override
+    public String getType() {
+        return "pspd";
     }
 
     @Override

@@ -2,9 +2,7 @@ package org.mipams.jumbf.core.entities;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.MipamsException;
 
 import lombok.EqualsAndHashCode;
@@ -24,12 +22,17 @@ public class EmbeddedFileBox implements ContentBox {
 
     @Override
     public int getTypeId() {
-        return BoxTypeEnum.EmbeddedFileBox.getTypeId();
+        return 0x6266264;
     }
 
     @Override
-    public UUID getContentTypeUUID() {
-        return BoxTypeEnum.EmbeddedFileBox.getContentUuid();
+    public String getType() {
+        return "bfbd";
+    }
+
+    @Override
+    public String getContentTypeUUID() {
+        return "40CB0C32-BB8A-489D-A70B-2AD6F47F4369";
     }
 
     @Override

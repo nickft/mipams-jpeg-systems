@@ -4,7 +4,6 @@ import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.privacy_security.entities.replacement.ParamHandlerInterface;
-import org.mipams.jumbf.privacy_security.util.BoxTypeEnum;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -25,7 +24,12 @@ public class ReplacementDescriptionBox extends BmffBox {
 
     @Override
     public int getTypeId() {
-        return BoxTypeEnum.ReplacementDescriptionBox.getTypeId();
+        return 0x70737264;
+    }
+
+    @Override
+    public String getType() {
+        return "psrd";
     }
 
     @Override

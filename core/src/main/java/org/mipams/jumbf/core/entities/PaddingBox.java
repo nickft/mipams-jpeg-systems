@@ -1,6 +1,5 @@
 package org.mipams.jumbf.core.entities;
 
-import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.MipamsException;
 
 import lombok.EqualsAndHashCode;
@@ -20,7 +19,12 @@ public class PaddingBox extends BmffBox {
 
     @Override
     public int getTypeId() {
-        return BoxTypeEnum.PaddingBox.getTypeId();
+        return 0x66726565;
+    }
+
+    @Override
+    public String getType() {
+        return "free";
     }
 
     @Override

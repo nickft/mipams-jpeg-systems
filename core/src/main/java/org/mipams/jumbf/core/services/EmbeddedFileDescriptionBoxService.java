@@ -1,8 +1,9 @@
 package org.mipams.jumbf.core.services;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
+
+import javax.annotation.PostConstruct;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -10,7 +11,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.mipams.jumbf.core.entities.EmbeddedFileDescriptionBox;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.util.BadRequestException;
-import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.slf4j.Logger;
@@ -22,14 +22,22 @@ public class EmbeddedFileDescriptionBoxService extends BmffBoxService<EmbeddedFi
 
     private static final Logger logger = LoggerFactory.getLogger(EmbeddedFileDescriptionBoxService.class);
 
+    ServiceMetadata serviceMetadata;
+
+    @PostConstruct
+    void init() {
+        EmbeddedFileDescriptionBox box = initializeBox();
+        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType());
+    }
+
     @Override
-    protected EmbeddedFileDescriptionBox initializeBox() throws MipamsException {
+    protected EmbeddedFileDescriptionBox initializeBox() {
         return new EmbeddedFileDescriptionBox();
     }
 
     @Override
     public ServiceMetadata getServiceMetadata() {
-        return BoxTypeEnum.EmbeddedFileDescriptionBox.getServiceMetadata();
+        return serviceMetadata;
     }
 
     @Override
@@ -69,18 +77,15 @@ public class EmbeddedFileDescriptionBoxService extends BmffBoxService<EmbeddedFi
     protected void writeBmffPayloadToJumbfFile(EmbeddedFileDescriptionBox embeddedFileDescriptionBox,
             FileOutputStream fileOutputStream) throws MipamsException {
 
-        try {
-            fileOutputStream
-                    .write(CoreUtils.convertIntToSingleElementByteArray(embeddedFileDescriptionBox.getToggle()));
-            fileOutputStream.write(
-                    CoreUtils.convertStringToByteArray(embeddedFileDescriptionBox.getMediaTypeWithEscapeCharacter()));
+        CoreUtils.writeIntAsSingleByteToOutputStream(embeddedFileDescriptionBox.getToggle(), fileOutputStream);
 
-            if (embeddedFileDescriptionBox.fileNameExists()) {
-                fileOutputStream.write(CoreUtils
-                        .convertStringToByteArray(embeddedFileDescriptionBox.getFileNameWithEscapeCharacter()));
-            }
-        } catch (IOException e) {
-            throw new MipamsException("Could not write to file.", e);
+        CoreUtils.writeTextToOutputStream(embeddedFileDescriptionBox.getMediaTypeWithEscapeCharacter(),
+                fileOutputStream);
+
+        if (embeddedFileDescriptionBox.fileNameExists()) {
+            CoreUtils
+                    .writeTextToOutputStream(embeddedFileDescriptionBox.getFileNameWithEscapeCharacter(),
+                            fileOutputStream);
         }
 
     }
@@ -90,39 +95,26 @@ public class EmbeddedFileDescriptionBoxService extends BmffBoxService<EmbeddedFi
             long availableBytesForBox, InputStream input) throws MipamsException {
         logger.debug("Embedded File Description box");
 
-        long actualSize = 0;
+        int toggleValue = CoreUtils.readSingleByteAsIntFromInputStream(input);
+        embeddedFileDescriptionBox.setToggle(toggleValue);
+
+        String mediaTypeAsString = CoreUtils.readStringFromInputStream(input);
+
+        CoreUtils.addEscapeCharacterToText(mediaTypeAsString).length();
 
         try {
-
-            int toggleValue = CoreUtils.readSingleByteAsIntFromInputStream(input);
-            embeddedFileDescriptionBox.setToggle(toggleValue);
-            actualSize++;
-
-            String mediaTypeAsString = CoreUtils.readStringFromInputStream(input);
-
-            // +1 for the null terminating character
-            actualSize += CoreUtils.addEscapeCharacterToText(mediaTypeAsString).length();
-
-            try {
-                embeddedFileDescriptionBox.setMediaTypeFromString(mediaTypeAsString);
-            } catch (MipamsException e) {
-                throw new BadRequestException(e);
-            }
-
-            String fileName = embeddedFileDescriptionBox.fileNameExists() ? CoreUtils.readStringFromInputStream(input)
-                    : embeddedFileDescriptionBox.getRandomFileName();
-
-            // +1 for the null terminating character
-            actualSize += CoreUtils.addEscapeCharacterToText(fileName).length();
-
-            embeddedFileDescriptionBox.setFileName(fileName);
-
-        } catch (IOException e) {
-            throw new MipamsException("Failed to read description box after {" + Long.toString(actualSize) + "} bytes.",
-                    e);
+            embeddedFileDescriptionBox.setMediaTypeFromString(mediaTypeAsString);
+        } catch (MipamsException e) {
+            throw new BadRequestException(e);
         }
+
+        String fileName = embeddedFileDescriptionBox.fileNameExists() ? CoreUtils.readStringFromInputStream(input)
+                : embeddedFileDescriptionBox.getRandomFileName();
+
+        CoreUtils.addEscapeCharacterToText(fileName).length();
+
+        embeddedFileDescriptionBox.setFileName(fileName);
 
         logger.debug("Discovered box: " + embeddedFileDescriptionBox.toString());
     }
-
 }

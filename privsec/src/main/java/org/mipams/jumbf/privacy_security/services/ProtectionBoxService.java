@@ -3,6 +3,8 @@ package org.mipams.jumbf.privacy_security.services;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+import javax.annotation.PostConstruct;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.mipams.jumbf.core.entities.BinaryDataBox;
@@ -12,7 +14,6 @@ import org.mipams.jumbf.core.services.ContentBoxService;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.privacy_security.entities.ProtectionBox;
 import org.mipams.jumbf.privacy_security.entities.ProtectionDescriptionBox;
-import org.mipams.jumbf.privacy_security.util.BoxTypeEnum;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,9 +27,17 @@ public class ProtectionBoxService implements ContentBoxService<ProtectionBox> {
     @Autowired
     BinaryDataBoxService binaryDataBoxService;
 
+    ServiceMetadata serviceMetadata;
+
+    @PostConstruct
+    void init() {
+        ProtectionBox box = new ProtectionBox();
+        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType(), box.getContentTypeUUID());
+    }
+
     @Override
     public ServiceMetadata getServiceMetadata() {
-        return BoxTypeEnum.ProtectionBox.getServiceMetadata();
+        return serviceMetadata;
     }
 
     @Override

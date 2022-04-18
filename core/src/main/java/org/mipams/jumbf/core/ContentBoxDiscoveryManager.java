@@ -9,7 +9,6 @@ import org.mipams.jumbf.core.services.ContentBoxService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
@@ -22,14 +21,12 @@ public class ContentBoxDiscoveryManager {
     @Autowired
     protected List<ContentBoxService> contentBoxServiceList;
 
-    public ContentBoxService getContentBoxServiceBasedOnContentUUID(UUID uuid) throws MipamsException {
+    public ContentBoxService getContentBoxServiceBasedOnContentUUID(String uuid) throws MipamsException {
 
         for (ContentBoxService service : contentBoxServiceList) {
-
-            if (service.getServiceMetadata().getContentTypeUuid().equals(uuid)) {
+            if (service.getServiceMetadata().getContentTypeUuid().equalsIgnoreCase(uuid)) {
                 return service;
             }
-
         }
 
         throw new MipamsException("Box with uuid " + uuid.toString() + " is not a Content Box");
@@ -39,7 +36,7 @@ public class ContentBoxDiscoveryManager {
 
         for (ContentBoxService service : contentBoxServiceList) {
 
-            if (service.getServiceMetadata().getBoxType().equals(type)) {
+            if (service.getServiceMetadata().getBoxType().equalsIgnoreCase(type)) {
                 return service.getServiceMetadata();
             }
 

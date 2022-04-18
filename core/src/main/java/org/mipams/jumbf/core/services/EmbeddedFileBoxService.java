@@ -3,13 +3,14 @@ package org.mipams.jumbf.core.services;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+import javax.annotation.PostConstruct;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.mipams.jumbf.core.entities.BinaryDataBox;
 import org.mipams.jumbf.core.entities.EmbeddedFileBox;
 import org.mipams.jumbf.core.entities.EmbeddedFileDescriptionBox;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
-import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,17 @@ public class EmbeddedFileBoxService implements ContentBoxService<EmbeddedFileBox
     @Autowired
     BinaryDataBoxService binaryDataBoxService;
 
+    ServiceMetadata serviceMetadata;
+
+    @PostConstruct
+    void init() {
+        EmbeddedFileBox box = new EmbeddedFileBox();
+        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType(), box.getContentTypeUUID());
+    }
+
     @Override
     public ServiceMetadata getServiceMetadata() {
-        return BoxTypeEnum.EmbeddedFileBox.getServiceMetadata();
+        return serviceMetadata;
     }
 
     @Override

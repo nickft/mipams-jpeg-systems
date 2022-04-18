@@ -1,11 +1,11 @@
 package org.mipams.jumbf.core.services;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
+
+import javax.annotation.PostConstruct;
 
 import org.mipams.jumbf.core.entities.BinaryDataBox;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
-import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.core.util.Properties;
@@ -17,6 +17,24 @@ public class BinaryDataBoxService extends SingleFormatBoxService<BinaryDataBox> 
 
     @Autowired
     Properties properties;
+
+    ServiceMetadata serviceMetadata;
+
+    @PostConstruct
+    void init() {
+        BinaryDataBox box = initializeBox();
+        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType());
+    }
+
+    @Override
+    protected BinaryDataBox initializeBox() {
+        return new BinaryDataBox();
+    }
+
+    @Override
+    public ServiceMetadata getServiceMetadata() {
+        return serviceMetadata;
+    }
 
     @Override
     protected void writeBmffPayloadToJumbfFile(BinaryDataBox binaryDataBox, FileOutputStream fileOutputStream)
@@ -31,13 +49,8 @@ public class BinaryDataBoxService extends SingleFormatBoxService<BinaryDataBox> 
 
     private void writeUrlToJumbfBox(BinaryDataBox binaryDataBox, FileOutputStream fileOutputStream)
             throws MipamsException {
-        try {
-
-            String fileUrlWithEscapeChar = CoreUtils.addEscapeCharacterToText(binaryDataBox.getFileUrl());
-            fileOutputStream.write(CoreUtils.convertStringToByteArray(fileUrlWithEscapeChar));
-        } catch (IOException e) {
-            throw new MipamsException(e);
-        }
+        String fileUrlWithEscapeChar = CoreUtils.addEscapeCharacterToText(binaryDataBox.getFileUrl());
+        CoreUtils.writeTextToOutputStream(fileUrlWithEscapeChar, fileOutputStream);
     }
 
     private void writeFileToJumbfBox(BinaryDataBox binaryDataBox, FileOutputStream fileOutputStream)
@@ -46,15 +59,5 @@ public class BinaryDataBoxService extends SingleFormatBoxService<BinaryDataBox> 
         properties.checkIfFileSizeExceedApplicationLimits(binaryDataBox.getFileUrl());
 
         CoreUtils.writeFileContentToOutput(binaryDataBox.getFileUrl(), fileOutputStream);
-    }
-
-    @Override
-    protected BinaryDataBox initializeBox() throws MipamsException {
-        return new BinaryDataBox();
-    }
-
-    @Override
-    public ServiceMetadata getServiceMetadata() {
-        return BoxTypeEnum.BinaryDataBox.getServiceMetadata();
     }
 }

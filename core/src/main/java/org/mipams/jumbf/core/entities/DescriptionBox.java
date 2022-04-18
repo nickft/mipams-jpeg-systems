@@ -1,8 +1,5 @@
 package org.mipams.jumbf.core.entities;
 
-import java.util.UUID;
-
-import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
@@ -17,7 +14,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public class DescriptionBox extends BmffBox {
 
-    protected @Getter @Setter UUID uuid;
+    protected @Getter @Setter String uuid;
 
     protected @Getter @Setter int toggle;
 
@@ -29,7 +26,12 @@ public class DescriptionBox extends BmffBox {
 
     @Override
     public int getTypeId() {
-        return BoxTypeEnum.DescriptionBox.getTypeId();
+        return 0x6A756D64;
+    }
+
+    @Override
+    public String getType() {
+        return "jumd";
     }
 
     @Override

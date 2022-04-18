@@ -1,6 +1,5 @@
 package org.mipams.jumbf.core.entities;
 
-import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
@@ -19,7 +18,12 @@ public class BinaryDataBox extends SingleFormatBox {
 
     @Override
     public int getTypeId() {
-        return BoxTypeEnum.BinaryDataBox.getTypeId();
+        return 0x62696462;
+    }
+
+    @Override
+    public String getType() {
+        return "bidb";
     }
 
     @Override
