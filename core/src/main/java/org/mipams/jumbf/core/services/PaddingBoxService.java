@@ -58,8 +58,6 @@ public final class PaddingBoxService extends BmffBoxService<PaddingBox> {
         long actualSize = CoreUtils.parsePaddingFromInputStream(input, PaddingBox.PADDING_VALUE, availableBytesForBox);
         paddingBox.setPaddingSize(actualSize);
 
-        verifyBoxSize(paddingBox, actualSize);
-
         logger.debug("Discovered box: " + paddingBox.toString());
     }
 

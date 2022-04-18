@@ -171,8 +171,6 @@ public class ProtectionDescriptionBoxService extends BmffBoxService<ProtectionDe
                     "Failed to read description box after {" + Long.toString(actualSize) + "} bytes.", e);
         }
 
-        verifyBoxSize(protectionDescriptionBox, actualSize);
-
         logger.debug("Discovered box: " + protectionDescriptionBox.toString());
     }
 }

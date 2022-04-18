@@ -94,11 +94,10 @@ public final class JumbfBoxService extends BmffBoxService<JumbfBox> implements C
         logger.debug("Jumbf box");
 
         final long nominalPayloadSize = jumbfBox.getPayloadSizeFromBmffHeaders();
-        long actualSize = 0;
 
         jumbfBox.setDescriptionBox(descriptionBoxService.parseFromJumbfFile(input, nominalPayloadSize));
 
-        actualSize += jumbfBox.getDescriptionBox().getBoxSizeFromBmffHeaders();
+        long actualSize = jumbfBox.getDescriptionBox().getBoxSizeFromBmffHeaders();
 
         ContentBoxService contentBoxService = contentBoxDiscoveryManager
                 .getContentBoxServiceBasedOnContentUUID(jumbfBox.getDescriptionBox().getUuid());
@@ -109,13 +108,10 @@ public final class JumbfBoxService extends BmffBoxService<JumbfBox> implements C
 
         jumbfBox.setContentBox(contentBox);
 
-        if (!sizeEqualsToBmffHeaderLength(actualSize, jumbfBox)) {
+        if (!actualBoxSizeEqualsToSizeSpecifiedInBmffHeaders(jumbfBox)) {
             PaddingBox paddingBox = paddingBoxService.parseFromJumbfFile(input, nominalPayloadSize - actualSize);
             jumbfBox.setPaddingBox(paddingBox);
-            actualSize += paddingBox.getBoxSize();
         }
-
-        verifyBoxSize(jumbfBox, actualSize);
 
         logger.debug("Discovered box: " + jumbfBox.toString());
     }

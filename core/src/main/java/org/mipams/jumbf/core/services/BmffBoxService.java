@@ -98,6 +98,8 @@ public abstract class BmffBoxService<T extends BmffBox> implements BoxServiceInt
 
         populatePayloadFromJumbfFile(bmffBox, availableBytesForBox, input);
 
+        verifyBoxSizeEqualsToSizeSpecifiedInBmffHeaders(bmffBox);
+
         logger.debug("The box " + BoxTypeEnum.getBoxTypeAsStringFromId(bmffBox.getTypeId()) + " has a total length of "
                 + bmffBox.getBoxSizeFromBmffHeaders());
 
@@ -107,62 +109,48 @@ public abstract class BmffBoxService<T extends BmffBox> implements BoxServiceInt
     protected abstract T initializeBox() throws MipamsException;
 
     private void populateHeadersFromJumbfFile(T box, InputStream input) throws MipamsException {
-        byte[] temp = new byte[4];
-        int value;
 
         try {
-
             if (input.available() == 0) {
                 return;
             }
-
-            if (input.read(temp, 0, 4) == -1) {
-                throw new CorruptedJumbfFileException("Failed to parse LBox value from byte stream");
-            }
-
-            value = CoreUtils.convertByteArrayToInt(temp);
-            box.setLBox(value);
-
-            if (input.read(temp, 0, 4) == -1) {
-                throw new CorruptedJumbfFileException("Failed to parse TBox value from byte stream");
-            }
-
-            value = CoreUtils.convertByteArrayToInt(temp);
-
-            BoxTypeEnum boxType = BoxTypeEnum.getBoxTypeFromIdOrNull(value);
-
-            if (boxType != null && box.getTypeId() != boxType.getTypeId()) {
-                throw new CorruptedJumbfFileException("TBox Id " + value + " does not match with box "
-                        + BoxTypeEnum.getBoxTypeAsStringFromId(box.getTypeId()));
-            }
-
-            box.setTBox(value);
-
-            if (box.getLBox() == 1) {
-                temp = new byte[8];
-                long longVal;
-
-                if (input.read(temp, 0, 8) == -1) {
-                    throw new CorruptedJumbfFileException("Failed to parse XBox value from byte stream");
-                }
-
-                longVal = CoreUtils.convertByteArrayToLong(temp);
-                box.setXBox(longVal);
-            }
         } catch (IOException e) {
-            throw new MipamsException("Could not read BMFF Box fields", e);
+            throw new MipamsException("Could not check for remaining input bytes");
+        }
+
+        int lBox = CoreUtils.readIntFromInputStream(input);
+        box.setLBox(lBox);
+
+        int tBox = CoreUtils.readIntFromInputStream(input);
+
+        BoxTypeEnum boxType = BoxTypeEnum.getBoxTypeFromIdOrNull(tBox);
+
+        if (boxType != null && box.getTypeId() != boxType.getTypeId()) {
+            throw new CorruptedJumbfFileException("TBox Id " + tBox + " does not match with box "
+                    + BoxTypeEnum.getBoxTypeAsStringFromId(box.getTypeId()));
+        }
+
+        box.setTBox(tBox);
+
+        if (box.getLBox() == 1) {
+            long xBox = CoreUtils.readLongFromInputStream(input);
+            box.setXBox(xBox);
         }
     }
 
-    protected void verifyBoxSize(T box, long actualSize) throws MipamsException {
-        if (!sizeEqualsToBmffHeaderLength(actualSize, box)) {
-            throw new MipamsException("Mismatch in the byte counting(Nominal: " + box.getPayloadSizeFromBmffHeaders()
-                    + ", Actual: " + Long.toString(actualSize) + ") of the Box: " + box.toString());
+    protected void verifyBoxSizeEqualsToSizeSpecifiedInBmffHeaders(T box) throws MipamsException {
+
+        if (!actualBoxSizeEqualsToSizeSpecifiedInBmffHeaders(box)) {
+            throw new MipamsException("Mismatch in the byte counting(Nominal: " + box.getBoxSizeFromBmffHeaders()
+                    + ", Actual: " + Long.toString(box.calculateSizeFromBox()) + ") of the Box: " + box.toString());
         }
     }
 
-    public boolean sizeEqualsToBmffHeaderLength(long size, T box) {
-        return box.getPayloadSizeFromBmffHeaders() == size;
+    public boolean actualBoxSizeEqualsToSizeSpecifiedInBmffHeaders(T box) throws MipamsException {
+        long actualBoxSize = box.calculateSizeFromBox();
+        long boxSizeAsInBmffHeaders = box.getBoxSizeFromBmffHeaders();
+
+        return (actualBoxSize == boxSizeAsInBmffHeaders);
     }
 
     protected abstract void populatePayloadFromJumbfFile(T box, long availableBytesForBox, InputStream input)

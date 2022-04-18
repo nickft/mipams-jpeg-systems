@@ -56,7 +56,7 @@ public abstract class BmffBox implements BoxInterface {
         }
     }
 
-    private long calculateSizeFromBox() throws MipamsException {
+    public long calculateSizeFromBox() throws MipamsException {
         return getLBoxSize() + getTBoxSize() + calculatePayloadSize();
     }
 

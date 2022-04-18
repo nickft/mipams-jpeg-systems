@@ -127,8 +127,6 @@ public class EmbeddedFileDescriptionBoxService extends BmffBoxService<EmbeddedFi
                     e);
         }
 
-        verifyBoxSize(embeddedFileDescriptionBox, actualSize);
-
         logger.debug("Discovered box: " + embeddedFileDescriptionBox.toString());
     }
 

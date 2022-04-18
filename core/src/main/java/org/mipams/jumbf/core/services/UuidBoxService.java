@@ -79,14 +79,10 @@ public class UuidBoxService extends BmffBoxService<UuidBox> implements ContentBo
             throws MipamsException {
         logger.debug("UUID box");
 
-        long actualSize = 0;
-
         try {
 
             UUID uuidVal = CoreUtils.readUuidFromInputStream(input);
             uuidBox.setUuid(uuidVal);
-
-            actualSize += CoreUtils.UUID_BYTE_SIZE;
 
             String fileName = CoreUtils.randomStringGenerator();
             String fullPath = CoreUtils.getFullPath(properties.getFileDirectory(), fileName);
@@ -96,13 +92,10 @@ public class UuidBoxService extends BmffBoxService<UuidBox> implements ContentBo
             long nominalTotalSizeInBytes = uuidBox.getPayloadSizeFromBmffHeaders();
             CoreUtils.writeBytesFromInputStreamToFile(input, nominalTotalSizeInBytes, uuidBox.getFileUrl());
 
-            actualSize += CoreUtils.getFileSizeFromPath(uuidBox.getFileUrl());
         } catch (MipamsException e) {
-            throw new CorruptedJumbfFileException(
-                    "Failed to read UUID box after {" + Long.toString(actualSize) + "} bytes.", e);
+            throw new CorruptedJumbfFileException("Failed to read UUID box", e);
         }
 
-        verifyBoxSize(uuidBox, actualSize);
         logger.debug("Discovered box: " + uuidBox.toString());
     }
 

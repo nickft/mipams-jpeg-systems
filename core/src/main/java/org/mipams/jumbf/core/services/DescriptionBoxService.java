@@ -163,8 +163,6 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
                     "Failed to read description box after {" + Long.toString(actualSize) + "} bytes.", e);
         }
 
-        verifyBoxSize(descriptionBox, actualSize);
-
         logger.debug("Discovered box: " + descriptionBox.toString());
     }
 
