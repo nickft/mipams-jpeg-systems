@@ -7,6 +7,7 @@ import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,9 +15,12 @@ import lombok.ToString;
 
 @NoArgsConstructor
 @ToString
+@EqualsAndHashCode(callSuper = false)
 public class UuidBox extends BmffBox implements ContentBox {
 
     private @Getter @Setter UUID uuid;
+
+    @EqualsAndHashCode.Exclude
     private @Getter @Setter String fileUrl;
 
     @Override

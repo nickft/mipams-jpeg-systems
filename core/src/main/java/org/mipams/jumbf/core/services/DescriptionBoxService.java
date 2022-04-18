@@ -56,29 +56,24 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
         descriptionBox.setUuid(serviceMetadata.getContentTypeUuid());
 
         JsonNode node = input.get("requestable");
-        int toggle = (node == null || !node.asBoolean()) ? 0 : 1;
 
         node = input.get("label");
         if (node != null) {
             descriptionBox.setLabel(node.asText());
-            toggle = toggle | 2;
         }
 
         node = input.get("id");
         if (node != null) {
             descriptionBox.setId(node.asInt());
-            toggle = toggle | 4;
         }
-
-        descriptionBox.setToggle(toggle);
 
         node = input.get("sha256Hash");
         if (node != null) {
             byte[] sha256Hash = DatatypeConverter.parseHexBinary(node.asText());
             descriptionBox.setSha256Hash(sha256Hash);
-
-            toggle = toggle | 8;
         }
+
+        descriptionBox.computeAndSetToggleBasedOnFields();
     }
 
     @Override
@@ -98,7 +93,7 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
                 fileOutputStream.write(CoreUtils.convertIntToByteArray(descriptionBox.getId()));
             }
 
-            if (descriptionBox.signatureExists()) {
+            if (descriptionBox.sha256HashExists()) {
                 fileOutputStream.write(descriptionBox.getSha256Hash());
             }
 
@@ -148,7 +143,7 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
                 actualSize += 4;
             }
 
-            if (descriptionBox.signatureExists()) {
+            if (descriptionBox.sha256HashExists()) {
                 byte[] sha256Hash = new byte[32];
 
                 if (input.read(sha256Hash, 0, 32) == -1) {

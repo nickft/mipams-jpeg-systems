@@ -5,11 +5,13 @@ import java.util.UUID;
 
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor
 @ToString
+@EqualsAndHashCode(callSuper = false)
 public class ContiguousCodestreamBox extends SingleFormatBox implements ContentBox {
 
     @Override

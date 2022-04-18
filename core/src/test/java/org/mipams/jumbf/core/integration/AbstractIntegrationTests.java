@@ -1,64 +1,74 @@
 package org.mipams.jumbf.core.integration;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
+
+import org.mipams.jumbf.core.entities.JumbfBox;
+import org.mipams.jumbf.core.services.CoreGeneratorService;
+import org.mipams.jumbf.core.services.CoreParserService;
+import org.mipams.jumbf.core.util.MipamsException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractIntegrationTests {
 
+    protected static String TEST_DIRECTORY = "/tmp/jumbf-tests/";
+    protected static String TEST_FILE_NAME = "test.jpeg";
+    protected static String TEST_FILE_PATH = TEST_DIRECTORY + TEST_FILE_NAME;
+    protected static String JUMBF_FILE_NAME = "test.jumbf";
+
     @Autowired
-    protected MockMvc mockMvc;
+    protected CoreGeneratorService coreGeneratorService;
 
-    protected abstract String getRequestBody();
-
-    protected static String TEST_FILE_PATH = "/tmp/test.jpeg";
-    protected static String JUMBF_FILE_PATH = "/tmp/test.jumbf";
+    @Autowired
+    protected CoreParserService coreParserService;
 
     static void generateFile() throws IOException {
-        File file = new File(TEST_FILE_PATH);
+        File file = new File(TEST_DIRECTORY);
         if (file.exists()) {
             return;
         }
+
+        file.mkdir();
+
+        file = new File(TEST_DIRECTORY);
 
         try (FileOutputStream fos = new FileOutputStream(TEST_FILE_PATH)) {
             fos.write("Hello world".getBytes());
         }
     }
 
-    static void fileCleanUp(String fileName) throws IOException {
-        File file = new File(TEST_FILE_PATH);
-        if (file.exists()) {
+    static void fileCleanUp() throws IOException {
+
+        File dir = new File(TEST_DIRECTORY);
+        if (!dir.exists()) {
+            return;
+        }
+
+        File[] directoryListing = dir.listFiles();
+
+        for (File file : directoryListing) {
             file.delete();
         }
+
+        dir.delete();
     }
 
-    @Test
-    void generateBoxRequest() throws Exception {
-        mockMvc.perform(post("/core/v1/generateBox")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(getRequestBody()))
-                .andExpect(status().isOk());
+    protected List<JumbfBox> generateJumbfFileAndParseBox(List<JumbfBox> givenJumbfBoxList) throws MipamsException {
+
+        testGenerateJumbfFileFromBox(givenJumbfBoxList, JUMBF_FILE_NAME);
+
+        return testParseMetadataFromJumbfFile(JUMBF_FILE_NAME);
     }
 
-    @Test
-    void generateBoxRequestInSpecificFile() throws Exception {
-        mockMvc.perform(post("/core/v1/generateBox?targetFile=test.jumbf")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(getRequestBody())).andExpect(status().isOk());
+    protected String testGenerateJumbfFileFromBox(List<JumbfBox> givenJumbfBoxList, String fileName)
+            throws MipamsException {
+        return coreGeneratorService.generateJumbfFileFromBox(givenJumbfBoxList, fileName);
     }
 
-    @Test
-    void parseBoxFromMetadata() throws Exception {
-        mockMvc.perform(get("/core/v1/parseMetadata?fileName=test.jumbf")).andExpect(status().isOk());
+    protected List<JumbfBox> testParseMetadataFromJumbfFile(String fileName) throws MipamsException {
+        return coreParserService.parseMetadataFromJumbfFile(fileName);
     }
 
 }

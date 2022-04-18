@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.MipamsException;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import lombok.ToString;
 
 @NoArgsConstructor
 @ToString
+@EqualsAndHashCode
 public class EmbeddedFileBox implements ContentBox {
 
     private @Getter @Setter EmbeddedFileDescriptionBox descriptionBox;

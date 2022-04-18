@@ -3,116 +3,53 @@ package org.mipams.jumbf.core.integration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.mipams.jumbf.core.entities.JsonBox;
+import org.mipams.jumbf.core.entities.JumbfBox;
+import org.mipams.jumbf.core.services.CoreGeneratorService;
+import org.mipams.jumbf.core.services.CoreParserService;
+import org.mipams.jumbf.core.util.BoxTypeEnum;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.io.IOException;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
+import java.io.IOException;
+import java.util.List;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @ActiveProfiles("test")
-@AutoConfigureMockMvc
 public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
 
-    private static String REQUEST_BODY;
+    @Autowired
+    CoreGeneratorService coreGeneratorService;
+
+    @Autowired
+    CoreParserService coreParserService;
 
     @BeforeAll
     static void initRequest() throws IOException {
-
-        StringBuilder request = new StringBuilder();
-
-        request.append("{")
-                .append("  \"type\": \"jumb\",")
-                .append("  \"description\": {")
-                .append("    \"type\": \"jumd\",")
-                .append("    \"contentType\": \"json\",")
-                .append("    \"label\": \"JSON Content Type JUMBF box\",")
-                .append("    \"id\": 4334431")
-                .append("  },")
-                .append("  \"content\": {")
-                .append("    \"type\": \"json\",")
-                .append("    \"fileUrl\":\"").append(TEST_FILE_PATH).append("\"")
-                .append("  }")
-                .append("}");
-
-        REQUEST_BODY = request.toString();
-
         generateFile();
     }
 
     @AfterAll
     public static void cleanUp() throws IOException {
-        fileCleanUp(TEST_FILE_PATH);
-        fileCleanUp(JUMBF_FILE_PATH);
-    }
-
-    @Override
-    public String getRequestBody() {
-        return REQUEST_BODY;
+        fileCleanUp();
     }
 
     @Test
-    void testJsonBoxWithPathNotSpecified() throws Exception {
-        StringBuilder request = new StringBuilder();
+    void testJsonBox() throws Exception {
+        JsonBox jsonBox = new JsonBox();
+        jsonBox.setFileUrl(TEST_FILE_PATH);
+        jsonBox.updateBmffHeadersBasedOnBox();
 
-        request.append("{")
-                .append("  \"type\": \"jumb\",")
-                .append("  \"description\": {")
-                .append("    \"type\": \"jumd\",")
-                .append("    \"contentType\": \"json\"")
-                .append("  },")
-                .append("  \"content\": {")
-                .append("    \"type\": \"json\"")
-                .append("  }")
-                .append("}");
+        JumbfBox givenJumbfBox = MockJumbfBoxCreation.generateJumbfBoxWithContent(jsonBox,
+                BoxTypeEnum.JsonBox.getContentUuid(), 10);
 
-        request.toString();
+        JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 
-        mockMvc.perform(post("/core/v1/generateBox")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(request.toString()))
-                .andExpect(status().isBadRequest());
+        assertEquals(givenJumbfBox, parsedJumbfBox);
     }
-
-    @Test
-    void testJsonBoxWithPadding() throws Exception {
-
-        String paddingSize = "10";
-
-        StringBuilder request = new StringBuilder();
-
-        request.append("{")
-                .append("  \"type\": \"jumb\",")
-                .append("  \"description\": {")
-                .append("    \"type\": \"jumd\",")
-                .append("    \"contentType\": \"json\"")
-                .append("  },")
-                .append("  \"content\": {")
-                .append("    \"type\": \"json\",")
-                .append("    \"fileUrl\":\"").append(TEST_FILE_PATH).append("\"")
-                .append("  },")
-                .append("  \"padding\": {")
-                .append("    \"type\": \"free\",")
-                .append("    \"size\": ").append(paddingSize)
-                .append("  }")
-                .append("}");
-
-        request.toString();
-
-        mockMvc.perform(post("/core/v1/generateBox")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(request.toString()))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void parseJsonBoxWithPaddingFromMetadata() throws Exception {
-        mockMvc.perform(get("/core/v1/parseMetadata?fileName=test.jumbf")).andExpect(status().isOk());
-    }
-
 }

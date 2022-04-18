@@ -6,6 +6,7 @@ import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import lombok.ToString;
 
 @NoArgsConstructor
 @ToString
+@EqualsAndHashCode(callSuper = true)
 public class DescriptionBox extends BmffBox {
 
     protected @Getter @Setter UUID uuid;
@@ -44,7 +46,7 @@ public class DescriptionBox extends BmffBox {
             sum += getIdSize();
         }
 
-        if (signatureExists()) {
+        if (sha256HashExists()) {
             sum += getSignatureSize();
         }
 
@@ -71,6 +73,33 @@ public class DescriptionBox extends BmffBox {
         return CoreUtils.addEscapeCharacterToText(getLabel()).length();
     }
 
+    public void computeAndSetToggleBasedOnFields() {
+
+        int toggle = 0;
+
+        if (isRequestable()) {
+            toggle = 3;
+        }
+
+        if (labelExists()) {
+            toggle = toggle | 2;
+        }
+
+        if (idExists()) {
+            toggle = toggle | 4;
+        }
+
+        if (sha256HashExists()) {
+            toggle = toggle | 8;
+        }
+
+        setToggle(toggle);
+    }
+
+    public boolean isRequestable() {
+        return CoreUtils.isBitAtGivenPositionSet(toggle, 0);
+    }
+
     public boolean labelExists() {
         return CoreUtils.isBitAtGivenPositionSet(toggle, 1);
     }
@@ -79,7 +108,7 @@ public class DescriptionBox extends BmffBox {
         return CoreUtils.isBitAtGivenPositionSet(toggle, 2);
     }
 
-    public boolean signatureExists() {
+    public boolean sha256HashExists() {
         return CoreUtils.isBitAtGivenPositionSet(toggle, 3);
     }
 

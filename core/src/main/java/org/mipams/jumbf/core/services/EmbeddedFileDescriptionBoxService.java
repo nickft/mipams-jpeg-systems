@@ -36,8 +36,6 @@ public class EmbeddedFileDescriptionBoxService extends BmffBoxService<EmbeddedFi
     protected void populateBox(EmbeddedFileDescriptionBox embeddedFileDescriptionBox, ObjectNode input)
             throws MipamsException {
 
-        int toggle = 0;
-
         try {
             embeddedFileDescriptionBox.setMediaTypeFromString(input.get("mediaType").asText());
         } catch (MipamsException e) {
@@ -49,14 +47,12 @@ public class EmbeddedFileDescriptionBoxService extends BmffBoxService<EmbeddedFi
         JsonNode node = input.get("fileName");
 
         if (node != null) {
-            toggle = 1;
             embeddedFileDescriptionBox.setFileName(node.asText());
         }
 
         node = input.get("fileExternallyReferenced");
 
         if (node != null) {
-            toggle = toggle | 2;
             if (node.asBoolean()) {
                 embeddedFileDescriptionBox.markFileAsExternallyReferenced();
             } else {
@@ -66,7 +62,7 @@ public class EmbeddedFileDescriptionBoxService extends BmffBoxService<EmbeddedFi
             embeddedFileDescriptionBox.markFileAsExternallyReferenced();
         }
 
-        embeddedFileDescriptionBox.setToggle(toggle);
+        embeddedFileDescriptionBox.computeAndSetToggleBasedOnFields();
     }
 
     @Override
@@ -113,14 +109,13 @@ public class EmbeddedFileDescriptionBoxService extends BmffBoxService<EmbeddedFi
                 throw new BadRequestException(e);
             }
 
-            if (embeddedFileDescriptionBox.fileNameExists()) {
-                String fileName = CoreUtils.readStringFromInputStream(input);
+            String fileName = embeddedFileDescriptionBox.fileNameExists() ? CoreUtils.readStringFromInputStream(input)
+                    : embeddedFileDescriptionBox.getRandomFileName();
 
-                // +1 for the null terminating character
-                actualSize += CoreUtils.addEscapeCharacterToText(fileName).length();
+            // +1 for the null terminating character
+            actualSize += CoreUtils.addEscapeCharacterToText(fileName).length();
 
-                embeddedFileDescriptionBox.setFileName(fileName);
-            }
+            embeddedFileDescriptionBox.setFileName(fileName);
 
         } catch (IOException e) {
             throw new MipamsException("Failed to read description box after {" + Long.toString(actualSize) + "} bytes.",

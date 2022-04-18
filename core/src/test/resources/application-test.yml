@@ -1,4 +1,4 @@
 org:
   mipams:
     core:
-      image_folder: /tmp
+      image_folder: /tmp/jumbf-tests

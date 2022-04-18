@@ -3,10 +3,10 @@ package org.mipams.jumbf.core.entities;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.http.MediaType;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,14 +14,14 @@ import lombok.ToString;
 
 @NoArgsConstructor
 @ToString
+@EqualsAndHashCode(callSuper = true)
 public class EmbeddedFileDescriptionBox extends BmffBox {
-
-    private static final Logger logger = LoggerFactory.getLogger(EmbeddedFileDescriptionBox.class);
 
     private @Getter @Setter int toggle;
 
     private @Getter @Setter MediaType mediaType;
 
+    @EqualsAndHashCode.Exclude
     private @Getter @Setter String fileName;
 
     @Override
@@ -40,6 +40,20 @@ public class EmbeddedFileDescriptionBox extends BmffBox {
             sum += getFileNameSize();
 
         return sum;
+    }
+
+    public void computeAndSetToggleBasedOnFields() {
+        int toggle = 0;
+
+        if (fileNameExists()) {
+            toggle = 1;
+        }
+
+        if (isContentReferencedExternally()) {
+            toggle = toggle | 2;
+        }
+
+        setToggle(toggle);
     }
 
     public int getToggleSize() {
@@ -97,8 +111,12 @@ public class EmbeddedFileDescriptionBox extends BmffBox {
         if (fileNameExists()) {
             return getFileName();
         } else {
-            logger.info(getMediaType().toString());
-            return CoreUtils.randomStringGenerator() + "." + getMediaType().getSubtype();
+            return getRandomFileName();
+
         }
+    }
+
+    public String getRandomFileName() {
+        return CoreUtils.randomStringGenerator() + "." + getMediaType().getSubtype();
     }
 }

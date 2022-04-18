@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.mipams.jumbf.core.util.BoxTypeEnum;
 import org.mipams.jumbf.core.util.MipamsException;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import lombok.ToString;
 
 @NoArgsConstructor
 @ToString
+@EqualsAndHashCode(callSuper = false)
 public class JumbfBox extends BmffBox implements ContentBox {
 
     protected @Getter @Setter DescriptionBox descriptionBox;

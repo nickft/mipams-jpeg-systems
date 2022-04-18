@@ -30,35 +30,6 @@ public class EmbeddedFileBoxService implements ContentBoxService<EmbeddedFileBox
     }
 
     @Override
-    public void writeToJumbfFile(EmbeddedFileBox embeddedFileBox, FileOutputStream fileOutputStream)
-            throws MipamsException {
-        embeddedFileDescriptionBoxService.writeToJumbfFile(embeddedFileBox.getDescriptionBox(), fileOutputStream);
-        binaryDataBoxService.writeToJumbfFile(embeddedFileBox.getBinaryDataBox(), fileOutputStream);
-    }
-
-    @Override
-    public EmbeddedFileBox parseFromJumbfFile(InputStream inputStream, long availableBytesForBox)
-            throws MipamsException {
-
-        EmbeddedFileBox embeddedFileBox = new EmbeddedFileBox();
-
-        embeddedFileBox.setDescriptionBox(
-                embeddedFileDescriptionBoxService.parseFromJumbfFile(inputStream, availableBytesForBox));
-        embeddedFileBox.setBinaryDataBox(binaryDataBoxService.parseFromJumbfFile(inputStream, availableBytesForBox));
-
-        return embeddedFileBox;
-    }
-
-    public String getFileUrlFromBox(EmbeddedFileBox embeddedFileBox) throws MipamsException {
-
-        if (embeddedFileBox.getDescriptionBox().isContentReferencedExternally()) {
-            return embeddedFileBox.getDescriptionBox().getFileName();
-        } else {
-            return CoreUtils.parseStringFromFile(embeddedFileBox.getBinaryDataBox().getFileUrl());
-        }
-    }
-
-    @Override
     public EmbeddedFileBox discoverBoxFromRequest(ObjectNode inputNode) throws MipamsException {
 
         EmbeddedFileBox embeddedFileBox = new EmbeddedFileBox();
@@ -77,5 +48,37 @@ public class EmbeddedFileBoxService implements ContentBoxService<EmbeddedFileBox
         embeddedFileBox.setBinaryDataBox(binaryDataBox);
 
         return embeddedFileBox;
+    }
+
+    @Override
+    public void writeToJumbfFile(EmbeddedFileBox embeddedFileBox, FileOutputStream fileOutputStream)
+            throws MipamsException {
+        embeddedFileDescriptionBoxService.writeToJumbfFile(embeddedFileBox.getDescriptionBox(), fileOutputStream);
+        binaryDataBoxService.writeToJumbfFile(embeddedFileBox.getBinaryDataBox(), fileOutputStream);
+    }
+
+    @Override
+    public EmbeddedFileBox parseFromJumbfFile(InputStream inputStream, long availableBytesForBox)
+            throws MipamsException {
+
+        EmbeddedFileBox embeddedFileBox = new EmbeddedFileBox();
+
+        embeddedFileBox.setDescriptionBox(
+                embeddedFileDescriptionBoxService.parseFromJumbfFile(inputStream, availableBytesForBox));
+        embeddedFileBox.setBinaryDataBox(binaryDataBoxService.parseFromJumbfFile(inputStream, availableBytesForBox));
+
+        boolean fileReference = embeddedFileBox.getDescriptionBox().isContentReferencedExternally();
+        embeddedFileBox.getBinaryDataBox().setReferencedExternally(fileReference);
+
+        return embeddedFileBox;
+    }
+
+    public String getFileUrlFromBox(EmbeddedFileBox embeddedFileBox) throws MipamsException {
+
+        if (embeddedFileBox.getDescriptionBox().isContentReferencedExternally()) {
+            return embeddedFileBox.getDescriptionBox().getFileName();
+        } else {
+            return CoreUtils.parseStringFromFile(embeddedFileBox.getBinaryDataBox().getFileUrl());
+        }
     }
 }

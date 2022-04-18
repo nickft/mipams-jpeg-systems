@@ -96,6 +96,7 @@ public abstract class BmffBoxService<T extends BmffBox> implements BoxServiceInt
 
         populateHeadersFromJumbfFile(bmffBox, input);
 
+        availableBytesForBox = bmffBox.getPayloadSizeFromBmffHeaders();
         populatePayloadFromJumbfFile(bmffBox, availableBytesForBox, input);
 
         verifyBoxSizeEqualsToSizeSpecifiedInBmffHeaders(bmffBox);
@@ -126,7 +127,7 @@ public abstract class BmffBoxService<T extends BmffBox> implements BoxServiceInt
         BoxTypeEnum boxType = BoxTypeEnum.getBoxTypeFromIdOrNull(tBox);
 
         if (boxType != null && box.getTypeId() != boxType.getTypeId()) {
-            throw new CorruptedJumbfFileException("TBox Id " + tBox + " does not match with box "
+            throw new CorruptedJumbfFileException("TBox Id " + Integer.toHexString(tBox) + " does not match with box "
                     + BoxTypeEnum.getBoxTypeAsStringFromId(box.getTypeId()));
         }
 

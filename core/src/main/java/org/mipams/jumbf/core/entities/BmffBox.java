@@ -3,11 +3,13 @@ package org.mipams.jumbf.core.entities;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 @ToString
+@EqualsAndHashCode
 public abstract class BmffBox implements BoxInterface {
 
     private @Getter @Setter int LBox;
