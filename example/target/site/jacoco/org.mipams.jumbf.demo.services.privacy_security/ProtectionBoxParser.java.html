@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProtectionBoxParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Demo</a> &gt; <a href="index.source.html" class="el_package">org.mipams.jumbf.demo.services.privacy_security</a> &gt; <span class="el_source">ProtectionBoxParser.java</span></div><h1>ProtectionBoxParser.java</h1><pre class="source lang-java linenums">package org.mipams.jumbf.demo.services.privacy_security;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import org.mipams.jumbf.core.entities.BinaryDataBox;
+import org.mipams.jumbf.core.entities.ServiceMetadata;
+import org.mipams.jumbf.core.util.MipamsException;
+import org.mipams.jumbf.demo.services.core.BinaryDataBoxParser;
+import org.mipams.jumbf.demo.services.core.ContentBoxParser;
+import org.mipams.jumbf.privacy_security.entities.ProtectionBox;
+import org.mipams.jumbf.privacy_security.entities.ProtectionDescriptionBox;
+import org.mipams.jumbf.privacy_security.services.ProtectionBoxService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+<span class="fc" id="L17">public class ProtectionBoxParser implements ContentBoxParser {</span>
+
+    @Autowired
+    ProtectionBoxService protectionBoxService;
+
+    @Autowired
+    ProtectionDescriptionBoxParser protectionDescriptionBoxParser;
+
+    @Autowired
+    BinaryDataBoxParser binaryDataBoxParser;
+
+    @Override
+    public ServiceMetadata getServiceMetadata() {
+<span class="fc" id="L30">        return protectionBoxService.getServiceMetadata();</span>
+    }
+
+    @Override
+
+    public ProtectionBox discoverBoxFromRequest(ObjectNode inputNode) throws MipamsException {
+<span class="fc" id="L36">        ProtectionBox protectionBox = new ProtectionBox();</span>
+
+<span class="fc" id="L38">        ObjectNode protectionDescriptionNode = (ObjectNode) inputNode.get(&quot;protectionDescription&quot;);</span>
+<span class="fc" id="L39">        ProtectionDescriptionBox protectionDescriptionBox = protectionDescriptionBoxParser</span>
+<span class="fc" id="L40">                .discoverBoxFromRequest(protectionDescriptionNode);</span>
+
+<span class="fc" id="L42">        ObjectNode binaryDataNode = (ObjectNode) inputNode.get(&quot;content&quot;);</span>
+<span class="fc" id="L43">        BinaryDataBox binaryDataBox = binaryDataBoxParser.discoverBoxFromRequest(binaryDataNode);</span>
+
+<span class="fc" id="L45">        protectionBox.setProtectionDescriptionBox(protectionDescriptionBox);</span>
+<span class="fc" id="L46">        protectionBox.setBinaryDataBox(binaryDataBox);</span>
+
+<span class="fc" id="L48">        return protectionBox;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

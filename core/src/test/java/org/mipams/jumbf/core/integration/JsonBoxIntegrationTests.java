@@ -70,10 +70,13 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
         dBox.computeAndSetToggleBasedOnFields();
         dBox.updateBmffHeadersBasedOnBox();
 
+        assertEquals(dBox.isRequestable(), false);
+
         JumbfBox givenJumbfBox = MockJumbfBoxCreation.generateJumbfBox(dBox, jsonBox);
 
         JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 
         assertEquals(givenJumbfBox, parsedJumbfBox);
+        assertEquals(givenJumbfBox.getBmffBoxes(), parsedJumbfBox.getBmffBoxes());
     }
 }

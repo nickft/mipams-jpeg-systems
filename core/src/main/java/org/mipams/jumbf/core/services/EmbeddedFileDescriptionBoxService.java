@@ -5,12 +5,8 @@ import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.mipams.jumbf.core.entities.EmbeddedFileDescriptionBox;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
-import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.slf4j.Logger;
@@ -38,39 +34,6 @@ public class EmbeddedFileDescriptionBoxService extends BmffBoxService<EmbeddedFi
     @Override
     public ServiceMetadata getServiceMetadata() {
         return serviceMetadata;
-    }
-
-    @Override
-    protected void populateBox(EmbeddedFileDescriptionBox embeddedFileDescriptionBox, ObjectNode input)
-            throws MipamsException {
-
-        try {
-            embeddedFileDescriptionBox.setMediaTypeFromString(input.get("mediaType").asText());
-        } catch (MipamsException e) {
-            throw new BadRequestException(e);
-        } catch (NullPointerException e) {
-            throw new BadRequestException("Media type not specified", e);
-        }
-
-        JsonNode node = input.get("fileName");
-
-        if (node != null) {
-            embeddedFileDescriptionBox.setFileName(node.asText());
-        }
-
-        node = input.get("fileExternallyReferenced");
-
-        if (node != null) {
-            if (node.asBoolean()) {
-                embeddedFileDescriptionBox.markFileAsExternallyReferenced();
-            } else {
-                embeddedFileDescriptionBox.markFileAsInternallyReferenced();
-            }
-        } else {
-            embeddedFileDescriptionBox.markFileAsExternallyReferenced();
-        }
-
-        embeddedFileDescriptionBox.computeAndSetToggleBasedOnFields();
     }
 
     @Override
@@ -102,11 +65,7 @@ public class EmbeddedFileDescriptionBoxService extends BmffBoxService<EmbeddedFi
 
         CoreUtils.addEscapeCharacterToText(mediaTypeAsString).length();
 
-        try {
-            embeddedFileDescriptionBox.setMediaTypeFromString(mediaTypeAsString);
-        } catch (MipamsException e) {
-            throw new BadRequestException(e);
-        }
+        embeddedFileDescriptionBox.setMediaTypeFromString(mediaTypeAsString);
 
         String fileName = embeddedFileDescriptionBox.fileNameExists() ? CoreUtils.readStringFromInputStream(input)
                 : embeddedFileDescriptionBox.getRandomFileName();

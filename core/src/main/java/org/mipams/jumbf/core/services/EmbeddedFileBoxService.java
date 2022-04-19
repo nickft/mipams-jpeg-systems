@@ -5,11 +5,7 @@ import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import org.mipams.jumbf.core.entities.BinaryDataBox;
 import org.mipams.jumbf.core.entities.EmbeddedFileBox;
-import org.mipams.jumbf.core.entities.EmbeddedFileDescriptionBox;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
@@ -39,27 +35,6 @@ public class EmbeddedFileBoxService implements ContentBoxService<EmbeddedFileBox
     }
 
     @Override
-    public EmbeddedFileBox discoverBoxFromRequest(ObjectNode inputNode) throws MipamsException {
-
-        EmbeddedFileBox embeddedFileBox = new EmbeddedFileBox();
-
-        ObjectNode descriptionNode = (ObjectNode) inputNode.get("embeddedFileDescription");
-        EmbeddedFileDescriptionBox embeddedFileDescriptionBox = embeddedFileDescriptionBoxService
-                .discoverBoxFromRequest(descriptionNode);
-
-        ObjectNode binaryDataNode = (ObjectNode) inputNode.get("content");
-        BinaryDataBox binaryDataBox = binaryDataBoxService.discoverBoxFromRequest(binaryDataNode);
-
-        binaryDataBox.setReferencedExternally(embeddedFileDescriptionBox.isContentReferencedExternally());
-        binaryDataBox.updateBmffHeadersBasedOnBox();
-
-        embeddedFileBox.setDescriptionBox(embeddedFileDescriptionBox);
-        embeddedFileBox.setBinaryDataBox(binaryDataBox);
-
-        return embeddedFileBox;
-    }
-
-    @Override
     public void writeToJumbfFile(EmbeddedFileBox embeddedFileBox, FileOutputStream fileOutputStream)
             throws MipamsException {
         embeddedFileDescriptionBoxService.writeToJumbfFile(embeddedFileBox.getDescriptionBox(), fileOutputStream);
@@ -85,9 +60,9 @@ public class EmbeddedFileBoxService implements ContentBoxService<EmbeddedFileBox
     public String getFileUrlFromBox(EmbeddedFileBox embeddedFileBox) throws MipamsException {
 
         if (embeddedFileBox.getDescriptionBox().isContentReferencedExternally()) {
-            return embeddedFileBox.getDescriptionBox().getFileName();
-        } else {
             return CoreUtils.parseStringFromFile(embeddedFileBox.getBinaryDataBox().getFileUrl());
+        } else {
+            return embeddedFileBox.getDescriptionBox().getFileName();
         }
     }
 }

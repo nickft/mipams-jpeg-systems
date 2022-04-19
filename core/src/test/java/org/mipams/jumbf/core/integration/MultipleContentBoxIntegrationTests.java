@@ -62,6 +62,13 @@ public class MultipleContentBoxIntegrationTests extends AbstractIntegrationTests
         List<JumbfBox> parsedJumbfBoxList = generateJumbfFileAndParseBox(givenJumbfBoxList);
 
         assertEquals(givenJumbfBoxList, parsedJumbfBoxList);
+        assertContentBoxes(givenJumbfBoxList, parsedJumbfBoxList);
+    }
+
+    private void assertContentBoxes(List<JumbfBox> givenJumbfBoxList, List<JumbfBox> parsedJumbfBoxList) {
+        for (int i = 0; i < givenJumbfBoxList.size(); i++) {
+            assertEquals(givenJumbfBoxList.get(i).getBmffBoxes(), parsedJumbfBoxList.get(i).getBmffBoxes());
+        }
     }
 
     private JumbfBox createJsonJumbfBox() throws MipamsException {

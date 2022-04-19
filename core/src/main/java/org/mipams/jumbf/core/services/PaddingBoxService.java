@@ -5,8 +5,6 @@ import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.mipams.jumbf.core.ContentBoxDiscoveryManager;
@@ -42,13 +40,6 @@ public final class PaddingBoxService extends BmffBoxService<PaddingBox> {
     @Override
     public ServiceMetadata getServiceMetadata() {
         return serviceMetadata;
-    }
-
-    @Override
-    protected void populateBox(PaddingBox paddingBox, ObjectNode input) throws MipamsException {
-        long payloadSize = input.get("size").asLong();
-        paddingBox.setPaddingSize(payloadSize);
-
     }
 
     @Override

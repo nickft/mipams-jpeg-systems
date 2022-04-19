@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JumbfBoxParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Demo</a> &gt; <a href="index.source.html" class="el_package">org.mipams.jumbf.demo.services.core</a> &gt; <span class="el_source">JumbfBoxParser.java</span></div><h1>JumbfBoxParser.java</h1><pre class="source lang-java linenums">package org.mipams.jumbf.demo.services.core;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import org.mipams.jumbf.core.entities.ContentBox;
+import org.mipams.jumbf.core.entities.JumbfBox;
+import org.mipams.jumbf.core.entities.PaddingBox;
+import org.mipams.jumbf.core.entities.ServiceMetadata;
+import org.mipams.jumbf.core.services.JumbfBoxService;
+import org.mipams.jumbf.core.util.MipamsException;
+
+import org.mipams.jumbf.demo.ContentBoxParserManager;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+<span class="fc" id="L18">public class JumbfBoxParser extends BmffBoxParser&lt;JumbfBox&gt; implements ContentBoxParser {</span>
+
+    @Autowired
+    DescriptionBoxParser descriptionBoxParser;
+
+    @Autowired
+    JumbfBoxService jumbfBoxService;
+
+    @Autowired
+    ContentBoxParserManager contentBoxParserManager;
+
+    @Autowired
+    PaddingBoxParser paddingBoxParser;
+
+    @Override
+    protected JumbfBox initializeBox() {
+<span class="fc" id="L34">        return new JumbfBox();</span>
+    }
+
+    @Override
+    public ServiceMetadata getServiceMetadata() {
+<span class="fc" id="L39">        return jumbfBoxService.getServiceMetadata();</span>
+    }
+
+    @Override
+    protected void populateBox(JumbfBox jumbfBox, ObjectNode input) throws MipamsException {
+
+<span class="fc" id="L45">        ObjectNode descriptionNode = (ObjectNode) input.get(&quot;description&quot;);</span>
+
+<span class="fc" id="L47">        jumbfBox.setDescriptionBox(descriptionBoxParser.discoverBoxFromRequest(descriptionNode));</span>
+
+<span class="fc" id="L49">        ObjectNode contentNode = (ObjectNode) input.get(&quot;content&quot;);</span>
+
+<span class="fc" id="L51">        String contentTypeUuid = jumbfBox.getDescriptionBox().getUuid();</span>
+
+<span class="fc" id="L53">        ContentBoxParser contentBoxParser = contentBoxParserManager</span>
+<span class="fc" id="L54">                .getParserBasedOnContentUUID(contentTypeUuid);</span>
+
+<span class="fc" id="L56">        ContentBox contentBox = contentBoxParser.discoverBoxFromRequest(contentNode);</span>
+
+<span class="fc" id="L58">        jumbfBox.setContentBox(contentBox);</span>
+
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">        if (input.has(&quot;padding&quot;)) {</span>
+<span class="nc" id="L61">            ObjectNode paddingNode = (ObjectNode) input.get(&quot;padding&quot;);</span>
+
+<span class="nc" id="L63">            PaddingBox paddingBox = paddingBoxParser.discoverBoxFromRequest(paddingNode);</span>
+<span class="nc" id="L64">            jumbfBox.setPaddingBox(paddingBox);</span>
+        }
+<span class="fc" id="L66">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

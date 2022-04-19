@@ -6,8 +6,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.services.ContentBoxService;
@@ -42,26 +40,6 @@ public class ReplacementBoxService implements ContentBoxService<ReplacementBox> 
     @Override
     public ServiceMetadata getServiceMetadata() {
         return serviceMetadata;
-    }
-
-    @Override
-    public ReplacementBox discoverBoxFromRequest(ObjectNode inputNode) throws MipamsException {
-        ReplacementBox replacementBox = new ReplacementBox();
-
-        ObjectNode replacementDescriptionNode = (ObjectNode) inputNode.get("replacementDescription");
-        ReplacementDescriptionBox descriptionBox = replacementDescriptionBoxService
-                .discoverBoxFromRequest(replacementDescriptionNode);
-
-        replacementBox.setDescriptionBox(descriptionBox);
-
-        ReplacementType replacementType = replacementBox.getReplacementType();
-        DataBoxHandler dataBoxHandler = dataBoxHandlerFactory.getDataBoxHandlerFromType(replacementType);
-
-        List<BmffBox> contentBoxList = dataBoxHandler.discoverDataBoxFromRequest(inputNode);
-
-        replacementBox.setReplacementDataBoxList(contentBoxList);
-
-        return replacementBox;
     }
 
     @Override

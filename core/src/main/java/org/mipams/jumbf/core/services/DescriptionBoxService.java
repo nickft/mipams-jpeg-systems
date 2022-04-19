@@ -4,10 +4,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
-import javax.xml.bind.DatatypeConverter;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +12,6 @@ import org.mipams.jumbf.core.entities.DescriptionBox;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
-import org.mipams.jumbf.core.util.BadRequestException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,40 +40,6 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
     @Override
     public ServiceMetadata getServiceMetadata() {
         return serviceMetadata;
-    }
-
-    @Override
-    protected void populateBox(DescriptionBox descriptionBox, ObjectNode input) throws MipamsException {
-
-        String type = input.get("contentType").asText();
-
-        ServiceMetadata serviceMetadata = contentBoxDiscoveryManager.getMetadataForContentBoxServiceWithType(type);
-
-        if (serviceMetadata == null) {
-            throw new BadRequestException("Content Type: " + type + " is not supported");
-        }
-
-        descriptionBox.setUuid(serviceMetadata.getContentTypeUuid());
-
-        JsonNode node = input.get("requestable");
-
-        node = input.get("label");
-        if (node != null) {
-            descriptionBox.setLabel(node.asText());
-        }
-
-        node = input.get("id");
-        if (node != null) {
-            descriptionBox.setId(node.asInt());
-        }
-
-        node = input.get("sha256Hash");
-        if (node != null) {
-            byte[] sha256Hash = DatatypeConverter.parseHexBinary(node.asText());
-            descriptionBox.setSha256Hash(sha256Hash);
-        }
-
-        descriptionBox.computeAndSetToggleBasedOnFields();
     }
 
     @Override

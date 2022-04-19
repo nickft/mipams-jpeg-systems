@@ -3,7 +3,6 @@ package org.mipams.jumbf.core;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mipams.jumbf.core.entities.JsonBox;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
-import org.mipams.jumbf.core.services.ContentBoxService;
 import org.mipams.jumbf.core.services.JsonBoxService;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
@@ -21,23 +19,19 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@SuppressWarnings("rawtypes")
 public class ContentBoxDiscoveryManagerTests {
 
     ContentBoxDiscoveryManager manager;
 
     @BeforeEach
     void setup() {
-        List<ContentBoxService> mockContentBoxServiceList = new ArrayList<>();
-
         JsonBoxService service = new JsonBoxService();
         JsonBox jsonBox = new JsonBox();
         ReflectionTestUtils.setField(service, "serviceMetadata",
                 new ServiceMetadata(jsonBox.getTypeId(), jsonBox.getType(), jsonBox.getContentTypeUUID()));
-        mockContentBoxServiceList.add(service);
 
         manager = new ContentBoxDiscoveryManager();
-        ReflectionTestUtils.setField(manager, "contentBoxServiceList", mockContentBoxServiceList);
+        ReflectionTestUtils.setField(manager, "contentBoxServiceList", List.of(service));
     }
 
     @Test

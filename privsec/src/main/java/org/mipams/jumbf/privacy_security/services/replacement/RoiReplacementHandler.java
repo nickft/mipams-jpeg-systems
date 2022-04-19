@@ -4,8 +4,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.mipams.jumbf.core.entities.ContiguousCodestreamBox;
 import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.services.ContiguousCodestreamBoxService;
@@ -18,17 +16,6 @@ public class RoiReplacementHandler implements DataBoxHandler {
 
     @Autowired
     ContiguousCodestreamBoxService contiguousCodestreamBoxService;
-
-    @Override
-    public List<BmffBox> discoverDataBoxFromRequest(ObjectNode inputNode) throws MipamsException {
-
-        ObjectNode contentNode = (ObjectNode) inputNode.get("content");
-
-        ContiguousCodestreamBox contiguousCodestreamBox = contiguousCodestreamBoxService
-                .discoverBoxFromRequest(contentNode);
-
-        return List.of(contiguousCodestreamBox);
-    }
 
     @Override
     public void writeDataBoxToJumbfFile(List<BmffBox> replacementDataBoxList, FileOutputStream fileOutputStream)

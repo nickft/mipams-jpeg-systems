@@ -29,7 +29,7 @@ public class ContentBoxDiscoveryManager {
             }
         }
 
-        throw new MipamsException("Box with uuid " + uuid.toString() + " is not a Content Box");
+        throw new MipamsException("Box with uuid " + uuid + " is not a Content Box");
     }
 
     public ServiceMetadata getMetadataForContentBoxServiceWithType(String type) throws MipamsException {
