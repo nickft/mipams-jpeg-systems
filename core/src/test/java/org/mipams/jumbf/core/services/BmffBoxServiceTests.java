@@ -59,6 +59,31 @@ public class BmffBoxServiceTests {
     }
 
     @Test
+    void testParsingLBox() throws IOException {
+        UuidBoxService uuidBoxService = new UuidBoxService();
+
+        UuidBox uuidBox = new UuidBox();
+        ServiceMetadata serviceMetadata = new ServiceMetadata(uuidBox.getTypeId(), uuidBox.getType(),
+                uuidBox.getContentTypeUUID());
+
+        ReflectionTestUtils.setField(uuidBoxService, "serviceMetadata", serviceMetadata);
+
+        byte[] bmffHeaderInput = new byte[16];
+
+        long xBoxValue = Long.valueOf(5);
+
+        System.arraycopy(CoreUtils.convertIntToByteArray(1), 0, bmffHeaderInput, 0, 4);
+        System.arraycopy(CoreUtils.convertIntToByteArray(uuidBox.getTypeId()), 0, bmffHeaderInput, 4, 4);
+        System.arraycopy(CoreUtils.convertLongToByteArray(xBoxValue), 0, bmffHeaderInput, 8, 8);
+
+        try (InputStream input = new ByteArrayInputStream(bmffHeaderInput);) {
+            assertThrows(MipamsException.class, () -> {
+                uuidBoxService.parseFromJumbfFile(input, 16);
+            });
+        }
+    }
+
+    @Test
     void testUpdatingBmffHeadersOfLongBox() throws MipamsException {
         MockLongBox mockBox = new MockLongBox();
 
