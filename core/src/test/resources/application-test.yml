@@ -8,6 +8,6 @@ logging:
     org:
       mipams:
         jumbf:
-          core: DEBUG
+          core: INFO
 
 

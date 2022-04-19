@@ -102,8 +102,6 @@ public class EmbeddedFileDescriptionBox extends BmffBox {
             setMediaType(mediaType);
         } catch (IllegalArgumentException e) {
             throw new MipamsException("Bad Media Type", e);
-        } catch (NullPointerException e) {
-            throw new MipamsException("Media type not specified", e);
         }
     }
 

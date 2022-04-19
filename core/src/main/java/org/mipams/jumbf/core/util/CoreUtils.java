@@ -265,4 +265,8 @@ public class CoreUtils {
             throw new MipamsException("Could not read content", e);
         }
     }
+
+    public static int numberOfHexCharsToRepresentLong(long size) {
+        return Long.toHexString(size).length();
+    }
 }

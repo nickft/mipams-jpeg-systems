@@ -3,7 +3,6 @@ package org.mipams.jumbf.core;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.services.ContentBoxService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,19 +29,6 @@ public class ContentBoxDiscoveryManager {
         }
 
         throw new MipamsException("Box with uuid " + uuid + " is not a Content Box");
-    }
-
-    public ServiceMetadata getMetadataForContentBoxServiceWithType(String type) throws MipamsException {
-
-        for (ContentBoxService service : contentBoxServiceList) {
-
-            if (service.getServiceMetadata().getBoxType().equalsIgnoreCase(type)) {
-                return service.getServiceMetadata();
-            }
-
-        }
-
-        throw new MipamsException("Box " + type + " is not supported yet");
     }
 
     public ContentBoxService getContentBoxServiceBasedOnBoxWithId(int boxId) throws MipamsException {

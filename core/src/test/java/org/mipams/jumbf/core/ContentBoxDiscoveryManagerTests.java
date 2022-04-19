@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.mipams.jumbf.core.entities.JsonBox;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.services.JsonBoxService;
-import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -44,19 +43,6 @@ public class ContentBoxDiscoveryManagerTests {
         });
 
         String expectedMessage = String.format("Box with uuid %s is not a Content Box", randomInput.toString());
-
-        assertEquals(expectedMessage, exception.getMessage());
-    }
-
-    @Test
-    void testGetMetadataForContentServiceWithRandomType() {
-        String randomInput = CoreUtils.randomStringGenerator();
-
-        Exception exception = assertThrows(MipamsException.class, () -> {
-            manager.getMetadataForContentBoxServiceWithType(randomInput);
-        });
-
-        String expectedMessage = String.format("Box %s is not supported yet", randomInput);
 
         assertEquals(expectedMessage, exception.getMessage());
     }
