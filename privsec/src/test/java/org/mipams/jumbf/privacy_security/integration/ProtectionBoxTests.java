@@ -100,15 +100,15 @@ public class ProtectionBoxTests extends AbstractIntegrationTests {
         protectionDescriptionBox.updateBmffHeadersBasedOnBox();
         JumbfBox protectionJumbfBox = getProtectionJumbfBoxBasedOnProtectionDescriptionBox(protectionDescriptionBox);
 
-        DescriptionBox dBox = new DescriptionBox();
-        dBox.setUuid(org.mipams.jumbf.core.util.BoxTypeEnum.XmlBox.getContentUuid());
-        dBox.setLabel("access-rules-reference");
-        dBox.computeAndSetToggleBasedOnFields();
-        dBox.updateBmffHeadersBasedOnBox();
-
         XmlBox xmlBox = new XmlBox();
         xmlBox.setFileUrl(TEST_FILE_PATH);
         xmlBox.updateBmffHeadersBasedOnBox();
+
+        DescriptionBox dBox = new DescriptionBox();
+        dBox.setUuid(xmlBox.getContentTypeUUID());
+        dBox.setLabel("access-rules-reference");
+        dBox.computeAndSetToggleBasedOnFields();
+        dBox.updateBmffHeadersBasedOnBox();
 
         JumbfBox xmlJumbfBox = MockJumbfBox.generateJumbfBox(dBox, xmlBox);
 
