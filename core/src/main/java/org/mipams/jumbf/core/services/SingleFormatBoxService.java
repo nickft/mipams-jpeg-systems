@@ -3,10 +3,7 @@ package org.mipams.jumbf.core.services;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.mipams.jumbf.core.entities.SingleFormatBox;
-import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.core.util.Properties;
@@ -16,17 +13,6 @@ public abstract class SingleFormatBoxService<T extends SingleFormatBox> extends 
 
     @Autowired
     Properties properties;
-
-    @Override
-    protected void populateBox(T singleFormatBox, ObjectNode input) throws MipamsException {
-        String path = input.get("fileUrl").asText();
-
-        if (path == null) {
-            throw new BadRequestException("Path is not specified");
-        }
-
-        singleFormatBox.setFileUrl(path);
-    }
 
     @Override
     protected void writeBmffPayloadToJumbfFile(T singleFormatBox, FileOutputStream fileOutputStream)

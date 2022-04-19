@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UuidBoxParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Demo</a> &gt; <a href="index.source.html" class="el_package">org.mipams.jumbf.demo.services.core</a> &gt; <span class="el_source">UuidBoxParser.java</span></div><h1>UuidBoxParser.java</h1><pre class="source lang-java linenums">package org.mipams.jumbf.demo.services.core;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import org.mipams.jumbf.core.entities.ServiceMetadata;
+import org.mipams.jumbf.core.entities.UuidBox;
+import org.mipams.jumbf.core.services.UuidBoxService;
+import org.mipams.jumbf.core.util.BadRequestException;
+import org.mipams.jumbf.core.util.MipamsException;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.stereotype.Service;
+
+@Service
+<span class="fc" id="L15">public class UuidBoxParser extends BmffBoxParser&lt;UuidBox&gt; implements ContentBoxParser {</span>
+
+    @Autowired
+    UuidBoxService uuidBoxService;
+
+    @Override
+    protected void populateBox(UuidBox uuidBox, ObjectNode input) throws MipamsException {
+<span class="fc" id="L22">        String uuid = input.get(&quot;uuid&quot;).asText();</span>
+
+        try {
+<span class="fc" id="L25">            uuidBox.setUuid(uuid);</span>
+<span class="nc" id="L26">        } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L27">            throw new BadRequestException(&quot;Invalid UUID format: &quot;, e);</span>
+
+<span class="fc" id="L29">        }</span>
+
+<span class="fc" id="L31">        String path = input.get(&quot;fileUrl&quot;).asText();</span>
+
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">        if (path == null) {</span>
+<span class="nc" id="L34">            throw new BadRequestException(&quot;Path is not specified&quot;);</span>
+        }
+
+<span class="fc" id="L37">        uuidBox.setFileUrl(path);</span>
+<span class="fc" id="L38">    }</span>
+
+    @Override
+    public ServiceMetadata getServiceMetadata() {
+<span class="fc" id="L42">        return uuidBoxService.getServiceMetadata();</span>
+    }
+
+    @Override
+    protected UuidBox initializeBox() {
+<span class="fc" id="L47">        return new UuidBox();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

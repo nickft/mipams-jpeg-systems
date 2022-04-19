@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
@@ -20,15 +18,6 @@ public class RoiParamHandler implements ParamHandlerInterface {
 
     private @Getter @Setter int offsetX;
     private @Getter @Setter int offsetY;
-
-    @Override
-    public void populateParamFromRequest(ObjectNode input) throws MipamsException {
-        int offsetX = input.get("offset-X").asInt();
-        int offsetY = input.get("offset-Y").asInt();
-
-        setOffsetX(offsetX);
-        setOffsetY(offsetY);
-    }
 
     @Override
     public void writeParamToBytes(OutputStream outputStream) throws MipamsException {

@@ -5,13 +5,9 @@ import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.entities.UuidBox;
-import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.CoreUtils;
-import org.mipams.jumbf.core.util.CorruptedJumbfFileException;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.core.util.Properties;
 
@@ -47,26 +43,6 @@ public class UuidBoxService extends BmffBoxService<UuidBox> implements ContentBo
     }
 
     @Override
-    protected void populateBox(UuidBox uuidBox, ObjectNode input) throws MipamsException {
-        String uuid = input.get("uuid").asText();
-
-        try {
-            uuidBox.setUuid(uuid);
-        } catch (IllegalArgumentException e) {
-            throw new BadRequestException("Invalid UUID format: ", e);
-
-        }
-
-        String path = input.get("fileUrl").asText();
-
-        if (path == null) {
-            throw new BadRequestException("Path is not specified");
-        }
-
-        uuidBox.setFileUrl(path);
-    }
-
-    @Override
     protected void writeBmffPayloadToJumbfFile(UuidBox uuidBox, FileOutputStream fileOutputStream)
             throws MipamsException {
 
@@ -83,20 +59,15 @@ public class UuidBoxService extends BmffBoxService<UuidBox> implements ContentBo
 
         long nominalTotalSizeInBytes = availableBytesForBox;
 
-        try {
+        String uuid = CoreUtils.readUuidFromInputStream(input);
+        uuidBox.setUuid(uuid);
+        nominalTotalSizeInBytes -= CoreUtils.UUID_BYTE_SIZE;
 
-            String uuid = CoreUtils.readUuidFromInputStream(input);
-            uuidBox.setUuid(uuid);
-            nominalTotalSizeInBytes -= CoreUtils.UUID_BYTE_SIZE;
+        String fileName = CoreUtils.randomStringGenerator();
+        String fullPath = CoreUtils.getFullPath(properties.getFileDirectory(), fileName);
+        uuidBox.setFileUrl(fullPath);
 
-            String fileName = CoreUtils.randomStringGenerator();
-            String fullPath = CoreUtils.getFullPath(properties.getFileDirectory(), fileName);
-            uuidBox.setFileUrl(fullPath);
-
-            CoreUtils.writeBytesFromInputStreamToFile(input, nominalTotalSizeInBytes, uuidBox.getFileUrl());
-        } catch (MipamsException e) {
-            throw new CorruptedJumbfFileException("Failed to read UUID box", e);
-        }
+        CoreUtils.writeBytesFromInputStreamToFile(input, nominalTotalSizeInBytes, uuidBox.getFileUrl());
 
         logger.debug("Discovered box: " + uuidBox.toString());
     }

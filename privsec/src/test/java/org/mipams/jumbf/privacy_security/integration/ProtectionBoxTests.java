@@ -73,15 +73,15 @@ public class ProtectionBoxTests extends AbstractIntegrationTests {
 
         JumbfBox protectionJumbfBox = getProtectionJumbfBoxBasedOnProtectionDescriptionBox(protectionDescriptionBox);
 
-        DescriptionBox dBox = new DescriptionBox();
-        dBox.setUuid(org.mipams.jumbf.core.util.BoxTypeEnum.JsonBox.getContentUuid());
-        dBox.setLabel("encryption-reference");
-        dBox.computeAndSetToggleBasedOnFields();
-        dBox.updateBmffHeadersBasedOnBox();
-
         JsonBox jsonBox = new JsonBox();
         jsonBox.setFileUrl(TEST_FILE_PATH);
         jsonBox.updateBmffHeadersBasedOnBox();
+
+        DescriptionBox dBox = new DescriptionBox();
+        dBox.setUuid(jsonBox.getContentTypeUUID());
+        dBox.setLabel("encryption-reference");
+        dBox.computeAndSetToggleBasedOnFields();
+        dBox.updateBmffHeadersBasedOnBox();
 
         JumbfBox jsonJumbfBox = MockJumbfBox.generateJumbfBox(dBox, jsonBox);
 

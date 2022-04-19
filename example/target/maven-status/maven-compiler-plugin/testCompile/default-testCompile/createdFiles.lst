@@ -1,0 +1,10 @@
+org/mipams/jumbf/demo/ContentBoxParserManagerTests.class
+org/mipams/jumbf/demo/integration/core/BadRequestParserTests.class
+org/mipams/jumbf/demo/integration/core/JsonBoxParserTests.class
+org/mipams/jumbf/demo/integration/core/EmbeddedFileBoxParserTests.class
+org/mipams/jumbf/demo/integration/privacy_security/ReplacementBoxTests.class
+org/mipams/jumbf/demo/integration/privacy_security/ProtectionBoxTests.class
+org/mipams/jumbf/demo/integration/AbstractParserTests.class
+org/mipams/jumbf/demo/integration/core/MultipleBoxParserTests.class
+org/mipams/jumbf/demo/DemoApplicationTests.class
+org/mipams/jumbf/demo/integration/core/UuidBoxParserTests.class

@@ -5,9 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
@@ -22,22 +19,6 @@ public class BoxParamHandler implements ParamHandlerInterface {
 
     private @Getter @Setter Long offset;
     private @Getter @Setter String label;
-
-    @Override
-    public void populateParamFromRequest(ObjectNode input) throws MipamsException {
-        JsonNode offsetNode = input.get("offset");
-
-        if (offsetNode != null) {
-            setOffset(offsetNode.asLong());
-        }
-
-        JsonNode labelNode = input.get("label");
-
-        if (labelNode != null) {
-            setOffset(getMaxLongValue());
-            setLabel(labelNode.asText());
-        }
-    }
 
     @Override
     public void writeParamToBytes(OutputStream outputStream) throws MipamsException {

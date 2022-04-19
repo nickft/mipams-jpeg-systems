@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DemoController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Demo</a> &gt; <a href="index.source.html" class="el_package">org.mipams.jumbf.demo.controller</a> &gt; <span class="el_source">DemoController.java</span></div><h1>DemoController.java</h1><pre class="source lang-java linenums">package org.mipams.jumbf.demo.controller;
+
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
+import org.mipams.jumbf.core.services.CoreParserService;
+import org.mipams.jumbf.core.entities.JumbfBox;
+import org.mipams.jumbf.core.services.CoreGeneratorService;
+import org.mipams.jumbf.core.util.MipamsException;
+import org.mipams.jumbf.demo.services.DemoRequestParser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+
+@RestController
+@RequestMapping(&quot;/demo&quot;)
+<span class="fc" id="L24">public class DemoController {</span>
+
+    @Autowired
+    CoreParserService parserService;
+
+    @Autowired
+    CoreGeneratorService generatorService;
+
+    @Autowired
+    DemoRequestParser demoRequestParser;
+
+    @GetMapping(&quot;/parseMetadata&quot;)
+    public ResponseEntity&lt;?&gt; parseJumbfMetadataFromPath(@RequestParam String fileName) {
+        try {
+<span class="fc" id="L38">            List&lt;JumbfBox&gt; boxList = parserService.parseMetadataFromJumbfFile(fileName);</span>
+<span class="fc" id="L39">            return ResponseEntity.ok().body(prepareResponse(boxList));</span>
+<span class="fc" id="L40">        } catch (MipamsException e) {</span>
+<span class="fc" id="L41">            return ResponseEntity.badRequest().body(e.getMessage());</span>
+        }
+    }
+
+    private String prepareResponse(List&lt;JumbfBox&gt; boxList) {
+<span class="fc" id="L46">        StringBuilder result = new StringBuilder(&quot;This .jumbf file contains the following boxes:\n&quot;);</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        for (JumbfBox jumbfBox : boxList) {</span>
+<span class="fc" id="L48">            result.append(jumbfBox.toString());</span>
+<span class="fc" id="L49">        }</span>
+<span class="fc" id="L50">        return result.toString();</span>
+    }
+
+    @PostMapping(&quot;/generateBox&quot;)
+    public ResponseEntity&lt;?&gt; generateJumbfBytes(@RequestParam(required = false) String targetFile,
+            @RequestBody JsonNode requestBody) {
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        String outputFileName = targetFile == null ? &quot;test.jumbf&quot; : targetFile;</span>
+
+        try {
+<span class="fc" id="L59">            List&lt;JumbfBox&gt; boxList = demoRequestParser.generateBoxFromRequest(requestBody);</span>
+
+<span class="fc" id="L61">            String filePath = generatorService.generateJumbfFileFromBox(boxList, outputFileName);</span>
+
+<span class="fc" id="L63">            String result = generateResultMessage(boxList, filePath);</span>
+<span class="fc" id="L64">            return ResponseEntity.ok().body(result);</span>
+<span class="fc" id="L65">        } catch (MipamsException e) {</span>
+<span class="fc" id="L66">            return ResponseEntity.badRequest().body(e.getMessage());</span>
+        }
+    }
+
+    private String generateResultMessage(List&lt;JumbfBox&gt; jumbfBoxList, String path) {
+
+<span class="fc" id="L72">        StringBuilder result = new StringBuilder(&quot;Jumbf file is stored in location &quot;);</span>
+
+<span class="fc" id="L74">        result.append(path).append(&quot;\n&quot;);</span>
+
+<span class="fc" id="L76">        result.append(&quot;The JUMBF content is the following: \n&quot;);</span>
+
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        for (JumbfBox jumbfBox : jumbfBoxList) {</span>
+<span class="fc" id="L79">            result.append(jumbfBox.toString());</span>
+<span class="fc" id="L80">        }</span>
+
+<span class="fc" id="L82">        return result.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

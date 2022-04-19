@@ -6,8 +6,6 @@ import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.services.BmffBoxService;
 import org.mipams.jumbf.core.util.CoreUtils;
@@ -42,23 +40,6 @@ public class ReplacementDescriptionBoxService extends BmffBoxService<Replacement
     @Override
     public ServiceMetadata getServiceMetadata() {
         return serviceMetadata;
-    }
-
-    @Override
-    protected final void populateBox(ReplacementDescriptionBox box, ObjectNode input) throws MipamsException {
-        String typeAsString = input.get("replacementType").asText();
-
-        ReplacementType replacementType = ReplacementType.getTypeFromString(typeAsString);
-
-        box.setReplacementTypeId(replacementType.getId());
-
-        boolean isAutoApply = input.get("auto-apply").asBoolean();
-        box.setAutoApply(isAutoApply);
-
-        ParamHandlerInterface paramHandler = paramHandlerFactory.getParamHandler(replacementType);
-        paramHandler.populateParamFromRequest(input);
-
-        box.setParamHandler(paramHandler);
     }
 
     @Override

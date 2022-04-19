@@ -5,8 +5,6 @@ import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -51,32 +49,6 @@ public final class JumbfBoxService extends BmffBoxService<JumbfBox> implements C
     @Override
     public ServiceMetadata getServiceMetadata() {
         return serviceMetadata;
-    }
-
-    @Override
-    protected void populateBox(JumbfBox jumbfBox, ObjectNode input) throws MipamsException {
-
-        ObjectNode descriptionNode = (ObjectNode) input.get("description");
-
-        jumbfBox.setDescriptionBox(descriptionBoxService.discoverBoxFromRequest(descriptionNode));
-
-        ObjectNode contentNode = (ObjectNode) input.get("content");
-
-        String contentTypeUuid = jumbfBox.getDescriptionBox().getUuid();
-
-        ContentBoxService contentBoxService = contentBoxDiscoveryManager
-                .getContentBoxServiceBasedOnContentUUID(contentTypeUuid);
-
-        ContentBox contentBox = contentBoxService.discoverBoxFromRequest(contentNode);
-
-        jumbfBox.setContentBox(contentBox);
-
-        if (input.has("padding")) {
-            ObjectNode paddingNode = (ObjectNode) input.get("padding");
-
-            PaddingBox paddingBox = paddingBoxService.discoverBoxFromRequest(paddingNode);
-            jumbfBox.setPaddingBox(paddingBox);
-        }
     }
 
     @Override

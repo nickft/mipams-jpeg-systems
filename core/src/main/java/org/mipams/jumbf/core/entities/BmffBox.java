@@ -29,8 +29,9 @@ public abstract class BmffBox implements BoxInterface {
 
         payloadSize -= getLBoxSize() + getTBoxSize();
 
-        if (isXBoxEnabled())
+        if (isXBoxEnabled()) {
             payloadSize -= getXBoxSize();
+        }
 
         return payloadSize;
     }
@@ -59,7 +60,13 @@ public abstract class BmffBox implements BoxInterface {
     }
 
     public long calculateSizeFromBox() throws MipamsException {
-        return getLBoxSize() + getTBoxSize() + calculatePayloadSize();
+        long sum = getLBoxSize() + getTBoxSize() + calculatePayloadSize();
+
+        if (isXBoxEnabled()) {
+            sum += getXBoxSize();
+        }
+
+        return sum;
     }
 
     private int getLBoxSize() {

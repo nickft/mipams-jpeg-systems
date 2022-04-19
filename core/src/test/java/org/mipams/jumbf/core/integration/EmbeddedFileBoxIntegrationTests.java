@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.mipams.jumbf.core.entities.BinaryDataBox;
 import org.mipams.jumbf.core.entities.EmbeddedFileBox;
@@ -50,6 +51,8 @@ public class EmbeddedFileBoxIntegrationTests extends AbstractIntegrationTests {
         embeddedFileDescriptionBox.markFileAsExternallyReferenced();
         embeddedFileDescriptionBox.updateBmffHeadersBasedOnBox();
 
+        assertEquals(TEST_FILE_NAME, embeddedFileDescriptionBox.discoverFileName());
+
         BinaryDataBox binaryDataBox = new BinaryDataBox();
         binaryDataBox.setReferencedExternally(true);
         binaryDataBox.setFileUrl("http://example.org/test.jpeg");
@@ -60,21 +63,24 @@ public class EmbeddedFileBoxIntegrationTests extends AbstractIntegrationTests {
         embeddedFileBox.setBinaryDataBox(binaryDataBox);
 
         JumbfBox givenJumbfBox = MockJumbfBoxCreation.generateJumbfBoxWithContent(embeddedFileBox, 10);
+        assertEquals(TEST_FILE_NAME, embeddedFileBox.getFileName());
 
         JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 
         assertEquals(givenJumbfBox, parsedJumbfBox);
+        assertEquals(givenJumbfBox.getBmffBoxes(), parsedJumbfBox.getBmffBoxes());
     }
 
     @Test
     void testEmbeddedFileBoxWithInternalReference() throws Exception {
 
         EmbeddedFileDescriptionBox embeddedFileDescriptionBox = new EmbeddedFileDescriptionBox();
-        embeddedFileDescriptionBox.setFileName(TEST_FILE_NAME);
         embeddedFileDescriptionBox.setMediaTypeFromString("image/jpeg");
         embeddedFileDescriptionBox.markFileAsInternallyReferenced();
         embeddedFileDescriptionBox.computeAndSetToggleBasedOnFields();
         embeddedFileDescriptionBox.updateBmffHeadersBasedOnBox();
+
+        assertTrue(!TEST_FILE_NAME.equals(embeddedFileDescriptionBox.discoverFileName()));
 
         BinaryDataBox binaryDataBox = new BinaryDataBox();
         binaryDataBox.setFileUrl(TEST_FILE_PATH);
