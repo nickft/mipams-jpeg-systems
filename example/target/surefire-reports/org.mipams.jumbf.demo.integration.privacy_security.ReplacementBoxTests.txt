@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: org.mipams.jumbf.demo.integration.privacy_security.ReplacementBoxTests
--------------------------------------------------------------------------------
-Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.625 s - in org.mipams.jumbf.demo.integration.privacy_security.ReplacementBoxTests

@@ -17,7 +17,7 @@ public class JumbfBox extends BmffBox implements ContentBox {
 
     protected @Getter @Setter DescriptionBox descriptionBox;
     protected @Getter @Setter ContentBox contentBox;
-    protected @Getter @Setter PaddingBox paddingBox;
+    protected @Getter @Setter @ToString.Exclude PaddingBox paddingBox;
 
     @Override
     public int getTypeId() {

@@ -16,8 +16,11 @@ import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.entities.UuidBox;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
+
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
 
+@SpringBootTest
 public class BmffBoxServiceTests {
 
     @Test

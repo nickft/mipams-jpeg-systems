@@ -30,19 +30,6 @@ org.mipams.core.max_file_size_in_bytes=52428800
 org.mipams.core.image_folder=/home/nikos/Desktop
 
 ```
-To Launch the application execute the following command:
-
-```
-java -jar target/jumbf-privsec-0.0.1-SNAPSHOT.jar
-```
-
-Providing that all the steps were executed with no error, the following message should be displayed in the terminal:
-
-```
-org.mipams.jumbf.core.JumbfApplication       : Privacy & Security module is up and running
-```
-
-The application runs on port 8080.
 
 ## Demo <a name="demo"></a>
 

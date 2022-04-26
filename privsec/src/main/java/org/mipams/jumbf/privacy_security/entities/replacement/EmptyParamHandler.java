@@ -10,7 +10,7 @@ import lombok.ToString;
 
 @NoArgsConstructor
 @ToString
-public class FileParamHandler implements ParamHandlerInterface {
+public class EmptyParamHandler implements ParamHandlerInterface {
 
     @Override
     public void writeParamToBytes(OutputStream outputStream) throws MipamsException {
@@ -24,5 +24,4 @@ public class FileParamHandler implements ParamHandlerInterface {
     public long getParamSize() throws MipamsException {
         return 0;
     }
-
 }

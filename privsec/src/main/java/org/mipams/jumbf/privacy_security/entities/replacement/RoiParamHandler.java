@@ -1,6 +1,5 @@
 package org.mipams.jumbf.privacy_security.entities.replacement;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -21,13 +20,8 @@ public class RoiParamHandler implements ParamHandlerInterface {
 
     @Override
     public void writeParamToBytes(OutputStream outputStream) throws MipamsException {
-
-        try {
-            outputStream.write(CoreUtils.convertIntToByteArray(getOffsetX()));
-            outputStream.write(CoreUtils.convertIntToByteArray(getOffsetY()));
-        } catch (IOException e) {
-            throw new MipamsException("Could not write to file.", e);
-        }
+        CoreUtils.writeIntToOutputStream(getOffsetX(), outputStream);
+        CoreUtils.writeIntToOutputStream(getOffsetY(), outputStream);
     }
 
     @Override

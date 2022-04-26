@@ -59,4 +59,30 @@ public class ContentBoxDiscoveryManagerTests {
 
         assertEquals(expectedMessage, exception.getMessage());
     }
+
+    @Test
+    void testGetContentBoxServiceMetadataBasedOnBoxWithType() throws MipamsException {
+        JsonBox jsonBox = new JsonBox();
+
+        String type = jsonBox.getType();
+        ServiceMetadata expectedResult = new ServiceMetadata(jsonBox.getTypeId(), jsonBox.getType(),
+                jsonBox.getContentTypeUUID());
+
+        ServiceMetadata givenResult = manager.getMetadataForContentBoxServiceWithType(type);
+
+        assertEquals(expectedResult.getBoxTypeId(), givenResult.getBoxTypeId());
+    }
+
+    @Test
+    void testGetContentBoxServiceMetadataBasedOnBoxWithRandomType() {
+        String nonExistentInput = "test";
+
+        Exception exception = assertThrows(MipamsException.class, () -> {
+            manager.getMetadataForContentBoxServiceWithType(nonExistentInput);
+        });
+
+        String expectedMessage = String.format("Box %s is not a Content Box", nonExistentInput);
+
+        assertEquals(expectedMessage, exception.getMessage());
+    }
 }

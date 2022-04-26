@@ -1,6 +1,5 @@
 package org.mipams.jumbf.privacy_security.entities.replacement;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -20,13 +19,8 @@ public class AppParamHandler implements ParamHandlerInterface {
 
     @Override
     public void writeParamToBytes(OutputStream outputStream) throws MipamsException {
-        try {
-            if (offsetExists()) {
-                outputStream.write(CoreUtils.convertLongToByteArray(getOffset()));
-            }
-        } catch (IOException e) {
-            throw new MipamsException("Could not write to file.", e);
-        }
+
+        CoreUtils.writeLongToOutputStream(getOffset(), outputStream);
     }
 
     @Override
@@ -37,17 +31,7 @@ public class AppParamHandler implements ParamHandlerInterface {
 
     @Override
     public long getParamSize() throws MipamsException {
-        long sum = 0;
-
-        if (offsetExists()) {
-            sum += getOffsetSize();
-        }
-
-        return sum;
-    }
-
-    public boolean offsetExists() {
-        return getOffset() != null;
+        return getOffsetSize();
     }
 
     private long getOffsetSize() {

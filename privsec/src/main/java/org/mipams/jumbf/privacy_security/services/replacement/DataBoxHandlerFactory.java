@@ -1,6 +1,5 @@
 package org.mipams.jumbf.privacy_security.services.replacement;
 
-import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.privacy_security.entities.replacement.ReplacementType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,14 +16,11 @@ public class DataBoxHandlerFactory {
     @Autowired
     RoiReplacementHandler roiReplacementHandler;
 
-    public DataBoxHandler getDataBoxHandlerFromType(ReplacementType replacementType) throws MipamsException {
+    public DataBoxHandler getDataBoxHandlerFromType(ReplacementType replacementType) {
 
         DataBoxHandler result = null;
 
         switch (replacementType) {
-            case BOX:
-                result = boxReplacementHandler;
-                break;
             case APP:
                 result = appReplacementHandler;
                 break;
@@ -32,8 +28,10 @@ public class DataBoxHandlerFactory {
             case FILE:
                 result = roiReplacementHandler;
                 break;
+            case BOX:
             default:
-                throw new MipamsException(replacementType.getType() + " is not supported");
+                result = boxReplacementHandler;
+                break;
         }
 
         return result;

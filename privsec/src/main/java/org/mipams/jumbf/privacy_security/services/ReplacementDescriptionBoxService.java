@@ -1,7 +1,6 @@
 package org.mipams.jumbf.privacy_security.services;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
@@ -46,14 +45,10 @@ public class ReplacementDescriptionBoxService extends BmffBoxService<Replacement
     protected final void writeBmffPayloadToJumbfFile(ReplacementDescriptionBox box, FileOutputStream fileOutputStream)
             throws MipamsException {
 
-        try {
-            fileOutputStream.write(CoreUtils.convertIntToSingleElementByteArray(box.getReplacementTypeId()));
-            fileOutputStream.write(CoreUtils.convertIntToSingleElementByteArray(box.getToggle()));
+        CoreUtils.writeIntAsSingleByteToOutputStream(box.getReplacementTypeId(), fileOutputStream);
+        CoreUtils.writeIntAsSingleByteToOutputStream(box.getToggle(), fileOutputStream);
 
-            box.getParamHandler().writeParamToBytes(fileOutputStream);
-        } catch (IOException e) {
-            throw new MipamsException("Could not write to file.", e);
-        }
+        box.getParamHandler().writeParamToBytes(fileOutputStream);
 
     }
 
@@ -61,14 +56,19 @@ public class ReplacementDescriptionBoxService extends BmffBoxService<Replacement
     protected final void populatePayloadFromJumbfFile(ReplacementDescriptionBox box, long availableBytesForBox,
             InputStream input) throws MipamsException {
 
+        long remainingBytes = availableBytesForBox;
+
         int value = CoreUtils.readSingleByteAsIntFromInputStream(input);
         box.setReplacementTypeId(value);
+        remainingBytes -= box.getReplacementTypeIdSize();
 
         value = CoreUtils.readSingleByteAsIntFromInputStream(input);
         box.setToggle(value);
+        remainingBytes -= box.getToggleSize();
 
         ReplacementType replacementType = ReplacementType.getTypeFromId(box.getReplacementTypeId());
-        ParamHandlerInterface paramHandler = paramHandlerFactory.getParamHandler(replacementType);
+
+        ParamHandlerInterface paramHandler = paramHandlerFactory.getParamHandler(replacementType, remainingBytes);
         paramHandler.populateParamFromBytes(input);
 
         box.setParamHandler(paramHandler);

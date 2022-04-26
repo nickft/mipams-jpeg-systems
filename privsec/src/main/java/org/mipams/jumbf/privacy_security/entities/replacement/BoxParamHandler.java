@@ -1,6 +1,5 @@
 package org.mipams.jumbf.privacy_security.entities.replacement;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -17,26 +16,21 @@ import lombok.ToString;
 @ToString
 public class BoxParamHandler implements ParamHandlerInterface {
 
-    private @Getter @Setter Long offset;
+    private @Getter @Setter long offset;
     private @Getter @Setter String label;
 
     @Override
     public void writeParamToBytes(OutputStream outputStream) throws MipamsException {
-        try {
-            if (offsetExists()) {
-                outputStream.write(CoreUtils.convertLongToByteArray(getOffset()));
-            }
+        CoreUtils.writeLongToOutputStream(getOffset(), outputStream);
 
-            if (labelExists()) {
-                outputStream.write(CoreUtils.convertStringToByteArray(getLabelWithEscapeCharacter()));
-            }
-        } catch (IOException e) {
-            throw new MipamsException("Could not write to file.", e);
+        if (labelExists()) {
+            CoreUtils.writeTextToOutputStream(getLabelWithEscapeCharacter(), outputStream);
         }
     }
 
     @Override
     public void populateParamFromBytes(InputStream inputStream) throws MipamsException {
+
         long offset = CoreUtils.readLongFromInputStream(inputStream);
         setOffset(offset);
 
@@ -50,9 +44,7 @@ public class BoxParamHandler implements ParamHandlerInterface {
     public long getParamSize() throws MipamsException {
         long sum = 0;
 
-        if (offsetExists()) {
-            sum += getOffsetSize();
-        }
+        sum += getOffsetSize();
 
         if (labelExists()) {
             sum += getLabelSize();
@@ -61,24 +53,20 @@ public class BoxParamHandler implements ParamHandlerInterface {
         return sum;
     }
 
-    public boolean offsetExists() {
-        return getOffset() != null;
-    }
-
     private long getOffsetSize() {
         return CoreUtils.LONG_BYTE_SIZE;
     }
 
-    long getLabelSize() {
+    private long getLabelSize() {
         return getLabelWithEscapeCharacter().length();
     }
 
     public boolean labelExists() {
-        return getOffset() != null && offsetHasMaxValue();
+        return offsetHasMaxValue();
     }
 
     private boolean offsetHasMaxValue() {
-        return getOffset() == getMaxLongValue();
+        return Long.valueOf(getMaxLongValue()).equals(getOffset());
     }
 
     public long getMaxLongValue() {

@@ -43,20 +43,6 @@ The application was developped using the following tools:
 
 In the home directory of the project there are two directories core (corresponding to JUMBF) and privsec (corresponding to Privacy & Security) each one corresponding to a separate application. Privacy & Security application is dependent on core application. Let's first focus on the core module. 
 
-In the core/src/main/resources/application.parameters you may find the parameters that can be configured for the core application. It is important to specify the path where the images and jumbf files (files with extension .jumbf) should be stored. For documentation purposes below you may find all the parameters used for the demo:
-
-``` 
-spring.main.allow-circular-references=true
-
-logging.level.org.mipams.jumbf.core=DEBUG 
-
-# Maximum size per file uploaded: 50 MB
-org.mipams.core.max_file_size_in_bytes=52428800
-
-org.mipams.core.image_folder=/home/nikos/Desktop
-
-```
-
 To compile the entire project. Run the following command in the home directory:
 
 ```
@@ -66,7 +52,7 @@ mvn clean package
 This will produce the executable jars in all the submodules. 
 
 ## Demo <a name="demo"></a>
-For detailed explanation on how to run each submodule separately visit the respective directory.
+In the "example" directory you can find a demo application which shows how to use the mipams library. For more information visit the "example" directory.
 
 ## Application structure and terminology <a name="spring"></a>
 

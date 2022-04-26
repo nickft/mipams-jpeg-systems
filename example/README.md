@@ -1,6 +1,3 @@
-[![Tests](https://github.com/nickft/mipams-jumbf/actions/workflows/maven.yml/badge.svg)](https://github.com/nickft/mipams-jumbf/actions/workflows/maven.yml)
-[![coverage](../.github/badges/jacoco-privsec.svg)](https://github.com/nickft/mipams-jumbf/actions/workflows/maven.yml)
-[![branches coverage](../.github/badges/branches-privsec.svg)](https://github.com/nickft/mipams-jumbf/actions/workflows/maven.yml)
 # JUMBF Reference software: Example
 
 ## Table of Contents
@@ -12,7 +9,7 @@
 
 ## Introduction <a name="intro"></a>
 
-This submodule implements the JUMBF boxes as defined in JPEG systems — Part 4: Privacy and security standard
+This submodule implements a demo application that demonstrates how to use the mipams-jumbf library. Specifically, this application defines endpoints that allows a user to parse and generate JUMBF boxes.
 
 ## Deploying <a name="deployment"></a>
 
@@ -22,7 +19,7 @@ In the src/main/resources/application.parameters you may find the parameters tha
 spring.main.allow-circular-references=true
 
 logging.level.org.mipams.jumbf.core=INFO
-logging.level.org.mipams.jumbf.privacy_security=DEBUG 
+logging.level.org.mipams.jumbf.privacy_security=INFO 
 
 # Maximum size per file uploaded: 50 MB
 org.mipams.core.max_file_size_in_bytes=52428800
@@ -30,16 +27,23 @@ org.mipams.core.max_file_size_in_bytes=52428800
 org.mipams.core.image_folder=/home/nikos/Desktop
 
 ```
+
+First we need to compile the example application:
+
+```
+mvn clean package
+```
+
 To Launch the application execute the following command:
 
 ```
-java -jar target/jumbf-privsec-0.0.1-SNAPSHOT.jar
+java -jar target/demo-0.0.1-SNAPSHOT.jar
 ```
 
 Providing that all the steps were executed with no error, the following message should be displayed in the terminal:
 
 ```
-org.mipams.jumbf.core.JumbfApplication       : Privacy & Security module is up and running
+org.mipams.jumbf.core.DemoApplication       : Demo application is up and running
 ```
 
 The application runs on port 8080.
@@ -50,7 +54,112 @@ Now that the application is up and running, let's use the Rest API to test our f
 
 ### Generate a JUMBF file
 
-#### Protection boxes
+Firstly, let's request the generation of a JUMBF file containing our metadata which is a test.json file. 
+For this example we need to specify a test.json file with information in JSON format.
+
+We can use the Rest Client of our preference and perform the following POST request:
+
+```
+http://localhost:8080/core/v1/generateBox
+```
+
+We can optionally specify the name of the file that we want the jumbf file to be stored:
+
+```
+http://localhost:8080/core/v1/generateBox?targetFile=test1.jumbf
+```
+
+#### (JPEG Systems Part 5: JUMBF): JSON box
+
+The body of this request should be the following JSON document describing the JUMBF structure that we want to generate. Remember that in the "fileUrl" we need to specify the absolute path of our test.json file.
+
+```
+{
+  "type": "jumb",
+  "description": { 
+    "type": "jumd", 
+    "contentType": "json", 
+    "label": "JSON Content Type JUMBF box" 
+  },
+  "content": { 
+    "type": "json", 
+    "fileUrl":"/home/nikos/test.json" 
+  }	
+}
+```
+
+The above JSON format describes a jumbf box with one description box (by definition) and one content box of type JSON. 
+
+Provided that the request is well-formed, the POST request is a string corresponding to the path where the .jumbf file is stored.
+
+#### (JPEG Systems Part 5: JUMBF): Multiple JUMBF boxes
+
+Let's see a more complicated example where we can specify metadata consisting of three type of content boxes: A JSON, a XML and a Contiguous Codestream (Image file) Box. For this we need to define three files: test.xml, test.json and test.jpeg. Below you can see the Request body that needs to be sent in the same endpoint.
+
+```
+[
+  {
+    "type": "jumb",
+    "description": { "type": "jumd", "contentType": "xml", "label": "XML Content Type JUMBF box" },
+    "content": { "type": "xml", "fileUrl":"/home/nikos/test.xml" }	
+  },
+  {
+    "type": "jumb",
+    "description": { "type": "jumd", "contentType": "json", "label": "JSON Content Type JUMBF box" },
+    "content": { "type": "json", "fileUrl":"/home/nikos/test.json" }	
+  },
+  {
+    "type": "jumb",
+    "description": { "type": "jumd", "contentType": "jp2c", "label": "Contiguous Codestream Content Type JUMBF box" },
+    "content": { "type": "jp2c", "fileUrl":"/home/nikos/test.jpeg" }	
+  }
+]
+```
+
+#### (JPEG Systems Part 5: JUMBF): UUID box
+
+Example to define a UUID JUMBF Box is shown below (We need to provide the vendor-specific.obj file that contains the bytes that we want to include in the JUMBF box):
+
+```
+{
+  "type": "jumb",
+  "description": { 
+    "type": "jumd", 
+    "contentType": "uuid", 
+    "label": "UUID Content Type JUMBF box" 
+  },
+  "content": { 
+    "type": "uuid", 
+    "uuid": "645ba7a8-b7f4-11ec-b909-0242ac120002", 
+    "fileUrl": "/home/nikos/vendor-specific.obj" 
+  }
+}
+```
+
+#### (JPEG Systems Part 5: JUMBF): Embedded File box
+
+Example to define an Embedded File JUMBF Box is shown below:
+
+```
+{
+  "type": "jumb",
+  "description": { "type": "jumd", "contentType": "bfbd" },
+  "content": {
+    "embeddedFileDescription": {
+      "type": "bfdb",
+      "mediaType": "image/jpeg",
+      "fileName": "test.jpeg",
+      "fileExternallyReferenced": "true"
+    },
+    "content": {
+      "type": "bidb",
+      "fileUrl": "http://example.org/test.jpeg"
+    }
+  }
+}
+```
+
+#### (JPEG Systems Part 4: Privacy & Security): Protection boxes
 Firstly, let's generate a Protection Content Type JUMBF box containing the encrypted data that we have stored in the file "file.enc" which we assume that we have already created.
 
 We can use the Rest Client of our preference and perform the following POST request:
@@ -165,7 +274,7 @@ The JUMBF content is the following:
 ReplacementBox Content Type JUMBF box
 ```
 
-#### Replacement boxes
+#### (JPEG Systems Part 4: Privacy & Security): Replacement boxes
 
 For this example we distinguish four cases, one for each type of replacement.
 
@@ -312,4 +421,16 @@ In this case we want to define the replacement of a whole image with the content
 
 ### Parse a JUBMF file
 
-The way to parse a JUMBF box from a .jumbf file is identical to the one presented in the code module.
+Now that we have generated JUMBF files, let's parse on of them and see its contents. For this, we need to execute the following GET request:
+
+```
+http://localhost:8080/core/v1/parseMetadata?path=/home/nikos/Desktop/test.jumbf
+```
+
+Provided that the JUMBF file is well-formed, the GET response shall be a brief string describing the structure of the parsed file. An example of this description is depicted below:
+
+```
+[
+XmlBox Content Type JUMBF box 
+]
+```

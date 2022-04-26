@@ -18,11 +18,11 @@ import org.mipams.jumbf.privacy_security.entities.ReplacementBox;
 import org.mipams.jumbf.privacy_security.entities.ReplacementDescriptionBox;
 import org.mipams.jumbf.privacy_security.entities.replacement.AppParamHandler;
 import org.mipams.jumbf.privacy_security.entities.replacement.BoxParamHandler;
-import org.mipams.jumbf.privacy_security.entities.replacement.FileParamHandler;
+import org.mipams.jumbf.privacy_security.entities.replacement.EmptyParamHandler;
 import org.mipams.jumbf.privacy_security.entities.replacement.ParamHandlerInterface;
 import org.mipams.jumbf.privacy_security.entities.replacement.ReplacementType;
 import org.mipams.jumbf.privacy_security.entities.replacement.RoiParamHandler;
-
+import org.mipams.jumbf.privacy_security.services.replacement.ParamHandlerFactory;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -61,10 +61,11 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
                 JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 
                 assertEquals(givenJumbfBox, parsedJumbfBox);
+                assertEquals(givenJumbfBox.getBmffBoxes(), parsedJumbfBox.getBmffBoxes());
         }
 
         @Test
-        void testReplacementBoxWithLabel() throws Exception {
+        void testBoxReplacementBoxWithLabel() throws Exception {
                 BoxParamHandler boxParamHandler = new BoxParamHandler();
                 boxParamHandler.setLabel("reference-label");
                 boxParamHandler.setOffset(boxParamHandler.getMaxLongValue());
@@ -83,10 +84,32 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
                 JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 
                 assertEquals(givenJumbfBox, parsedJumbfBox);
+                assertEquals(givenJumbfBox.getBmffBoxes(), parsedJumbfBox.getBmffBoxes());
         }
 
         @Test
-        void testReplacementBoxWithMultipleReplacement() throws Exception {
+        void testBoxReplacementBoxWithNoAdditionalParam() throws Exception {
+                ParamHandlerFactory paramHandlerFactory = new ParamHandlerFactory();
+                ParamHandlerInterface paramHandler = paramHandlerFactory.getParamHandler(ReplacementType.BOX, 0);
+
+                JsonBox jsonBox = new JsonBox();
+                jsonBox.setFileUrl(TEST_FILE_PATH);
+                jsonBox.updateBmffHeadersBasedOnBox();
+
+                JumbfBox jsonJumbfBox = MockJumbfBox.generateJumbfBoxWithContent(jsonBox);
+
+                List<BmffBox> replacementDataBoxList = List.of(jsonJumbfBox);
+
+                JumbfBox givenJumbfBox = getReplacementJumbfBoxBasedOnReplacementDescriptionBox(
+                                ReplacementType.BOX.getId(), paramHandler, replacementDataBoxList);
+                JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
+
+                assertEquals(givenJumbfBox, parsedJumbfBox);
+                assertEquals(givenJumbfBox.getBmffBoxes(), parsedJumbfBox.getBmffBoxes());
+        }
+
+        @Test
+        void testBoxReplacementBoxWithMultipleReplacement() throws Exception {
                 BoxParamHandler boxParamHandler = new BoxParamHandler();
                 boxParamHandler.setLabel("reference-label");
                 boxParamHandler.setOffset(boxParamHandler.getMaxLongValue());
@@ -105,6 +128,7 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
                 JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 
                 assertEquals(givenJumbfBox, parsedJumbfBox);
+                assertEquals(givenJumbfBox.getBmffBoxes(), parsedJumbfBox.getBmffBoxes());
         }
 
         @Test
@@ -124,11 +148,12 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
                 JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 
                 assertEquals(givenJumbfBox, parsedJumbfBox);
+                assertEquals(givenJumbfBox.getBmffBoxes(), parsedJumbfBox.getBmffBoxes());
         }
 
         @Test
         void testFileReplacementBox() throws Exception {
-                FileParamHandler fileParamHandler = new FileParamHandler();
+                EmptyParamHandler emptyParamHandler = new EmptyParamHandler();
 
                 ContiguousCodestreamBox jp2cBox = new ContiguousCodestreamBox();
                 jp2cBox.setFileUrl(TEST_FILE_PATH);
@@ -138,10 +163,11 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
 
                 JumbfBox givenJumbfBox = getReplacementJumbfBoxBasedOnReplacementDescriptionBox(
                                 ReplacementType.FILE.getId(),
-                                fileParamHandler, replacementDataBoxList);
+                                emptyParamHandler, replacementDataBoxList);
                 JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 
                 assertEquals(givenJumbfBox, parsedJumbfBox);
+                assertEquals(givenJumbfBox.getBmffBoxes(), parsedJumbfBox.getBmffBoxes());
         }
 
         @Test
@@ -160,6 +186,7 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
                 JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 
                 assertEquals(givenJumbfBox, parsedJumbfBox);
+                assertEquals(givenJumbfBox.getBmffBoxes(), parsedJumbfBox.getBmffBoxes());
         }
 
         private JumbfBox getReplacementJumbfBoxBasedOnReplacementDescriptionBox(int replacementTypeId,

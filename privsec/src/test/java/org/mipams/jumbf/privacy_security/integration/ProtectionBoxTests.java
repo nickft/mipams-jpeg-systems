@@ -48,6 +48,7 @@ public class ProtectionBoxTests extends AbstractIntegrationTests {
         JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 
         assertEquals(givenJumbfBox, parsedJumbfBox);
+        assertEquals(givenJumbfBox.getBmffBoxes(), parsedJumbfBox.getBmffBoxes());
     }
 
     @Test
@@ -62,6 +63,7 @@ public class ProtectionBoxTests extends AbstractIntegrationTests {
         JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 
         assertEquals(givenJumbfBox, parsedJumbfBox);
+        assertEquals(givenJumbfBox.getBmffBoxes(), parsedJumbfBox.getBmffBoxes());
     }
 
     @Test

@@ -1,7 +1,6 @@
 package org.mipams.jumbf.privacy_security.services;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
@@ -9,7 +8,6 @@ import javax.annotation.PostConstruct;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.services.BmffBoxService;
 import org.mipams.jumbf.core.util.CoreUtils;
-import org.mipams.jumbf.core.util.CorruptedJumbfFileException;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.privacy_security.entities.ProtectionDescriptionBox;
 
@@ -46,28 +44,20 @@ public class ProtectionDescriptionBoxService extends BmffBoxService<ProtectionDe
             FileOutputStream fileOutputStream)
             throws MipamsException {
 
-        try {
+        CoreUtils.writeIntAsSingleByteToOutputStream(protectionDescriptionBox.getMethodToggle(), fileOutputStream);
 
-            fileOutputStream
-                    .write(CoreUtils.convertIntToSingleElementByteArray(protectionDescriptionBox.getMethodToggle()));
+        if (protectionDescriptionBox.isProtectionExternallyReferenced()) {
+            CoreUtils.writeTextToOutputStream(protectionDescriptionBox.getEncLabelWithEscapeCharacter(),
+                    fileOutputStream);
+        }
 
-            if (protectionDescriptionBox.isProtectionExternallyReferenced()) {
-                fileOutputStream
-                        .write(CoreUtils
-                                .convertStringToByteArray(protectionDescriptionBox.getEncLabelWithEscapeCharacter()));
-            }
+        if (protectionDescriptionBox.accessRulesExist()) {
+            CoreUtils.writeTextToOutputStream(protectionDescriptionBox.getArLabelWithEscapeCharacter(),
+                    fileOutputStream);
+        }
 
-            if (protectionDescriptionBox.accessRulesExist()) {
-                fileOutputStream.write(
-                        CoreUtils.convertStringToByteArray(protectionDescriptionBox.getArLabelWithEscapeCharacter()));
-            }
-
-            if (protectionDescriptionBox.isAes256CbcWithIvProtection()) {
-                fileOutputStream.write(protectionDescriptionBox.getIv());
-            }
-
-        } catch (IOException e) {
-            throw new MipamsException("Could not write to file.", e);
+        if (protectionDescriptionBox.isAes256CbcWithIvProtection()) {
+            CoreUtils.writeByteArrayToOutputStream(protectionDescriptionBox.getIv(), fileOutputStream);
         }
 
     }
@@ -79,46 +69,24 @@ public class ProtectionDescriptionBoxService extends BmffBoxService<ProtectionDe
 
         logger.debug("Protection Description box");
 
-        long actualSize = 0;
+        int methodToggle = CoreUtils.readSingleByteAsIntFromInputStream(input);
+        protectionDescriptionBox.setMethodToggle(methodToggle);
 
-        try {
+        if (protectionDescriptionBox.isProtectionExternallyReferenced()) {
+            String label = CoreUtils.readStringFromInputStream(input);
+            protectionDescriptionBox.setEncLabel(label);
+        }
 
-            int methodToggle = CoreUtils.readSingleByteAsIntFromInputStream(input);
-            actualSize++;
+        if (protectionDescriptionBox.accessRulesExist()) {
+            String label = CoreUtils.readStringFromInputStream(input);
+            protectionDescriptionBox.setArLabel(label);
+        }
 
-            protectionDescriptionBox.setMethodToggle(methodToggle);
-            if (protectionDescriptionBox.isProtectionExternallyReferenced()) {
-                String label = CoreUtils.readStringFromInputStream(input);
+        if (protectionDescriptionBox.isAes256CbcWithIvProtection()) {
+            int ivSize = 16;
+            byte[] iv = CoreUtils.readBytesFromInputStream(input, ivSize);
 
-                // +1 for the null terminating character
-                actualSize += CoreUtils.addEscapeCharacterToText(label).length();
-
-                protectionDescriptionBox.setEncLabel(label);
-            }
-
-            if (protectionDescriptionBox.accessRulesExist()) {
-                String label = CoreUtils.readStringFromInputStream(input);
-
-                // +1 for the null terminating character
-                actualSize += CoreUtils.addEscapeCharacterToText(label).length();
-
-                protectionDescriptionBox.setArLabel(label);
-            }
-
-            if (protectionDescriptionBox.isAes256CbcWithIvProtection()) {
-                byte[] iv = new byte[16];
-
-                if (input.read(iv) == -1) {
-                    throw new MipamsException();
-                }
-
-                protectionDescriptionBox.setIv(iv);
-                actualSize += 16;
-            }
-
-        } catch (IOException e) {
-            throw new CorruptedJumbfFileException(
-                    "Failed to read description box after {" + Long.toString(actualSize) + "} bytes.", e);
+            protectionDescriptionBox.setIv(iv);
         }
 
         logger.debug("Discovered box: " + protectionDescriptionBox.toString());
