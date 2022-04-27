@@ -1,4 +1,4 @@
-package org.mipams.jumbf.privacy_security.services.replacement;
+package org.mipams.jumbf.privacy_security.services.boxes.replacement;
 
 import org.mipams.jumbf.privacy_security.entities.replacement.ReplacementType;
 import org.springframework.beans.factory.annotation.Autowired;

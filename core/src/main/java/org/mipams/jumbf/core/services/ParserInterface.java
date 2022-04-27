@@ -1,4 +1,4 @@
-package org.mipams.jumbf.core.services.boxes;
+package org.mipams.jumbf.core.services;
 
 import java.util.List;
 

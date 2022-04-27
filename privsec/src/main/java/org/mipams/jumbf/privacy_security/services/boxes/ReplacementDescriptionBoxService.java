@@ -1,4 +1,4 @@
-package org.mipams.jumbf.privacy_security.services;
+package org.mipams.jumbf.privacy_security.services.boxes;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -6,13 +6,14 @@ import java.io.InputStream;
 import javax.annotation.PostConstruct;
 
 import org.mipams.jumbf.core.entities.ServiceMetadata;
-import org.mipams.jumbf.core.services.BmffBoxService;
+import org.mipams.jumbf.core.services.boxes.BmffBoxService;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
+
 import org.mipams.jumbf.privacy_security.entities.ReplacementDescriptionBox;
 import org.mipams.jumbf.privacy_security.entities.replacement.ParamHandlerInterface;
 import org.mipams.jumbf.privacy_security.entities.replacement.ReplacementType;
-import org.mipams.jumbf.privacy_security.services.replacement.ParamHandlerFactory;
+import org.mipams.jumbf.privacy_security.services.boxes.replacement.ParamHandlerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

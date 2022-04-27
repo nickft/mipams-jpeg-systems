@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.entities.UuidBox;
-import org.mipams.jumbf.core.services.boxes.CoreGeneratorService;
-import org.mipams.jumbf.core.services.boxes.CoreParserService;
+import org.mipams.jumbf.core.services.CoreGeneratorService;
+import org.mipams.jumbf.core.services.CoreParserService;
 import org.mipams.jumbf.core.services.content_types.UuidContentType;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;

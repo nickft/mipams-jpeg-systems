@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.mipams.jumbf.core.entities.JumbfBox;
-import org.mipams.jumbf.core.services.boxes.CoreGeneratorService;
-import org.mipams.jumbf.core.services.boxes.CoreParserService;
+import org.mipams.jumbf.core.services.CoreGeneratorService;
+import org.mipams.jumbf.core.services.CoreParserService;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.springframework.beans.factory.annotation.Autowired;
 

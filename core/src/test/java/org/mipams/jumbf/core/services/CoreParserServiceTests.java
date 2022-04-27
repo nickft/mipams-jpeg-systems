@@ -8,7 +8,6 @@ import java.io.IOException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mipams.jumbf.core.services.boxes.CoreParserService;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.core.util.Properties;
 import org.springframework.boot.test.context.SpringBootTest;

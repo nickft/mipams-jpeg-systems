@@ -1,4 +1,4 @@
-package org.mipams.jumbf.core.services.boxes;
+package org.mipams.jumbf.core.services;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mipams.jumbf.core.entities.JumbfBox;
+import org.mipams.jumbf.core.services.boxes.JumbfBoxService;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.CorruptedJumbfFileException;
 import org.mipams.jumbf.core.util.MipamsException;

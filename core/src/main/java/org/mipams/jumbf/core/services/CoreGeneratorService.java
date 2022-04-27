@@ -1,4 +1,4 @@
-package org.mipams.jumbf.core.services.boxes;
+package org.mipams.jumbf.core.services;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.core.util.Properties;
 import org.mipams.jumbf.core.entities.JumbfBox;
+import org.mipams.jumbf.core.services.boxes.JumbfBoxService;
 import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.CoreUtils;
 

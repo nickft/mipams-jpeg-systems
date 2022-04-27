@@ -1,4 +1,4 @@
-package org.mipams.jumbf.privacy_security.services.replacement;
+package org.mipams.jumbf.privacy_security.services.boxes.replacement;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;

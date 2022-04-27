@@ -2,3 +2,9 @@ org:
   mipams:
     core:
       image_folder: /tmp/jumbf-tests
+logging:
+  level:
+    org:
+      mipams:
+        jumbf:
+          core: DEBUG 

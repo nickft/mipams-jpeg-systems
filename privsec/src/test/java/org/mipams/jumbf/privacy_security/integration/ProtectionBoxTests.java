@@ -15,9 +15,11 @@ import org.mipams.jumbf.core.entities.DescriptionBox;
 import org.mipams.jumbf.core.entities.JsonBox;
 import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.entities.XmlBox;
+import org.mipams.jumbf.core.services.content_types.JsonContentType;
+import org.mipams.jumbf.core.services.content_types.XmlContentType;
 import org.mipams.jumbf.core.util.MipamsException;
-import org.mipams.jumbf.privacy_security.entities.ProtectionBox;
 import org.mipams.jumbf.privacy_security.entities.ProtectionDescriptionBox;
+import org.mipams.jumbf.privacy_security.services.content_types.ProtectionContentType;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -48,7 +50,6 @@ public class ProtectionBoxTests extends AbstractIntegrationTests {
         JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 
         assertEquals(givenJumbfBox, parsedJumbfBox);
-        assertEquals(givenJumbfBox.getBmffBoxes(), parsedJumbfBox.getBmffBoxes());
     }
 
     @Test
@@ -63,7 +64,6 @@ public class ProtectionBoxTests extends AbstractIntegrationTests {
         JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 
         assertEquals(givenJumbfBox, parsedJumbfBox);
-        assertEquals(givenJumbfBox.getBmffBoxes(), parsedJumbfBox.getBmffBoxes());
     }
 
     @Test
@@ -79,13 +79,16 @@ public class ProtectionBoxTests extends AbstractIntegrationTests {
         jsonBox.setFileUrl(TEST_FILE_PATH);
         jsonBox.updateBmffHeadersBasedOnBox();
 
+        JsonContentType jsonContentType = new JsonContentType();
+        String contentTypeUuid = jsonContentType.getContentTypeUuid();
+
         DescriptionBox dBox = new DescriptionBox();
-        dBox.setUuid(jsonBox.getContentTypeUUID());
+        dBox.setUuid(contentTypeUuid);
         dBox.setLabel("encryption-reference");
         dBox.computeAndSetToggleBasedOnFields();
         dBox.updateBmffHeadersBasedOnBox();
 
-        JumbfBox jsonJumbfBox = MockJumbfBox.generateJumbfBox(dBox, jsonBox);
+        JumbfBox jsonJumbfBox = MockJumbfBox.generateJumbfBox(dBox, List.of(jsonBox));
 
         List<JumbfBox> givenJumbfBoxList = List.of(protectionJumbfBox, jsonJumbfBox);
         List<JumbfBox> parsedJumbfBoxList = generateJumbfFileAndParseBox(givenJumbfBoxList);
@@ -106,13 +109,16 @@ public class ProtectionBoxTests extends AbstractIntegrationTests {
         xmlBox.setFileUrl(TEST_FILE_PATH);
         xmlBox.updateBmffHeadersBasedOnBox();
 
+        XmlContentType xmlContentType = new XmlContentType();
+        String contentTypeUuid = xmlContentType.getContentTypeUuid();
+
         DescriptionBox dBox = new DescriptionBox();
-        dBox.setUuid(xmlBox.getContentTypeUUID());
+        dBox.setUuid(contentTypeUuid);
         dBox.setLabel("access-rules-reference");
         dBox.computeAndSetToggleBasedOnFields();
         dBox.updateBmffHeadersBasedOnBox();
 
-        JumbfBox xmlJumbfBox = MockJumbfBox.generateJumbfBox(dBox, xmlBox);
+        JumbfBox xmlJumbfBox = MockJumbfBox.generateJumbfBox(dBox, List.of(xmlBox));
 
         List<JumbfBox> givenJumbfBoxList = List.of(protectionJumbfBox, xmlJumbfBox);
         List<JumbfBox> parsedJumbfBoxList = generateJumbfFileAndParseBox(givenJumbfBoxList);
@@ -123,15 +129,13 @@ public class ProtectionBoxTests extends AbstractIntegrationTests {
     JumbfBox getProtectionJumbfBoxBasedOnProtectionDescriptionBox(ProtectionDescriptionBox pdBox)
             throws MipamsException {
 
+        ProtectionContentType protectionContentType = new ProtectionContentType();
+        String contentTypeUuid = protectionContentType.getContentTypeUuid();
+
         BinaryDataBox binaryDataBox = new BinaryDataBox();
         binaryDataBox.setFileUrl(TEST_FILE_PATH);
         binaryDataBox.updateBmffHeadersBasedOnBox();
 
-        ProtectionBox protectionBox = new ProtectionBox();
-        protectionBox.setProtectionDescriptionBox(pdBox);
-        protectionBox.setBinaryDataBox(binaryDataBox);
-
-        return MockJumbfBox.generateJumbfBoxWithContent(protectionBox);
-
+        return MockJumbfBox.generateJumbfBoxWithContent(contentTypeUuid, List.of(pdBox, binaryDataBox));
     }
 }

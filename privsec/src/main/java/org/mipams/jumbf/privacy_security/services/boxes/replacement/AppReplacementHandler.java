@@ -1,4 +1,4 @@
-package org.mipams.jumbf.privacy_security.services.replacement;
+package org.mipams.jumbf.privacy_security.services.boxes.replacement;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.mipams.jumbf.core.entities.BinaryDataBox;
 import org.mipams.jumbf.core.entities.BmffBox;
-import org.mipams.jumbf.core.services.BinaryDataBoxService;
+import org.mipams.jumbf.core.services.boxes.BinaryDataBoxService;
 import org.mipams.jumbf.core.util.MipamsException;
 
 import org.springframework.beans.factory.annotation.Autowired;
