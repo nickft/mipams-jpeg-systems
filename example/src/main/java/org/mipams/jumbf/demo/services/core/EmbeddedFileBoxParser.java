@@ -1,22 +1,25 @@
 package org.mipams.jumbf.demo.services.core;
 
+import java.util.List;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.mipams.jumbf.core.entities.BinaryDataBox;
-import org.mipams.jumbf.core.entities.EmbeddedFileBox;
+import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.entities.EmbeddedFileDescriptionBox;
-import org.mipams.jumbf.core.entities.ServiceMetadata;
-import org.mipams.jumbf.core.services.EmbeddedFileBoxService;
+import org.mipams.jumbf.core.services.content_types.EmbeddedFileContentType;
 import org.mipams.jumbf.core.util.MipamsException;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import org.mipams.jumbf.demo.services.ContentTypeParser;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmbeddedFileBoxParser implements ContentBoxParser {
+public class EmbeddedFileBoxParser implements ContentTypeParser {
 
     @Autowired
-    EmbeddedFileBoxService embeddedFileBoxService;
+    EmbeddedFileContentType embeddedFileContentType;
 
     @Autowired
     EmbeddedFileDescriptionBoxParser embeddedFileDescriptionBoxParser;
@@ -25,14 +28,7 @@ public class EmbeddedFileBoxParser implements ContentBoxParser {
     BinaryDataBoxParser binaryDataBoxParser;
 
     @Override
-    public ServiceMetadata getServiceMetadata() {
-        return embeddedFileBoxService.getServiceMetadata();
-    }
-
-    @Override
-    public EmbeddedFileBox discoverBoxFromRequest(ObjectNode inputNode) throws MipamsException {
-
-        EmbeddedFileBox embeddedFileBox = new EmbeddedFileBox();
+    public List<BmffBox> discoverContentBoxesFromRequest(ObjectNode inputNode) throws MipamsException {
 
         ObjectNode descriptionNode = (ObjectNode) inputNode.get("embeddedFileDescription");
         EmbeddedFileDescriptionBox embeddedFileDescriptionBox = embeddedFileDescriptionBoxParser
@@ -44,10 +40,12 @@ public class EmbeddedFileBoxParser implements ContentBoxParser {
         binaryDataBox.setReferencedExternally(embeddedFileDescriptionBox.isContentReferencedExternally());
         binaryDataBox.updateBmffHeadersBasedOnBox();
 
-        embeddedFileBox.setDescriptionBox(embeddedFileDescriptionBox);
-        embeddedFileBox.setBinaryDataBox(binaryDataBox);
+        return List.of(embeddedFileDescriptionBox, binaryDataBox);
+    }
 
-        return embeddedFileBox;
+    @Override
+    public String getContentTypeUuid() {
+        return embeddedFileContentType.getContentTypeUuid();
     }
 
 }

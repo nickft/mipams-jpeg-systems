@@ -14,10 +14,10 @@ public abstract class BmffBoxParser<T extends BmffBox> implements BoxParserInter
         T bmffBox = initializeBox();
 
         try {
-            validateRequestType(inputNode);
+            validateRequestType(bmffBox, inputNode);
             populateBox(bmffBox, inputNode);
         } catch (NullPointerException e) {
-            throw new MipamsException("Error while parsing the request for box: " + getServiceMetadata().toString(), e);
+            throw new MipamsException("Error while parsing the request for box: " + bmffBox.getType(), e);
         }
 
         bmffBox.updateBmffHeadersBasedOnBox();
@@ -27,14 +27,14 @@ public abstract class BmffBoxParser<T extends BmffBox> implements BoxParserInter
 
     protected abstract T initializeBox();
 
-    private void validateRequestType(ObjectNode inputNode) throws BadRequestException {
+    private void validateRequestType(T box, ObjectNode inputNode) throws BadRequestException {
         JsonNode typeNode = inputNode.get("type");
 
         if (typeNode == null) {
             throw new BadRequestException("Box 'type' must be specified");
         }
 
-        String expectedType = getServiceMetadata().getBoxType();
+        String expectedType = box.getType();
         String requestedType = typeNode.asText();
 
         if (!expectedType.equals(requestedType)) {

@@ -78,7 +78,7 @@ The body of this request should be the following JSON document describing the JU
   "type": "jumb",
   "description": { 
     "type": "jumd", 
-    "contentType": "json", 
+    "contentTypeUuid": "6A736F6E-0011-0010-8000-00AA00389B71", 
     "label": "JSON Content Type JUMBF box" 
   },
   "content": { 
@@ -100,17 +100,17 @@ Let's see a more complicated example where we can specify metadata consisting of
 [
   {
     "type": "jumb",
-    "description": { "type": "jumd", "contentType": "xml", "label": "XML Content Type JUMBF box" },
+    "description": { "type": "jumd", "contentTypeUuid": "786D6C20-0011-0010-8000-00AA00389B71", "label": "XML Content Type JUMBF box" },
     "content": { "type": "xml", "fileUrl":"/home/nikos/test.xml" }	
   },
   {
     "type": "jumb",
-    "description": { "type": "jumd", "contentType": "json", "label": "JSON Content Type JUMBF box" },
+    "description": { "type": "jumd", "contentTypeUuid": "6A736F6E-0011-0010-8000-00AA00389B71", "label": "JSON Content Type JUMBF box" },
     "content": { "type": "json", "fileUrl":"/home/nikos/test.json" }	
   },
   {
     "type": "jumb",
-    "description": { "type": "jumd", "contentType": "jp2c", "label": "Contiguous Codestream Content Type JUMBF box" },
+    "description": { "type": "jumd", "contentTypeUuid": "6579D6FB-DBA2-446B-B2AC-1B82FEEB89D1", "label": "Contiguous Codestream Content Type JUMBF box" },
     "content": { "type": "jp2c", "fileUrl":"/home/nikos/test.jpeg" }	
   }
 ]
@@ -125,7 +125,7 @@ Example to define a UUID JUMBF Box is shown below (We need to provide the vendor
   "type": "jumb",
   "description": { 
     "type": "jumd", 
-    "contentType": "uuid", 
+    "contentTypeUuid": "uuid", 
     "label": "UUID Content Type JUMBF box" 
   },
   "content": { 
@@ -143,7 +143,7 @@ Example to define an Embedded File JUMBF Box is shown below:
 ```
 {
   "type": "jumb",
-  "description": { "type": "jumd", "contentType": "bfbd" },
+  "description": { "type": "jumd", "contentTypeUuid": "bfbd" },
   "content": {
     "embeddedFileDescription": {
       "type": "bfdb",
@@ -179,7 +179,7 @@ The body of this request should be the following JSON document describing the JU
 ```
 {
   "type": "jumb",
-  "description": { "type": "jumd", "contentType": "prtc" },
+  "description": { "type": "jumd", "contentTypeUuid": "40CB0C32-BB8A-489D-A70B-2AD6F47F4369" },
   "content": {
     "protectionDescription": {
       "type": "pspd",
@@ -219,7 +219,7 @@ The request body is:
 [
   {
     "type": "jumb",
-    "description": { "type": "jumd", "contentType": "prtc" },
+    "description": { "type": "jumd", "contentTypeUuid": "40CB0C32-BB8A-489D-A70B-2AD6F47F4369" },
     "content": {
       "protectionDescription": {
         "type": "pspd",
@@ -231,7 +231,7 @@ The request body is:
   },
   {
     "type": "jumb",
-    "description": { "type": "jumd", "contentType": "json", "label": "json-encryption" },
+    "description": { "type": "jumd", "contentTypeUuid": "6A736F6E-0011-0010-8000-00AA00389B71", "label": "json-encryption" },
     "content": { "type": "json", "fileUrl":"/home/nikos/encryption-info.json" }
   }
 ]
@@ -246,7 +246,7 @@ The access rules information is assumed to be stored in the policy.xml file. An 
 [
   {
     "type": "jumb",
-    "description": { "type": "jumd", "contentType": "prtc" },
+    "description": { "type": "jumd", "contentTypeUuid": "40CB0C32-BB8A-489D-A70B-2AD6F47F4369" },
     "content": {
       "protectionDescription": {
         "type": "pspd",
@@ -259,7 +259,7 @@ The access rules information is assumed to be stored in the policy.xml file. An 
   },
   {
     "type": "jumb",
-    "description": { "type": "jumd", "contentType": "xml", "label": "xacml-rules-box" },
+    "description": { "type": "jumd", "contentTypeUuid": "786D6C20-0011-0010-8000-00AA00389B71", "label": "xacml-rules-box" },
     "content":{ "type": "xml", "fileUrl":"/home/nikos/policy.xml" }
   }
 ]
@@ -287,7 +287,7 @@ In the first example we specify the referenced box using the offset.
 ```
 { 
   "type": "jumb", 
-  "description": { "type": "jumd", "contentType": "rplc", "label": "test" }, 
+  "description": { "type": "jumd", "contentTypeUuid": "DC28B95F-B68A-498E-8064-0FCA845D6B0E", "label": "test" }, 
   "content": { 
     "replacementDescription": {
       "type": "psrd", 
@@ -297,7 +297,7 @@ In the first example we specify the referenced box using the offset.
     }, 
     "content": { 
       "type": "jumb", 
-      "description": { "type": "jumd", "contentType": "jp2c", "label": "Content which replaces the referenced box" }, 
+      "description": { "type": "jumd", "contentTypeUuid": "6579D6FB-DBA2-446B-B2AC-1B82FEEB89D1", "label": "Content which replaces the referenced box" }, 
       "content": { "type": "jp2c", "fileUrl":"/home/nikos/file.enc" } 
     } 
   } 
@@ -309,7 +309,7 @@ In the second example we specify the referenced box using the label instead of t
 ```
 { 
   "type": "jumb", 
-  "description": { "type": "jumd", "contentType": "rplc", "label": "test" }, 
+  "description": { "type": "jumd", "contentTypeUuid": "DC28B95F-B68A-498E-8064-0FCA845D6B0E", "label": "test" }, 
   "content": { 
     "replacementDescription": { 
       "type": "psrd", 
@@ -319,7 +319,7 @@ In the second example we specify the referenced box using the label instead of t
     }, 
     "content": { 
       "type": "jumb", 
-      "description": { "type": "jumd", "contentType": "jp2c", "label": "Content which replaces the referenced box" }, 
+      "description": { "type": "jumd", "contentTypeUuid": "6579D6FB-DBA2-446B-B2AC-1B82FEEB89D1", "label": "Content which replaces the referenced box" }, 
       "content": { "type": "jp2c", "fileUrl":"/home/nikos/file.enc" } 
     } 
   } 
@@ -331,7 +331,7 @@ In the third example we specify the referenced box using the label and we provid
 ```
 { 
   "type": "jumb", 
-  "description": { "type": "jumd", "contentType": "rplc", "label": "test" }, 
+  "description": { "type": "jumd", "contentTypeUuid": "DC28B95F-B68A-498E-8064-0FCA845D6B0E", "label": "test" }, 
   "content": { 
     "replacementDescription": { 
       "type": "psrd", 
@@ -342,12 +342,12 @@ In the third example we specify the referenced box using the label and we provid
     "content": [
       { 
         "type": "jumb", 
-        "description": { "type": "jumd", "contentType": "jp2c", "label": "One of the content which replaces the referenced box" }, 
+        "description": { "type": "jumd", "contentTypeUuid": "6579D6FB-DBA2-446B-B2AC-1B82FEEB89D1", "label": "One of the content which replaces the referenced box" }, 
         "content": { "type": "jp2c", "fileUrl":"/home/nikos/file.enc" } 
       },
       { 
         "type": "jumb", 
-        "description": { "type": "jumd", "contentType": "xml", "label": "One of the content which replaces the referenced box" }, 
+        "description": { "type": "jumd", "contentTypeUuid": "786D6C20-0011-0010-8000-00AA00389B71", "label": "One of the content which replaces the referenced box" }, 
         "content": { "type": "xml", "fileUrl":"/home/nikos/test.xml" } 
       }
     ]  
@@ -362,7 +362,7 @@ In this case we want to define the replacement of a APP segment using the conten
 ```
 {
   "type": "jumb",
-  "description": { "type": "jumd", "contentType": "rplc", "label": "test" },
+  "description": { "type": "jumd", "contentTypeUuid": "DC28B95F-B68A-498E-8064-0FCA845D6B0E", "label": "test" },
   "content": {
     "replacementDescription": 
     {
@@ -383,7 +383,7 @@ In this case we want to define the replacement of a image's Region Of Interest (
 ```
 {
   "type": "jumb",
-  "description": { "type": "jumd", "contentType": "rplc", "label": "test" },
+  "description": { "type": "jumd", "contentTypeUuid": "DC28B95F-B68A-498E-8064-0FCA845D6B0E", "label": "test" },
   "content": {
     "replacementDescription": 
     {
@@ -405,7 +405,7 @@ In this case we want to define the replacement of a whole image with the content
 ```
 {
   "type": "jumb",
-  "description": { "type": "jumd", "contentType": "rplc", "label": "test" },
+  "description": { "type": "jumd", "contentTypeUuid": "DC28B95F-B68A-498E-8064-0FCA845D6B0E", "label": "test" },
   "content": {
     "replacementDescription": 
     {

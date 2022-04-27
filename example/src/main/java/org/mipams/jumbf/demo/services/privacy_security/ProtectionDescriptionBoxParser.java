@@ -5,7 +5,6 @@ import javax.xml.bind.DatatypeConverter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.MipamsException;
 
@@ -13,21 +12,11 @@ import org.mipams.jumbf.demo.services.core.BmffBoxParser;
 
 import org.mipams.jumbf.privacy_security.entities.ProtectionDescriptionBox;
 import org.mipams.jumbf.privacy_security.entities.ProtectionDescriptionBox.MethodType;
-import org.mipams.jumbf.privacy_security.services.ProtectionDescriptionBoxService;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ProtectionDescriptionBoxParser extends BmffBoxParser<ProtectionDescriptionBox> {
-
-    @Autowired
-    ProtectionDescriptionBoxService protectionDescriptionBoxService;
-
-    @Override
-    public ServiceMetadata getServiceMetadata() {
-        return protectionDescriptionBoxService.getServiceMetadata();
-    }
 
     @Override
     protected ProtectionDescriptionBox initializeBox() {

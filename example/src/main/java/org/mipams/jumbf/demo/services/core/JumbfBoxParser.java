@@ -1,30 +1,28 @@
 package org.mipams.jumbf.demo.services.core;
 
+import java.util.List;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import org.mipams.jumbf.core.entities.ContentBox;
+import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.entities.PaddingBox;
-import org.mipams.jumbf.core.entities.ServiceMetadata;
-import org.mipams.jumbf.core.services.JumbfBoxService;
 import org.mipams.jumbf.core.util.MipamsException;
 
-import org.mipams.jumbf.demo.ContentBoxParserManager;
+import org.mipams.jumbf.demo.ContentTypeParserManager;
+import org.mipams.jumbf.demo.services.ContentTypeParser;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class JumbfBoxParser extends BmffBoxParser<JumbfBox> implements ContentBoxParser {
+public class JumbfBoxParser extends BmffBoxParser<JumbfBox> {
 
     @Autowired
     DescriptionBoxParser descriptionBoxParser;
 
     @Autowired
-    JumbfBoxService jumbfBoxService;
-
-    @Autowired
-    ContentBoxParserManager contentBoxParserManager;
+    ContentTypeParserManager contentTypeParserManager;
 
     @Autowired
     PaddingBoxParser paddingBoxParser;
@@ -32,11 +30,6 @@ public class JumbfBoxParser extends BmffBoxParser<JumbfBox> implements ContentBo
     @Override
     protected JumbfBox initializeBox() {
         return new JumbfBox();
-    }
-
-    @Override
-    public ServiceMetadata getServiceMetadata() {
-        return jumbfBoxService.getServiceMetadata();
     }
 
     @Override
@@ -50,12 +43,12 @@ public class JumbfBoxParser extends BmffBoxParser<JumbfBox> implements ContentBo
 
         String contentTypeUuid = jumbfBox.getDescriptionBox().getUuid();
 
-        ContentBoxParser contentBoxParser = contentBoxParserManager
+        ContentTypeParser contentTypeParser = contentTypeParserManager
                 .getParserBasedOnContentUUID(contentTypeUuid);
 
-        ContentBox contentBox = contentBoxParser.discoverBoxFromRequest(contentNode);
+        List<BmffBox> contentBoxList = contentTypeParser.discoverContentBoxesFromRequest(contentNode);
 
-        jumbfBox.setContentBox(contentBox);
+        jumbfBox.setContentBoxList(contentBoxList);
 
         if (input.has("padding")) {
             ObjectNode paddingNode = (ObjectNode) input.get("padding");

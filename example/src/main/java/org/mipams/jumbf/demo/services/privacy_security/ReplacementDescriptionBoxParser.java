@@ -2,23 +2,20 @@ package org.mipams.jumbf.demo.services.privacy_security;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.util.MipamsException;
+
 import org.mipams.jumbf.demo.entities.privacy_security.replacement.ParamParserInterface;
 import org.mipams.jumbf.demo.services.core.BmffBoxParser;
 import org.mipams.jumbf.demo.services.privacy_security.replacement.ParamParserFactory;
+
 import org.mipams.jumbf.privacy_security.entities.ReplacementDescriptionBox;
 import org.mipams.jumbf.privacy_security.entities.replacement.ReplacementType;
-import org.mipams.jumbf.privacy_security.services.ReplacementDescriptionBoxService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ReplacementDescriptionBoxParser extends BmffBoxParser<ReplacementDescriptionBox> {
-
-    @Autowired
-    ReplacementDescriptionBoxService replacementDescriptionBoxService;
 
     @Autowired
     ParamParserFactory paramParserFactory;
@@ -37,11 +34,6 @@ public class ReplacementDescriptionBoxParser extends BmffBoxParser<ReplacementDe
         ParamParserInterface paramHandler = paramParserFactory.getParamParser(replacementType);
 
         box.setParamHandler(paramHandler.populateParamFromRequest(input));
-    }
-
-    @Override
-    public ServiceMetadata getServiceMetadata() {
-        return replacementDescriptionBoxService.getServiceMetadata();
     }
 
     @Override

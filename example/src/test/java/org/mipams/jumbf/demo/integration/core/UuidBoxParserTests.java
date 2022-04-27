@@ -42,7 +42,7 @@ public class UuidBoxParserTests extends AbstractParserTests {
                 .append("  \"type\": \"jumb\",")
                 .append("  \"description\": {")
                 .append("    \"type\": \"jumd\",")
-                .append("    \"contentType\": \"uuid\",")
+                .append("    \"contentTypeUuid\": \"75756964-0011-0010-8000-00AA00389B71\",")
                 .append("    \"label\": \"UUID Content Type JUMBF box\"")
                 .append("  },")
                 .append("  \"content\": {")

@@ -1,21 +1,25 @@
 package org.mipams.jumbf.demo.services.core;
 
+import java.util.List;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import org.mipams.jumbf.core.entities.ServiceMetadata;
+import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.entities.UuidBox;
-import org.mipams.jumbf.core.services.UuidBoxService;
+import org.mipams.jumbf.core.services.content_types.UuidContentType;
 import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.MipamsException;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import org.mipams.jumbf.demo.services.ContentTypeParser;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UuidBoxParser extends BmffBoxParser<UuidBox> implements ContentBoxParser {
+public class UuidBoxParser extends BmffBoxParser<UuidBox> implements ContentTypeParser {
 
     @Autowired
-    UuidBoxService uuidBoxService;
+    UuidContentType uuidContentType;
 
     @Override
     protected void populateBox(UuidBox uuidBox, ObjectNode input) throws MipamsException {
@@ -38,13 +42,18 @@ public class UuidBoxParser extends BmffBoxParser<UuidBox> implements ContentBoxP
     }
 
     @Override
-    public ServiceMetadata getServiceMetadata() {
-        return uuidBoxService.getServiceMetadata();
+    protected UuidBox initializeBox() {
+        return new UuidBox();
     }
 
     @Override
-    protected UuidBox initializeBox() {
-        return new UuidBox();
+    public List<BmffBox> discoverContentBoxesFromRequest(ObjectNode input) throws MipamsException {
+        return List.of(discoverBoxFromRequest(input));
+    }
+
+    @Override
+    public String getContentTypeUuid() {
+        return uuidContentType.getContentTypeUuid();
     }
 
 }

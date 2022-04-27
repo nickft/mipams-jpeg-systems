@@ -78,7 +78,7 @@ public class ProtectionBoxTests extends AbstractParserTests {
 
         requestBody.append("{")
                 .append("  \"type\": \"jumb\",")
-                .append("  \"description\": { \"type\": \"jumd\", \"contentType\": \"prtc\" },")
+                .append("  \"description\": { \"type\": \"jumd\", \"contentTypeUuid\": \"74B11BBF-F21D-4EEA-98C1-0BEBF23AEFD3\" },")
                 .append("  \"content\": {")
                 .append("    \"protectionDescription\": {")
                 .append("      \"type\": \"pspd\",")
@@ -97,7 +97,7 @@ public class ProtectionBoxTests extends AbstractParserTests {
 
         requestBody.append("{")
                 .append("  \"type\": \"jumb\",")
-                .append("  \"description\": { \"type\": \"jumd\", \"contentType\": \"prtc\" },")
+                .append("  \"description\": { \"type\": \"jumd\", \"contentTypeUuid\": \"74B11BBF-F21D-4EEA-98C1-0BEBF23AEFD3\" },")
                 .append("  \"content\": {")
                 .append("    \"protectionDescription\": {")
                 .append("      \"type\": \"pspd\",")
@@ -118,7 +118,7 @@ public class ProtectionBoxTests extends AbstractParserTests {
         requestBody.append("[")
                 .append("  {")
                 .append("    \"type\": \"jumb\",")
-                .append("    \"description\": { \"type\": \"jumd\", \"contentType\": \"prtc\" },")
+                .append("    \"description\": { \"type\": \"jumd\", \"contentTypeUuid\": \"74B11BBF-F21D-4EEA-98C1-0BEBF23AEFD3\" },")
                 .append("    \"content\": {")
                 .append("      \"protectionDescription\": {")
                 .append("        \"type\": \"pspd\",")
@@ -131,7 +131,7 @@ public class ProtectionBoxTests extends AbstractParserTests {
                 .append("  },")
                 .append("  {")
                 .append("    \"type\": \"jumb\",")
-                .append("    \"description\": { \"type\": \"jumd\", \"contentType\": \"json\", \"label\": \"json-encryption\" },")
+                .append("    \"description\": { \"type\": \"jumd\", \"contentTypeUuid\": \"6A736F6E-0011-0010-8000-00AA00389B71\", \"label\": \"json-encryption\" },")
                 .append("    \"content\": { \"type\": \"json\", \"fileUrl\":\"").append(TEST_FILE_PATH).append("\" }")
                 .append("  }")
                 .append("]");
@@ -145,7 +145,7 @@ public class ProtectionBoxTests extends AbstractParserTests {
         requestBody.append("[")
                 .append("  {")
                 .append("    \"type\": \"jumb\",")
-                .append("    \"description\": { \"type\": \"jumd\", \"contentType\": \"prtc\" },")
+                .append("    \"description\": { \"type\": \"jumd\", \"contentTypeUuid\": \"74B11BBF-F21D-4EEA-98C1-0BEBF23AEFD3\" },")
                 .append("    \"content\": {")
                 .append("      \"protectionDescription\": {")
                 .append("        \"type\": \"pspd\",")
@@ -159,7 +159,7 @@ public class ProtectionBoxTests extends AbstractParserTests {
                 .append("  },")
                 .append("  {")
                 .append("    \"type\": \"jumb\",")
-                .append("    \"description\": { \"type\": \"jumd\", \"contentType\": \"xml\", \"label\": \"xacml-rules-box\" },")
+                .append("    \"description\": { \"type\": \"jumd\", \"contentTypeUuid\": \"786D6C20-0011-0010-8000-00AA00389B71\", \"label\": \"xacml-rules-box\" },")
                 .append("    \"content\":{ \"type\": \"xml\", \"fileUrl\": \"").append(TEST_FILE_PATH).append("\" }")
                 .append("  }")
                 .append("]");

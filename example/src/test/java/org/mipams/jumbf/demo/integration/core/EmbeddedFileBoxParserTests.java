@@ -40,7 +40,7 @@ public class EmbeddedFileBoxParserTests extends AbstractParserTests {
 
         request.append("{")
                 .append("  \"type\": \"jumb\",")
-                .append("  \"description\": { \"type\": \"jumd\", \"contentType\": \"bfbd\" },")
+                .append("  \"description\": { \"type\": \"jumd\", \"contentTypeUuid\": \"40CB0C32-BB8A-489D-A70B-2AD6F47F4369\" },")
                 .append("  \"content\": {")
                 .append("    \"embeddedFileDescription\": {")
                 .append("      \"type\": \"bfdb\",")

@@ -4,24 +4,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.mipams.jumbf.core.entities.EmbeddedFileDescriptionBox;
-import org.mipams.jumbf.core.entities.ServiceMetadata;
-import org.mipams.jumbf.core.services.EmbeddedFileDescriptionBoxService;
 import org.mipams.jumbf.core.util.BadRequestException;
 import org.mipams.jumbf.core.util.MipamsException;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmbeddedFileDescriptionBoxParser extends BmffBoxParser<EmbeddedFileDescriptionBox> {
-
-    @Autowired
-    EmbeddedFileDescriptionBoxService embeddedFileDescriptionBoxService;
-
-    @Override
-    public ServiceMetadata getServiceMetadata() {
-        return embeddedFileDescriptionBoxService.getServiceMetadata();
-    }
 
     @Override
     protected EmbeddedFileDescriptionBox initializeBox() {
