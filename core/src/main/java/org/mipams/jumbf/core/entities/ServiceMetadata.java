@@ -16,11 +16,4 @@ public class ServiceMetadata {
 
     private @Getter @Setter @NonNull String boxType;
 
-    private @Getter @Setter String contentTypeUuid;
-
-    public ServiceMetadata(int boxTypeId, String boxType) {
-        setBoxTypeId(boxTypeId);
-        setBoxType(boxType);
-    }
-
 }

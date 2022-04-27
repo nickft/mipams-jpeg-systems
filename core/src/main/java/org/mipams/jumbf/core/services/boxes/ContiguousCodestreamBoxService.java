@@ -1,4 +1,4 @@
-package org.mipams.jumbf.core.services;
+package org.mipams.jumbf.core.services.boxes;
 
 import javax.annotation.PostConstruct;
 
@@ -8,15 +8,14 @@ import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ContiguousCodestreamBoxService extends SingleFormatBoxService<ContiguousCodestreamBox>
-        implements ContentBoxService<ContiguousCodestreamBox> {
+public class ContiguousCodestreamBoxService extends SingleFormatBoxService<ContiguousCodestreamBox> {
 
     ServiceMetadata serviceMetadata;
 
     @PostConstruct
     void init() {
         ContiguousCodestreamBox box = initializeBox();
-        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType(), box.getContentTypeUUID());
+        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.mipams.jumbf.core.services;
+package org.mipams.jumbf.core.services.boxes;
 
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 
@@ -9,14 +9,14 @@ import org.mipams.jumbf.core.entities.CborBox;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CborBoxService extends SingleFormatBoxService<CborBox> implements ContentBoxService<CborBox> {
+public class CborBoxService extends SingleFormatBoxService<CborBox> {
 
     ServiceMetadata serviceMetadata;
 
     @PostConstruct
     void init() {
         CborBox box = initializeBox();
-        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType(), box.getContentTypeUUID());
+        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType());
     }
 
     @Override

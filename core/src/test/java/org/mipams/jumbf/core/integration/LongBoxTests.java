@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mipams.jumbf.core.entities.DescriptionBox;
 import org.mipams.jumbf.core.entities.JsonBox;
 import org.mipams.jumbf.core.entities.JumbfBox;
+import org.mipams.jumbf.core.services.content_types.JsonContentType;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,18 +41,21 @@ public class LongBoxTests extends AbstractIntegrationTests {
     }
 
     JumbfBox generateMockLongBox() throws MipamsException {
+
+        JsonContentType jsonContentType = new JsonContentType();
+
         JsonBox jsonBox = new JsonBox();
         jsonBox.setFileUrl(TEST_FILE_PATH);
         jsonBox.updateBmffHeadersBasedOnBox();
 
         DescriptionBox dBox = new DescriptionBox();
 
-        dBox.setUuid(jsonBox.getContentTypeUUID());
+        dBox.setUuid(jsonContentType.getContentTypeUuid());
         dBox.setId(12345);
         dBox.computeAndSetToggleBasedOnFields();
         dBox.updateBmffHeadersBasedOnBox();
 
-        JumbfBox box = MockJumbfBoxCreation.generateJumbfBox(dBox, jsonBox, 10);
+        JumbfBox box = MockJumbfBoxCreation.generateJumbfBox(dBox, List.of(jsonBox), 10);
 
         box.setXBox(Long.valueOf(box.getLBox() + CoreUtils.LONG_BYTE_SIZE));
         box.setLBox(1);

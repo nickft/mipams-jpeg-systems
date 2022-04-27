@@ -1,26 +1,26 @@
-package org.mipams.jumbf.core.services;
+package org.mipams.jumbf.core.services.boxes;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.entities.PaddingBox;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
-import org.mipams.jumbf.core.ContentBoxDiscoveryManager;
-import org.mipams.jumbf.core.entities.ContentBox;
+import org.mipams.jumbf.core.services.content_types.ContentTypeService;
+import org.mipams.jumbf.core.ContentTypeDiscoveryManager;
 import org.mipams.jumbf.core.util.MipamsException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
-@SuppressWarnings({ "rawtypes", "unchecked" })
-public final class JumbfBoxService extends BmffBoxService<JumbfBox> implements ContentBoxService<JumbfBox> {
+public final class JumbfBoxService extends BmffBoxService<JumbfBox> {
 
     private static final Logger logger = LoggerFactory.getLogger(JumbfBoxService.class);
 
@@ -28,7 +28,7 @@ public final class JumbfBoxService extends BmffBoxService<JumbfBox> implements C
     DescriptionBoxService descriptionBoxService;
 
     @Autowired
-    ContentBoxDiscoveryManager contentBoxDiscoveryManager;
+    ContentTypeDiscoveryManager contentTypeDiscoveryManager;
 
     @Autowired
     PaddingBoxService paddingBoxService;
@@ -38,7 +38,7 @@ public final class JumbfBoxService extends BmffBoxService<JumbfBox> implements C
     @PostConstruct
     void init() {
         JumbfBox box = initializeBox();
-        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType(), box.getContentTypeUUID());
+        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType());
     }
 
     @Override
@@ -57,9 +57,12 @@ public final class JumbfBoxService extends BmffBoxService<JumbfBox> implements C
 
         descriptionBoxService.writeToJumbfFile(jumbfBox.getDescriptionBox(), fileOutputStream);
 
-        ContentBoxService contentBoxService = contentBoxDiscoveryManager
-                .getContentBoxServiceBasedOnBoxWithId(jumbfBox.getContentBox().getTypeId());
-        contentBoxService.writeToJumbfFile(jumbfBox.getContentBox(), fileOutputStream);
+        String contentTypeUuid = jumbfBox.getDescriptionBox().getUuid();
+
+        ContentTypeService contentTypeService = contentTypeDiscoveryManager
+                .getContentBoxServiceBasedOnContentUuid(contentTypeUuid);
+
+        contentTypeService.writeContentBoxesToJumbfFile(jumbfBox.getContentBoxList(), fileOutputStream);
 
         if (jumbfBox.getPaddingBox() != null) {
             paddingBoxService.writeToJumbfFile(jumbfBox.getPaddingBox(), fileOutputStream);
@@ -79,14 +82,17 @@ public final class JumbfBoxService extends BmffBoxService<JumbfBox> implements C
 
         long actualSize = jumbfBox.getDescriptionBox().getBoxSizeFromBmffHeaders();
 
-        ContentBoxService contentBoxService = contentBoxDiscoveryManager
-                .getContentBoxServiceBasedOnContentUUID(jumbfBox.getDescriptionBox().getUuid());
+        String contentTypeUuid = jumbfBox.getDescriptionBox().getUuid();
 
-        ContentBox contentBox = contentBoxService.parseFromJumbfFile(input, nominalPayloadSize - actualSize);
+        ContentTypeService contentTypeService = contentTypeDiscoveryManager
+                .getContentBoxServiceBasedOnContentUuid(contentTypeUuid);
 
-        actualSize += contentBox.getBoxSize();
+        long remainingBytes = nominalPayloadSize - actualSize;
 
-        jumbfBox.setContentBox(contentBox);
+        List<BmffBox> contentBoxList = contentTypeService.parseContentBoxesFromJumbfFile(input, remainingBytes);
+        jumbfBox.setContentBoxList(contentBoxList);
+
+        actualSize += jumbfBox.calculateContentBoxListSize(contentBoxList);
 
         if (!actualBoxSizeEqualsToSizeSpecifiedInBmffHeaders(jumbfBox)) {
             PaddingBox paddingBox = paddingBoxService.parseFromJumbfFile(input, nominalPayloadSize - actualSize);

@@ -13,10 +13,10 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode(callSuper = false)
-public class JumbfBox extends BmffBox implements ContentBox {
+public class JumbfBox extends BmffBox {
 
     protected @Getter @Setter DescriptionBox descriptionBox;
-    protected @Getter @Setter ContentBox contentBox;
+    protected @Getter @Setter List<BmffBox> contentBoxList;
     protected @Getter @Setter @ToString.Exclude PaddingBox paddingBox;
 
     @Override
@@ -30,20 +30,24 @@ public class JumbfBox extends BmffBox implements ContentBox {
     }
 
     @Override
-    public String getContentTypeUUID() {
-        return "6A756D62-0011-0010-8000-00AA00389B71";
-    }
-
-    @Override
     protected long calculatePayloadSize() throws MipamsException {
         long sum = getDescriptionBox().getBoxSizeFromBmffHeaders();
-        sum += getContentBox().getBoxSize();
+
+        for (BmffBox contentBox : getContentBoxList()) {
+            sum += contentBox.getBoxSize();
+        }
+
         sum += (getPaddingBox() != null) ? getPaddingBox().getBoxSize() : 0;
         return sum;
     }
 
-    @Override
-    public List<BmffBox> getBmffBoxes() {
-        return contentBox.getBmffBoxes();
+    public long calculateContentBoxListSize(List<BmffBox> contentBoxList) {
+        long sum = 0;
+
+        for (BmffBox contentBox : contentBoxList) {
+            sum += contentBox.getBoxSize();
+        }
+
+        return sum;
     }
 }

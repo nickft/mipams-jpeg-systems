@@ -9,8 +9,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.mipams.jumbf.core.entities.DescriptionBox;
 import org.mipams.jumbf.core.entities.JsonBox;
 import org.mipams.jumbf.core.entities.JumbfBox;
-import org.mipams.jumbf.core.services.CoreGeneratorService;
-import org.mipams.jumbf.core.services.CoreParserService;
+import org.mipams.jumbf.core.services.boxes.CoreGeneratorService;
+import org.mipams.jumbf.core.services.boxes.CoreParserService;
+import org.mipams.jumbf.core.services.content_types.JsonContentType;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,11 +44,14 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
 
     @Test
     void testJsonBox() throws Exception {
+        JsonContentType jsonContentType = new JsonContentType();
+        String contentType = jsonContentType.getContentTypeUuid();
+
         JsonBox jsonBox = new JsonBox();
         jsonBox.setFileUrl(TEST_FILE_PATH);
         jsonBox.updateBmffHeadersBasedOnBox();
 
-        JumbfBox givenJumbfBox = MockJumbfBoxCreation.generateJumbfBoxWithContent(jsonBox, 10);
+        JumbfBox givenJumbfBox = MockJumbfBoxCreation.generateJumbfBoxWithContent(List.of(jsonBox), contentType, 10);
 
         JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 
@@ -57,13 +61,15 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
     @Test
     void testJsonBoxWithIdAndSignatureInDescriptionBox() throws Exception {
 
+        JsonContentType jsonContentType = new JsonContentType();
+
         JsonBox jsonBox = new JsonBox();
         jsonBox.setFileUrl(TEST_FILE_PATH);
         jsonBox.updateBmffHeadersBasedOnBox();
 
         DescriptionBox dBox = new DescriptionBox();
 
-        dBox.setUuid(jsonBox.getContentTypeUUID());
+        dBox.setUuid(jsonContentType.getContentTypeUuid());
         dBox.setId(12345);
         dBox.setSha256Hash(
                 DatatypeConverter.parseHexBinary("321242ad321242aa321242ad321242aa321242ad321242aa321242ad321242aa"));
@@ -72,11 +78,10 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
 
         assertEquals(dBox.isRequestable(), false);
 
-        JumbfBox givenJumbfBox = MockJumbfBoxCreation.generateJumbfBox(dBox, jsonBox);
+        JumbfBox givenJumbfBox = MockJumbfBoxCreation.generateJumbfBox(dBox, List.of(jsonBox), 10);
 
         JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 
         assertEquals(givenJumbfBox, parsedJumbfBox);
-        assertEquals(givenJumbfBox.getBmffBoxes(), parsedJumbfBox.getBmffBoxes());
     }
 }

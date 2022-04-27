@@ -1,4 +1,4 @@
-package org.mipams.jumbf.core.services;
+package org.mipams.jumbf.core.services.boxes;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;

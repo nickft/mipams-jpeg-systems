@@ -14,6 +14,8 @@ import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.entities.JsonBox;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.entities.UuidBox;
+import org.mipams.jumbf.core.services.boxes.JsonBoxService;
+import org.mipams.jumbf.core.services.boxes.UuidBoxService;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
@@ -44,8 +46,7 @@ public class BmffBoxServiceTests {
         UuidBoxService uuidBoxService = new UuidBoxService();
 
         UuidBox uuidBox = new UuidBox();
-        ServiceMetadata serviceMetadata = new ServiceMetadata(uuidBox.getTypeId(), uuidBox.getType(),
-                uuidBox.getContentTypeUUID());
+        ServiceMetadata serviceMetadata = new ServiceMetadata(uuidBox.getTypeId(), uuidBox.getType());
 
         ReflectionTestUtils.setField(uuidBoxService, "serviceMetadata", serviceMetadata);
 
@@ -66,8 +67,7 @@ public class BmffBoxServiceTests {
         UuidBoxService uuidBoxService = new UuidBoxService();
 
         UuidBox uuidBox = new UuidBox();
-        ServiceMetadata serviceMetadata = new ServiceMetadata(uuidBox.getTypeId(), uuidBox.getType(),
-                uuidBox.getContentTypeUUID());
+        ServiceMetadata serviceMetadata = new ServiceMetadata(uuidBox.getTypeId(), uuidBox.getType());
 
         ReflectionTestUtils.setField(uuidBoxService, "serviceMetadata", serviceMetadata);
 

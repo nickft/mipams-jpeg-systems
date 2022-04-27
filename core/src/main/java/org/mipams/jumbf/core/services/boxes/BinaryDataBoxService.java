@@ -1,4 +1,4 @@
-package org.mipams.jumbf.core.services;
+package org.mipams.jumbf.core.services.boxes;
 
 import java.io.FileOutputStream;
 

@@ -1,4 +1,4 @@
-package org.mipams.jumbf.core.services;
+package org.mipams.jumbf.core.services.boxes;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -7,7 +7,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.mipams.jumbf.core.ContentBoxDiscoveryManager;
+import org.mipams.jumbf.core.ContentTypeDiscoveryManager;
 import org.mipams.jumbf.core.entities.DescriptionBox;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.util.CoreUtils;
@@ -22,7 +22,7 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
     private static final Logger logger = LoggerFactory.getLogger(DescriptionBoxService.class);
 
     @Autowired
-    ContentBoxDiscoveryManager contentBoxDiscoveryManager;
+    ContentTypeDiscoveryManager contentBoxDiscoveryManager;
 
     ServiceMetadata serviceMetadata;
 

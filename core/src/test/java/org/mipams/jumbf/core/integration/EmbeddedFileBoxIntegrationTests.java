@@ -8,12 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.mipams.jumbf.core.entities.BinaryDataBox;
-import org.mipams.jumbf.core.entities.EmbeddedFileBox;
+import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.entities.EmbeddedFileDescriptionBox;
 import org.mipams.jumbf.core.entities.JumbfBox;
-import org.mipams.jumbf.core.services.CoreGeneratorService;
-import org.mipams.jumbf.core.services.CoreParserService;
-
+import org.mipams.jumbf.core.services.boxes.CoreGeneratorService;
+import org.mipams.jumbf.core.services.boxes.CoreParserService;
+import org.mipams.jumbf.core.services.content_types.EmbeddedFileContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -44,6 +44,9 @@ public class EmbeddedFileBoxIntegrationTests extends AbstractIntegrationTests {
     @Test
     void testEmbeddedFileBoxWithExternalReference() throws Exception {
 
+        EmbeddedFileContentType embeddedFileContentType = new EmbeddedFileContentType();
+        String contentType = embeddedFileContentType.getContentTypeUuid();
+
         EmbeddedFileDescriptionBox embeddedFileDescriptionBox = new EmbeddedFileDescriptionBox();
         embeddedFileDescriptionBox.setFileName(TEST_FILE_NAME);
         embeddedFileDescriptionBox.setMediaTypeFromString("image/jpeg");
@@ -58,21 +61,19 @@ public class EmbeddedFileBoxIntegrationTests extends AbstractIntegrationTests {
         binaryDataBox.setFileUrl("http://example.org/test.jpeg");
         binaryDataBox.updateBmffHeadersBasedOnBox();
 
-        EmbeddedFileBox embeddedFileBox = new EmbeddedFileBox();
-        embeddedFileBox.setDescriptionBox(embeddedFileDescriptionBox);
-        embeddedFileBox.setBinaryDataBox(binaryDataBox);
-
-        JumbfBox givenJumbfBox = MockJumbfBoxCreation.generateJumbfBoxWithContent(embeddedFileBox, 10);
-        assertEquals(TEST_FILE_NAME, embeddedFileBox.getFileName());
+        List<BmffBox> contentBoxes = List.of(embeddedFileDescriptionBox, binaryDataBox);
+        JumbfBox givenJumbfBox = MockJumbfBoxCreation.generateJumbfBoxWithContent(contentBoxes, contentType, 10);
 
         JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 
         assertEquals(givenJumbfBox, parsedJumbfBox);
-        assertEquals(givenJumbfBox.getBmffBoxes(), parsedJumbfBox.getBmffBoxes());
     }
 
     @Test
     void testEmbeddedFileBoxWithInternalReference() throws Exception {
+
+        EmbeddedFileContentType embeddedFileContentType = new EmbeddedFileContentType();
+        String contentType = embeddedFileContentType.getContentTypeUuid();
 
         EmbeddedFileDescriptionBox embeddedFileDescriptionBox = new EmbeddedFileDescriptionBox();
         embeddedFileDescriptionBox.setMediaTypeFromString("image/jpeg");
@@ -86,11 +87,8 @@ public class EmbeddedFileBoxIntegrationTests extends AbstractIntegrationTests {
         binaryDataBox.setFileUrl(TEST_FILE_PATH);
         binaryDataBox.updateBmffHeadersBasedOnBox();
 
-        EmbeddedFileBox embeddedFileBox = new EmbeddedFileBox();
-        embeddedFileBox.setDescriptionBox(embeddedFileDescriptionBox);
-        embeddedFileBox.setBinaryDataBox(binaryDataBox);
-
-        JumbfBox givenJumbfBox = MockJumbfBoxCreation.generateJumbfBoxWithContent(embeddedFileBox, 10);
+        List<BmffBox> contentBoxes = List.of(embeddedFileDescriptionBox, binaryDataBox);
+        JumbfBox givenJumbfBox = MockJumbfBoxCreation.generateJumbfBoxWithContent(contentBoxes, contentType, 10);
 
         JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 

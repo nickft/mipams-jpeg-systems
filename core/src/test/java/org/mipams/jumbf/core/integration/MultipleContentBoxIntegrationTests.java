@@ -11,8 +11,12 @@ import org.mipams.jumbf.core.entities.ContiguousCodestreamBox;
 import org.mipams.jumbf.core.entities.JsonBox;
 import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.entities.XmlBox;
-import org.mipams.jumbf.core.services.CoreGeneratorService;
-import org.mipams.jumbf.core.services.CoreParserService;
+import org.mipams.jumbf.core.services.boxes.CoreGeneratorService;
+import org.mipams.jumbf.core.services.boxes.CoreParserService;
+import org.mipams.jumbf.core.services.content_types.CborContentType;
+import org.mipams.jumbf.core.services.content_types.ContiguousCodestreamContentType;
+import org.mipams.jumbf.core.services.content_types.JsonContentType;
+import org.mipams.jumbf.core.services.content_types.XmlContentType;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -62,45 +66,49 @@ public class MultipleContentBoxIntegrationTests extends AbstractIntegrationTests
         List<JumbfBox> parsedJumbfBoxList = generateJumbfFileAndParseBox(givenJumbfBoxList);
 
         assertEquals(givenJumbfBoxList, parsedJumbfBoxList);
-        assertContentBoxes(givenJumbfBoxList, parsedJumbfBoxList);
-    }
 
-    private void assertContentBoxes(List<JumbfBox> givenJumbfBoxList, List<JumbfBox> parsedJumbfBoxList) {
-        for (int i = 0; i < givenJumbfBoxList.size(); i++) {
-            assertEquals(givenJumbfBoxList.get(i).getBmffBoxes(), parsedJumbfBoxList.get(i).getBmffBoxes());
-        }
     }
 
     private JumbfBox createJsonJumbfBox() throws MipamsException {
+
+        JsonContentType jsonContentType = new JsonContentType();
+
         JsonBox jsonBox = new JsonBox();
         jsonBox.setFileUrl(TEST_FILE_PATH);
         jsonBox.updateBmffHeadersBasedOnBox();
 
-        return MockJumbfBoxCreation.generateJumbfBoxWithContent(jsonBox);
+        return MockJumbfBoxCreation.generateJumbfBoxWithContent(List.of(jsonBox), jsonContentType.getContentTypeUuid());
     }
 
     private JumbfBox createXmlJumbfBox() throws MipamsException {
+
+        XmlContentType xmlContentType = new XmlContentType();
+
         XmlBox xmlBox = new XmlBox();
         xmlBox.setFileUrl(TEST_FILE_PATH);
         xmlBox.updateBmffHeadersBasedOnBox();
 
-        return MockJumbfBoxCreation.generateJumbfBoxWithContent(xmlBox);
+        return MockJumbfBoxCreation.generateJumbfBoxWithContent(List.of(xmlBox), xmlContentType.getContentTypeUuid());
     }
 
     private JumbfBox createJp2cJumbfBox() throws MipamsException {
+        ContiguousCodestreamContentType contentType = new ContiguousCodestreamContentType();
+
         ContiguousCodestreamBox jp2cBox = new ContiguousCodestreamBox();
         jp2cBox.setFileUrl(TEST_FILE_PATH);
         jp2cBox.updateBmffHeadersBasedOnBox();
 
-        return MockJumbfBoxCreation.generateJumbfBoxWithContent(jp2cBox);
+        return MockJumbfBoxCreation.generateJumbfBoxWithContent(List.of(jp2cBox), contentType.getContentTypeUuid());
     }
 
     private JumbfBox createCborJumbfBox() throws MipamsException {
+        CborContentType cborContentType = new CborContentType();
+
         CborBox cborBox = new CborBox();
         cborBox.setFileUrl(TEST_FILE_PATH);
         cborBox.updateBmffHeadersBasedOnBox();
 
-        return MockJumbfBoxCreation.generateJumbfBoxWithContent(cborBox);
+        return MockJumbfBoxCreation.generateJumbfBoxWithContent(List.of(cborBox), cborContentType.getContentTypeUuid());
     }
 
 }

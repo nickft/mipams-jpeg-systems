@@ -1,4 +1,4 @@
-package org.mipams.jumbf.core.services;
+package org.mipams.jumbf.core.services.boxes;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UuidBoxService extends BmffBoxService<UuidBox> implements ContentBoxService<UuidBox> {
+public class UuidBoxService extends BmffBoxService<UuidBox> {
 
     private static final Logger logger = LoggerFactory.getLogger(UuidBoxService.class);
 
@@ -29,7 +29,7 @@ public class UuidBoxService extends BmffBoxService<UuidBox> implements ContentBo
     @PostConstruct
     void init() {
         UuidBox box = initializeBox();
-        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType(), box.getContentTypeUUID());
+        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.mipams.jumbf.core.services;
+package org.mipams.jumbf.core.services.boxes;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -76,7 +76,7 @@ public abstract class BmffBoxService<T extends BmffBox> implements BoxServiceInt
         }
     }
 
-    protected void verifyBoxSizeEqualsToSizeSpecifiedInBmffHeaders(T box) throws MipamsException {
+    public void verifyBoxSizeEqualsToSizeSpecifiedInBmffHeaders(T box) throws MipamsException {
 
         if (!actualBoxSizeEqualsToSizeSpecifiedInBmffHeaders(box)) {
             throw new MipamsException("Mismatch in the byte counting(Nominal: " + box.getBoxSizeFromBmffHeaders()

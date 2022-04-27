@@ -1,4 +1,4 @@
-package org.mipams.jumbf.core.services;
+package org.mipams.jumbf.core.services.boxes;
 
 import org.springframework.stereotype.Service;
 
@@ -8,14 +8,14 @@ import org.mipams.jumbf.core.entities.JsonBox;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 
 @Service
-public class JsonBoxService extends SingleFormatBoxService<JsonBox> implements ContentBoxService<JsonBox> {
+public class JsonBoxService extends SingleFormatBoxService<JsonBox> {
 
     ServiceMetadata serviceMetadata;
 
     @PostConstruct
     void init() {
         JsonBox box = initializeBox();
-        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType(), box.getContentTypeUUID());
+        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType());
     }
 
     @Override
