@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.mipams.jumbf.core.services.CoreParserService;
 import org.mipams.jumbf.core.entities.JumbfBox;
@@ -43,11 +45,17 @@ public class DemoController {
     }
 
     private String prepareResponse(List<JumbfBox> boxList) {
-        StringBuilder result = new StringBuilder("This .jumbf file contains the following boxes:\n");
-        for (JumbfBox jumbfBox : boxList) {
-            result.append(jumbfBox.toString());
+
+        ObjectMapper mapper = new ObjectMapper();
+        String result;
+        try {
+            result = mapper.writeValueAsString(boxList);
+        } catch (JsonProcessingException e) {
+            result = "Error: " + e.getMessage();
+
         }
-        return result.toString();
+
+        return result;
     }
 
     @PostMapping("/generateBox")
