@@ -58,11 +58,16 @@ In the "example" directory you can find a demo application which shows how to us
 
 The whole JUMBF application (not only the one that appears on the demo) could be logically separated in independent layers each of whom is responsible for a specific application over JUMBF metadata. All these layers are strongly dependent on **core layer** which implements the basic JUMBF box definitions. Each layer can be defined in a separate package inside the jumbf package. In the jumbf package we could contain not only the core layer but also all the layers related to any application that needs to parse application-specific JUMBF boxes.
 
-In this design, the two main abstractions of a layer are the *entities* and the *services*. Each service is mapped to a specific entitity. An **entitity** describes the structure (i.e. fields) of its corresponding Box definition while a **service** defines all the necessary functionalities that need to be performed in this specific box. Any service that implements the BoxService interface shall implement three core methods: getServiceMetadata(), writeToJumbfFile() and parseFromJumbfFile(). For debugging and testing purposes we added a forth method, discoverBoxFromRequest, which defines a way to instantiate a JUMBF structure from a json request (i.e. through a REST request). 
+In this design, the two main abstractions of a layer are the *entities* and the *services*. Each service is mapped to a specific entitity. An **entitity** describes the structure (i.e. fields) of its corresponding Box definition while a **service** defines all the necessary functionalities that need to be performed in this specific box. Any service that implements the BoxService interface shall implement three core methods: getServiceMetadata(), writeToJumbfFile() and parseFromJumbfFile().
 
 The following diagram illustrates the entities structures. Privacy & Security module is depicted to show the extensibility of the classes. 
 
 ![UML Entities](./entities.jpg "Box class relationship")
+
+Finally, we need to define the JUMBF Box Content Types. A Content Type is defined based on the Content Type UUID that is defined in the JUMBF box's Description box. A ContentType class is a service which defines the way to parse/generate the Content Boxes (it could be more than one content boxes) that are specified in a Content Type JUMBF Box according to the standard.
+
+![Content Type UML Entities](./entities.jpg "Content Type class relationship")
+
 
 ### Implementing a BoxService
 A box is considered as a plain object (i.e entity) and all the functionalities are described in each corresponsing service class. A service is implemented as a Spring Bean. This allows us to easily discover the correct BoxService class that needs to be called depending on the type of box that we want to process. 
