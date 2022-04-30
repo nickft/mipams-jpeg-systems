@@ -1,0 +1,22 @@
+version: '3'
+services:
+  demo-server:
+    image: demo-server:latest
+    build:
+      context: ../demo-server/
+    ports:
+      - 8080:8080
+    environment:
+      org_mipams_core_image_folder: "/app/assets"
+  demo-client:
+    image: demo-client:latest
+    build:
+      context: ../demo-client/
+    volumes:
+      - '../demo-client:/app'
+    ports:
+      - 3001:3000
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - demo-server

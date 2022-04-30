@@ -1,0 +1,71 @@
+import React, { useEffect, useState } from 'react'
+
+import ParseLayout from '../components/ParseLayout'
+
+import { api } from '../utils/api';
+
+const Parse = () => {
+
+    const [jumbfStructure, setJumbfStructure] = useState();
+
+    const [loading, setLoading] = useState(false);
+
+    const [errorMessage, setErrorMessage] = useState();
+    const [expanded, setExpanded] = useState([]);
+
+    const [uploadedFileName, setUploadedFileName] = useState();
+
+    const handleToggle = (event, nodeIds) => {
+        setExpanded(nodeIds);
+    };
+
+    useEffect(() => {
+
+        if (uploadedFileName) {
+            setLoading(true);
+            setExpanded([]);
+
+            const formData = new FormData();
+
+            formData.append(
+                "file",
+                uploadedFileName,
+                uploadedFileName.name
+            );
+
+            // Request made to the backend api Send formData object
+
+            api.post("/demo/uploadJumbfFile", formData).then(response => {
+                setJumbfStructure(response.data);
+                setErrorMessage(null);
+                setLoading(false);
+            }).catch(error => {
+                setJumbfStructure(null);
+                setErrorMessage(error.response.data);
+                setLoading(false);
+            });
+        }
+    }, [uploadedFileName])
+
+    function handleFileUploadChange(event) {
+        setUploadedFileName(event.target.files[0]);
+    }
+
+    function onFileUploadClick(event) {
+        setExpanded([]);
+    }
+
+    return (
+        <ParseLayout
+            jumbfStructure={jumbfStructure}
+            errorMessage={errorMessage}
+            expandedList={expanded}
+            handleToggle={handleToggle}
+            loading={loading}
+            handleFileUploadChange={handleFileUploadChange}
+            onFileUploadClick={onFileUploadClick}
+        />
+    )
+}
+
+export default Parse

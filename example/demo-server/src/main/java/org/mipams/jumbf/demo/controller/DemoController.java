@@ -2,7 +2,9 @@ package org.mipams.jumbf.demo.controller;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,8 +19,11 @@ import org.mipams.jumbf.core.services.CoreParserService;
 import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.services.CoreGeneratorService;
 import org.mipams.jumbf.core.util.MipamsException;
+import org.mipams.jumbf.demo.entities.UploadRequest;
 import org.mipams.jumbf.demo.services.DemoRequestParser;
+import org.mipams.jumbf.demo.services.FileUploader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 @RestController
@@ -33,6 +38,21 @@ public class DemoController {
 
     @Autowired
     DemoRequestParser demoRequestParser;
+
+    @Autowired
+    FileUploader fileUploader;
+
+    @RequestMapping(path = "/uploadJumbfFile", method = RequestMethod.POST, consumes = {
+            MediaType.MULTIPART_FORM_DATA_VALUE }, produces = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadJumbf(@ModelAttribute UploadRequest request) throws MipamsException {
+        String fileName = fileUploader.saveFileToDiskAndGetFileName(request);
+        try {
+            List<JumbfBox> boxList = parserService.parseMetadataFromJumbfFile(fileName);
+            return ResponseEntity.ok().body(prepareResponse(boxList));
+        } catch (MipamsException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     @GetMapping("/parseMetadata")
     public ResponseEntity<?> parseJumbfMetadataFromPath(@RequestParam String fileName) {
