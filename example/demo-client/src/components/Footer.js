@@ -5,10 +5,10 @@ import { styled } from '@mui/material/styles';
 const FooterWrapper = styled('div')(({ theme }) => ({
     backgroundColor: 'aliceblue',
     width: '100%',
+    height: '5vh',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    marginTop: theme.spacing(10),
     borderTopStyle: 'solid',
     borderTopWidth: 'thin',
     borderTopColor: 'grey',

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import ParseLayout from '../components/ParseLayout'
+import ParseLayout from '../components/Parse/ParseLayout'
 
 import { api } from '../utils/api';
 
@@ -41,8 +41,12 @@ const Parse = () => {
                 setLoading(false);
             }).catch(error => {
                 setJumbfStructure(null);
-                setErrorMessage(error.response.data);
                 setLoading(false);
+                if (typeof (error.response.data) === 'string') {
+                    setErrorMessage(error.response.data);
+                } else {
+                    setErrorMessage(error.message);
+                }
             });
         }
     }, [uploadedFileName])
@@ -59,6 +63,7 @@ const Parse = () => {
         <ParseLayout
             jumbfStructure={jumbfStructure}
             errorMessage={errorMessage}
+            setErrorMessage={setErrorMessage}
             expandedList={expanded}
             handleToggle={handleToggle}
             loading={loading}

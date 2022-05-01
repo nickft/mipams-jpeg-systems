@@ -8,11 +8,13 @@ import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.entities.UuidBox;
 import org.mipams.jumbf.core.services.content_types.UuidContentType;
 import org.mipams.jumbf.core.util.BadRequestException;
+import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
 import org.mipams.jumbf.demo.services.ContentTypeParser;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +22,9 @@ public class UuidBoxParser extends BmffBoxParser<UuidBox> implements ContentType
 
     @Autowired
     UuidContentType uuidContentType;
+
+    @Value("${org.mipams.core.image_folder}")
+    String ASSET_DIRECTORY;
 
     @Override
     protected void populateBox(UuidBox uuidBox, ObjectNode input) throws MipamsException {
@@ -32,11 +37,15 @@ public class UuidBoxParser extends BmffBoxParser<UuidBox> implements ContentType
 
         }
 
-        String path = input.get("fileUrl").asText();
+        String fileName = input.get("fileName").asText();
 
-        if (path == null) {
+        if (fileName == null) {
             throw new BadRequestException("Path is not specified");
         }
+
+        String path = CoreUtils.getFullPath(ASSET_DIRECTORY, fileName);
+
+        uuidBox.setFileUrl(path);
 
         uuidBox.setFileUrl(path);
     }

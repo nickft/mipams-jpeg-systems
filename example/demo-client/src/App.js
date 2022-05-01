@@ -9,6 +9,7 @@ import Parse from './containers/Parse';
 import Layout from './components/Layout';
 
 import { createTheme, ThemeProvider, responsiveFontSizes } from '@mui/material/styles';
+import Generate from './containers/Generate';
 
 let theme = createTheme();
 theme = responsiveFontSizes(theme);
@@ -21,6 +22,7 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="parse" element={<Parse />} />
+            <Route path="generate" element={<Generate />} />
             <Route path="*" element={<PageNotFound />} />
           </Route>
         </Routes>

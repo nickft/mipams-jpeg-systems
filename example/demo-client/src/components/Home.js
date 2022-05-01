@@ -7,7 +7,6 @@ const Action = (props) => {
         <Button
             size="large"
             variant="contained"
-            disabled={props.disabled}
             href={props.href}
         >{props.title}</Button>
     )
@@ -21,7 +20,7 @@ export default function Home() {
             container
             alignItems="center"
             direction="row"
-            justifyContent="center"
+            justifyContent="space-around"
             spacing={6}
             sx={{
                 flex: 'auto'
@@ -29,7 +28,6 @@ export default function Home() {
         >
             <Grid item>
                 <Action
-                    disabled
                     title="Generate JUMBF"
                     href="/generate" />
             </Grid>

@@ -45,13 +45,20 @@ public class DemoController {
     @RequestMapping(path = "/uploadJumbfFile", method = RequestMethod.POST, consumes = {
             MediaType.MULTIPART_FORM_DATA_VALUE }, produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadJumbf(@ModelAttribute UploadRequest request) throws MipamsException {
-        String fileName = fileUploader.saveFileToDiskAndGetFileName(request);
+        String fileName = fileUploader.saveFileToDiskAndGetFileName(request, true);
         try {
             List<JumbfBox> boxList = parserService.parseMetadataFromJumbfFile(fileName);
             return ResponseEntity.ok().body(prepareResponse(boxList));
         } catch (MipamsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @RequestMapping(path = "/uploadMetadataFile", method = RequestMethod.POST, consumes = {
+            MediaType.MULTIPART_FORM_DATA_VALUE }, produces = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadMetadataFile(@ModelAttribute UploadRequest request) throws MipamsException {
+        fileUploader.saveFileToDiskAndGetFileName(request, false);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/parseMetadata")
@@ -78,7 +85,18 @@ public class DemoController {
         return result;
     }
 
-    @PostMapping("/generateBox")
+    @GetMapping(path = "/download")
+    public ResponseEntity<?> downloadFile(@RequestParam(required = false) String targetFile) {
+        String outputFileName = targetFile == null ? "test.jumbf" : targetFile;
+
+        try {
+            return fileUploader.createOctetResponse(outputFileName);
+        } catch (MipamsException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping(path = "/generateBox", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> generateJumbfBytes(@RequestParam(required = false) String targetFile,
             @RequestBody JsonNode requestBody) {
         String outputFileName = targetFile == null ? "test.jumbf" : targetFile;
