@@ -71,15 +71,14 @@ public class DemoController {
         }
     }
 
-    private String prepareResponse(List<JumbfBox> boxList) {
+    private String prepareResponse(List<JumbfBox> boxList) throws MipamsException {
 
         ObjectMapper mapper = new ObjectMapper();
         String result;
         try {
             result = mapper.writeValueAsString(boxList);
         } catch (JsonProcessingException e) {
-            result = "Error: " + e.getMessage();
-
+            throw new MipamsException(e.getMessage());
         }
 
         return result;

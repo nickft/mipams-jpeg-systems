@@ -97,19 +97,11 @@ public class ProtectionDescriptionBox extends BmffBox {
     }
 
     long getEncLabelSize() {
-        return getEncLabelWithEscapeCharacter().length();
-    }
-
-    public String getEncLabelWithEscapeCharacter() {
-        return CoreUtils.addEscapeCharacterToText(getEncLabel().toString());
+        return CoreUtils.addEscapeCharacterToText(getEncLabel()).length();
     }
 
     long getArLabelSize() {
-        return getArLabelWithEscapeCharacter().length();
-    }
-
-    public String getArLabelWithEscapeCharacter() {
-        return CoreUtils.addEscapeCharacterToText(getArLabel().toString());
+        return CoreUtils.addEscapeCharacterToText(getArLabel()).length();
     }
 
     public enum MethodType {

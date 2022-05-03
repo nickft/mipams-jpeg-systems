@@ -50,7 +50,7 @@ public class EmbeddedFileBoxParserTests extends AbstractParserTests {
                 .append("    },")
                 .append("    \"content\": {")
                 .append("      \"type\": \"bidb\",")
-                .append("      \"fileUrl\": \"http://example.org/test.jpeg\"")
+                .append("      \"fileName\": \"http://example.org/test.jpeg\"")
                 .append("    }")
                 .append("  }")
                 .append("}");

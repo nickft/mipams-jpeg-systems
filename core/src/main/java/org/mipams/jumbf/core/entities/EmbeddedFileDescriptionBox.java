@@ -51,11 +51,11 @@ public class EmbeddedFileDescriptionBox extends BmffBox {
     }
 
     public int getMediaTypeSize() {
-        return getMediaTypeWithEscapeCharacter().length();
+        return CoreUtils.addEscapeCharacterToText(getMediaType().toString()).length();
     }
 
     public int getFileNameSize() {
-        return getFileNameWithEscapeCharacter().length();
+        return CoreUtils.addEscapeCharacterToText(getFileName()).length();
     }
 
     public boolean fileNameExists() {
@@ -86,14 +86,6 @@ public class EmbeddedFileDescriptionBox extends BmffBox {
         int value = 0;
         int updatedToggle = CoreUtils.setBitValueAtGivenPosition(getToggle(), 1, value);
         setToggle(updatedToggle);
-    }
-
-    public String getMediaTypeWithEscapeCharacter() {
-        return CoreUtils.addEscapeCharacterToText(getMediaType().toString());
-    }
-
-    public String getFileNameWithEscapeCharacter() {
-        return CoreUtils.addEscapeCharacterToText(getFileName());
     }
 
     public void setMediaTypeFromString(String type) throws MipamsException {

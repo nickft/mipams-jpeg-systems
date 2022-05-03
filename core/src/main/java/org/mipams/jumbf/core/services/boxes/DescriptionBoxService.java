@@ -50,7 +50,8 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
         CoreUtils.writeIntAsSingleByteToOutputStream(descriptionBox.getToggle(), fileOutputStream);
 
         if (descriptionBox.labelExists()) {
-            CoreUtils.writeTextToOutputStream(descriptionBox.getLabelWithEscapeCharacter(), fileOutputStream);
+            final String labelWithEscapeCharacter = CoreUtils.addEscapeCharacterToText(descriptionBox.getLabel());
+            CoreUtils.writeTextToOutputStream(labelWithEscapeCharacter, fileOutputStream);
         }
 
         if (descriptionBox.idExists()) {

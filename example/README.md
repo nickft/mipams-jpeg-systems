@@ -99,7 +99,7 @@ Example to define a UUID JUMBF Box is shown below (We need to provide the vendor
   "type": "jumb",
   "description": { 
     "type": "jumd", 
-    "contentTypeUuid": "uuid", 
+    "contentTypeUuid": "75756964-0011-0010-8000-00AA00389B71", 
     "label": "UUID Content Type JUMBF box" 
   },
   "content": { 
@@ -117,7 +117,7 @@ Example to define an Embedded File JUMBF Box is shown below. Regarding the fileN
 ```
 {
   "type": "jumb",
-  "description": { "type": "jumd", "contentTypeUuid": "bfbd" },
+  "description": { "type": "jumd", "contentTypeUuid": "40CB0C32-BB8A-489D-A70B-2AD6F47F4369" },
   "content": {
     "embeddedFileDescription": {
       "type": "bfdb",
@@ -153,7 +153,7 @@ The body of this request should be the following JSON document describing the JU
 ```
 {
   "type": "jumb",
-  "description": { "type": "jumd", "contentTypeUuid": "40CB0C32-BB8A-489D-A70B-2AD6F47F4369" },
+  "description": { "type": "jumd", "contentTypeUuid": "74B11BBF-F21D-4EEA-98C1-0BEBF23AEFD3" },
   "content": {
     "protectionDescription": {
       "type": "pspd",
@@ -193,7 +193,7 @@ The request body is:
 [
   {
     "type": "jumb",
-    "description": { "type": "jumd", "contentTypeUuid": "40CB0C32-BB8A-489D-A70B-2AD6F47F4369" },
+    "description": { "type": "jumd", "contentTypeUuid": "74B11BBF-F21D-4EEA-98C1-0BEBF23AEFD3" },
     "content": {
       "protectionDescription": {
         "type": "pspd",
@@ -220,7 +220,7 @@ The access rules information is assumed to be stored in the policy.xml file. An 
 [
   {
     "type": "jumb",
-    "description": { "type": "jumd", "contentTypeUuid": "40CB0C32-BB8A-489D-A70B-2AD6F47F4369" },
+    "description": { "type": "jumd", "contentTypeUuid": "74B11BBF-F21D-4EEA-98C1-0BEBF23AEFD3" },
     "content": {
       "protectionDescription": {
         "type": "pspd",

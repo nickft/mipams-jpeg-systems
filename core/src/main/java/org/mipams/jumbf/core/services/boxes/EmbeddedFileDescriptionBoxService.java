@@ -42,13 +42,13 @@ public class EmbeddedFileDescriptionBoxService extends BmffBoxService<EmbeddedFi
 
         CoreUtils.writeIntAsSingleByteToOutputStream(embeddedFileDescriptionBox.getToggle(), fileOutputStream);
 
-        CoreUtils.writeTextToOutputStream(embeddedFileDescriptionBox.getMediaTypeWithEscapeCharacter(),
-                fileOutputStream);
+        final String mediaTypeAsString = embeddedFileDescriptionBox.getMediaType().toString();
+
+        CoreUtils.writeTextToOutputStream(CoreUtils.addEscapeCharacterToText(mediaTypeAsString), fileOutputStream);
 
         if (embeddedFileDescriptionBox.fileNameExists()) {
-            CoreUtils
-                    .writeTextToOutputStream(embeddedFileDescriptionBox.getFileNameWithEscapeCharacter(),
-                            fileOutputStream);
+            final String fileName = embeddedFileDescriptionBox.getFileName();
+            CoreUtils.writeTextToOutputStream(CoreUtils.addEscapeCharacterToText(fileName), fileOutputStream);
         }
 
     }

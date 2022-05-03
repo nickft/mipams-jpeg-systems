@@ -28,6 +28,11 @@ public abstract class BmffBoxParser<T extends BmffBox> implements BoxParserInter
     protected abstract T initializeBox();
 
     private void validateRequestType(T box, ObjectNode inputNode) throws BadRequestException {
+
+        if (inputNode == null) {
+            throw new BadRequestException("Expected input for " + box.getType() + " but got nothing instead");
+        }
+
         JsonNode typeNode = inputNode.get("type");
 
         if (typeNode == null) {

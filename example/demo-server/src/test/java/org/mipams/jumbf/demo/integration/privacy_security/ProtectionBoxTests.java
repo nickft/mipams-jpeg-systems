@@ -84,7 +84,7 @@ public class ProtectionBoxTests extends AbstractParserTests {
                 .append("      \"type\": \"pspd\",")
                 .append("      \"method\": \"aes-256-cbc\"")
                 .append("    },")
-                .append("    \"content\": { \"type\": \"bidb\", \"fileUrl\": \"").append(TEST_FILE_PATH).append("\" }")
+                .append("    \"content\": { \"type\": \"bidb\", \"fileName\": \"").append(TEST_FILE_NAME).append("\" }")
                 .append("  }")
                 .append("}");
 
@@ -104,7 +104,7 @@ public class ProtectionBoxTests extends AbstractParserTests {
                 .append("      \"method\": \"aes-256-cbc-iv\",")
                 .append("      \"ivHexString\": \"D9BBA15016D876F67532FAFB8B851D24\"")
                 .append("    },")
-                .append("    \"content\": { \"type\": \"bidb\", \"fileUrl\": \"").append(TEST_FILE_PATH).append("\" }")
+                .append("    \"content\": { \"type\": \"bidb\", \"fileName\": \"").append(TEST_FILE_NAME).append("\" }")
                 .append("  }")
                 .append("}");
 
@@ -125,14 +125,14 @@ public class ProtectionBoxTests extends AbstractParserTests {
                 .append("        \"method\": \"external\",")
                 .append("        \"external-label\": \"json-encryption\"")
                 .append("      },")
-                .append("      \"content\": { \"type\": \"bidb\", \"fileUrl\": \"").append(TEST_FILE_PATH)
+                .append("      \"content\": { \"type\": \"bidb\", \"fileName\": \"").append(TEST_FILE_NAME)
                 .append("\" }")
                 .append("    }")
                 .append("  },")
                 .append("  {")
                 .append("    \"type\": \"jumb\",")
                 .append("    \"description\": { \"type\": \"jumd\", \"contentTypeUuid\": \"6A736F6E-0011-0010-8000-00AA00389B71\", \"label\": \"json-encryption\" },")
-                .append("    \"content\": { \"type\": \"json\", \"fileUrl\":\"").append(TEST_FILE_PATH).append("\" }")
+                .append("    \"content\": { \"type\": \"json\", \"fileName\":\"").append(TEST_FILE_NAME).append("\" }")
                 .append("  }")
                 .append("]");
 
@@ -153,14 +153,14 @@ public class ProtectionBoxTests extends AbstractParserTests {
                 .append("        \"ivHexString\": \"D9BBA15016D876F67532FAFB8B851D24\",")
                 .append("        \"access-rules-label\": \"xaml-rules-box\"")
                 .append("      },")
-                .append("      \"content\": { \"type\": \"bidb\", \"fileUrl\": \"").append(TEST_FILE_PATH)
+                .append("      \"content\": { \"type\": \"bidb\", \"fileName\": \"").append(TEST_FILE_NAME)
                 .append("\" }")
                 .append("    }")
                 .append("  },")
                 .append("  {")
                 .append("    \"type\": \"jumb\",")
                 .append("    \"description\": { \"type\": \"jumd\", \"contentTypeUuid\": \"786D6C20-0011-0010-8000-00AA00389B71\", \"label\": \"xacml-rules-box\" },")
-                .append("    \"content\":{ \"type\": \"xml\", \"fileUrl\": \"").append(TEST_FILE_PATH).append("\" }")
+                .append("    \"content\":{ \"type\": \"xml\", \"fileName\": \"").append(TEST_FILE_NAME).append("\" }")
                 .append("  }")
                 .append("]");
 

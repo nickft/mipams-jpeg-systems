@@ -48,7 +48,7 @@ public class UuidBoxParserTests extends AbstractParserTests {
                 .append("  \"content\": {")
                 .append("    \"type\": \"uuid\",")
                 .append("    \"uuid\": \"645ba7a8-b7f4-11ec-b909-0242ac120002\",")
-                .append("    \"fileUrl\":\"").append(TEST_FILE_PATH).append("\"")
+                .append("    \"fileName\":\"").append(TEST_FILE_NAME).append("\"")
                 .append("  }")
                 .append("}");
 

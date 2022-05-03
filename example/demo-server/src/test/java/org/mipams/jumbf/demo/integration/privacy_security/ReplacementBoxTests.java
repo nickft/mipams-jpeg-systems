@@ -104,7 +104,7 @@ public class ReplacementBoxTests extends AbstractParserTests {
                 .append("    \"content\": { ")
                 .append("      \"type\": \"jumb\", ")
                 .append("      \"description\": { \"type\": \"jumd\", \"contentTypeUuid\": \"6579D6FB-DBA2-446B-B2AC-1B82FEEB89D1\", \"label\": \"Content which replaces the referenced box\" }, ")
-                .append("    \"content\": { \"type\": \"jp2c\", \"fileUrl\": \"").append(TEST_FILE_PATH).append("\" }")
+                .append("    \"content\": { \"type\": \"jp2c\", \"fileName\": \"").append(TEST_FILE_NAME).append("\" }")
                 .append("    } ")
                 .append("  } ")
                 .append("}");
@@ -129,7 +129,7 @@ public class ReplacementBoxTests extends AbstractParserTests {
                 .append("    \"content\": { ")
                 .append("      \"type\": \"jumb\", ")
                 .append("      \"description\": { \"type\": \"jumd\", \"contentTypeUuid\": \"6579D6FB-DBA2-446B-B2AC-1B82FEEB89D1\", \"label\": \"Content which replaces the referenced box\" }, ")
-                .append("    \"content\": { \"type\": \"jp2c\", \"fileUrl\": \"").append(TEST_FILE_PATH).append("\" }")
+                .append("    \"content\": { \"type\": \"jp2c\", \"fileName\": \"").append(TEST_FILE_NAME).append("\" }")
                 .append("    } ")
                 .append("  } ")
                 .append("}");
@@ -155,13 +155,13 @@ public class ReplacementBoxTests extends AbstractParserTests {
                 .append("      { ")
                 .append("        \"type\": \"jumb\", ")
                 .append("        \"description\": { \"type\": \"jumd\", \"contentTypeUuid\": \"6579D6FB-DBA2-446B-B2AC-1B82FEEB89D1\", \"label\": \"One of the content which replaces the referenced box\" }, ")
-                .append("        \"content\": { \"type\": \"jp2c\", \"fileUrl\":\"").append(TEST_FILE_PATH)
+                .append("        \"content\": { \"type\": \"jp2c\", \"fileName\":\"").append(TEST_FILE_NAME)
                 .append("\" }")
                 .append("      },")
                 .append("      { ")
                 .append("        \"type\": \"jumb\", ")
                 .append("        \"description\": { \"type\": \"jumd\", \"contentTypeUuid\": \"786D6C20-0011-0010-8000-00AA00389B71\", \"label\": \"One of the content which replaces the referenced box\" }, ")
-                .append("        \"content\": { \"type\": \"xml\", \"fileUrl\":\"").append(TEST_FILE_PATH)
+                .append("        \"content\": { \"type\": \"xml\", \"fileName\":\"").append(TEST_FILE_NAME)
                 .append("\" }")
                 .append("      }")
                 .append("    ]  ")
@@ -186,7 +186,7 @@ public class ReplacementBoxTests extends AbstractParserTests {
                 .append("      \"auto-apply\": false,")
                 .append("      \"offset\": 123123123123")
                 .append("    },")
-                .append("    \"content\": { \"type\": \"bidb\", \"fileUrl\": \"").append(TEST_FILE_PATH).append("\" }")
+                .append("    \"content\": { \"type\": \"bidb\", \"fileName\": \"").append(TEST_FILE_NAME).append("\" }")
                 .append("  }")
                 .append("}");
 
@@ -207,7 +207,7 @@ public class ReplacementBoxTests extends AbstractParserTests {
                 .append("      \"replacementType\": \"file\",")
                 .append("      \"auto-apply\": false")
                 .append("    },")
-                .append("    \"content\": { \"type\": \"jp2c\", \"fileUrl\": \"").append(TEST_FILE_PATH).append("\" }")
+                .append("    \"content\": { \"type\": \"jp2c\", \"fileName\": \"").append(TEST_FILE_NAME).append("\" }")
                 .append("  }")
                 .append("}");
 
@@ -230,7 +230,7 @@ public class ReplacementBoxTests extends AbstractParserTests {
                 .append("      \"offset-X\": 12232,")
                 .append("      \"offset-Y\": 21312")
                 .append("    },")
-                .append("    \"content\": { \"type\": \"jp2c\", \"fileUrl\": \"").append(TEST_FILE_PATH).append("\" }")
+                .append("    \"content\": { \"type\": \"jp2c\", \"fileName\": \"").append(TEST_FILE_NAME).append("\" }")
                 .append("  }")
                 .append("}");
 

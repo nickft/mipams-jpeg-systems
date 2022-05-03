@@ -380,7 +380,7 @@ public class CoreUtilsTests {
         String inputFileName = getTestFilePath();
 
         try (FailingOutputStream os = new FailingOutputStream();) {
-            assertThrows(MipamsException.class, () -> {
+            assertThrows(IOException.class, () -> {
                 CoreUtils.writeFileContentToOutput(inputFileName, os);
             });
         }

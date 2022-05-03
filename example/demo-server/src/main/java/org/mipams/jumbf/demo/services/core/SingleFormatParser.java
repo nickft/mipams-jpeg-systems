@@ -15,6 +15,12 @@ public abstract class SingleFormatParser<T extends SingleFormatBox> extends Bmff
 
     @Override
     protected void populateBox(T singleFormatBox, ObjectNode input) throws MipamsException {
+
+        if (input == null) {
+            throw new BadRequestException(
+                    "Expected input for box type " + singleFormatBox.getType() + " but nothing found");
+        }
+
         String fileName = input.get("fileName").asText();
 
         if (fileName == null) {

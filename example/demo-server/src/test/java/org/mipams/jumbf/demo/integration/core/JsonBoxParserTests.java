@@ -4,8 +4,10 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.mipams.jumbf.demo.integration.AbstractParserTests;
 
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
+@TestMethodOrder(OrderAnnotation.class)
 public class JsonBoxParserTests extends AbstractParserTests {
 
     @BeforeAll
@@ -32,11 +35,13 @@ public class JsonBoxParserTests extends AbstractParserTests {
     }
 
     @Test
+    @Order(1)
     void testGenerateJsonFileBoxRequest() throws Exception {
         testGenerateBoxEndpoint(generateJsonFileBoxRequest());
     }
 
     @Test
+    @Order(2)
     void testParseJsonFileBoxRequest() throws Exception {
         testParseBoxFromFile(JUMBF_FILE_NAME);
     }
@@ -45,7 +50,7 @@ public class JsonBoxParserTests extends AbstractParserTests {
     void testGenerateJsonFileBoxRequestWithPathNotSpecified() throws Exception {
         mockMvc.perform(post("/demo/generateBox")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(generateJsonFileBoxRequestWithPathNotSpecified()))
+                .content(generateJsonFileBoxRequestWithFileNameNotSpecified()))
                 .andExpect(status().isBadRequest());
     }
 
@@ -62,14 +67,14 @@ public class JsonBoxParserTests extends AbstractParserTests {
                 .append("  },")
                 .append("  \"content\": {")
                 .append("    \"type\": \"json\",")
-                .append("    \"fileUrl\":\"").append(TEST_FILE_PATH).append("\"")
-                .append("  }")
+                .append("    \"fileName\":\"").append(TEST_FILE_NAME).append("\"")
+                .append("   }")
                 .append("}");
 
         return request.toString();
     }
 
-    String generateJsonFileBoxRequestWithPathNotSpecified() {
+    String generateJsonFileBoxRequestWithFileNameNotSpecified() {
         StringBuilder request = new StringBuilder();
 
         request.append("{")

@@ -73,9 +73,11 @@ const Generate = () => {
 
     const generateJumbfFileHandler = () => {
         console.log("Initiate Generation Process");
+        setErrorMessage(null);
 
         if (!jsonRequest) {
             setErrorMessage("JUMBF Structure cannot be empty");
+            setLoading(false)
             return;
         }
 
@@ -85,20 +87,12 @@ const Generate = () => {
 
         filesToUpload.forEach(fileField => uploadFile(fileField.info));
 
-        console.log("Generating the JUMBF file")
-
-        if (errorMessage) {
-            return;
-        }
-
         const url = (jumbfFileName) ? "/demo/generateBox?targetFile=" + jumbfFileName : "/demo/generateBox";
 
         api.post(url, JSON.parse(jsonRequest)).then((response) => {
-            console.log(response);
             setLoading(false);
             setDownload(true)
         }).catch(error => {
-            console.log(error);
             if (typeof (error.response.data) === 'string') {
                 setErrorMessage(error.response.data);
             } else {

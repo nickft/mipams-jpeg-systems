@@ -20,15 +20,13 @@ public class CoreUtils {
 
     public static final int UUID_BYTE_SIZE = 16;
 
-    public static void writeFileContentToOutput(String path, OutputStream outputStream) throws MipamsException {
+    public static void writeFileContentToOutput(String path, OutputStream outputStream) throws IOException {
 
         try (FileInputStream inputStream = new FileInputStream(path)) {
             int n;
             while ((n = inputStream.read()) != -1) {
                 outputStream.write(n);
             }
-        } catch (IOException e) {
-            throw new MipamsException("Could not write to file", e);
         }
     }
 

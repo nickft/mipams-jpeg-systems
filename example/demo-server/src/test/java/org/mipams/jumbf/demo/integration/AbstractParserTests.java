@@ -5,6 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -53,15 +54,22 @@ public abstract class AbstractParserTests {
         dir.delete();
     }
 
+    protected void testParseBoxFromFile(String fileName) throws Exception {
+        mockMvc.perform(get("/demo/parseMetadata?fileName=" + fileName)).andExpect(status().isOk());
+    }
+
     protected void testGenerateBoxEndpoint(String requestBody) throws Exception {
         mockMvc.perform(post("/demo/generateBox")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isOk());
+
+        assertTrue(fileWithPathExists(TEST_FILE_PATH));
     }
 
-    protected void testParseBoxFromFile(String fileName) throws Exception {
-        mockMvc.perform(get("/demo/parseMetadata?fileName=" + fileName)).andExpect(status().isOk());
+    protected static boolean fileWithPathExists(String filePath) {
+        File f = new File(filePath);
+        return f.exists();
     }
 
 }

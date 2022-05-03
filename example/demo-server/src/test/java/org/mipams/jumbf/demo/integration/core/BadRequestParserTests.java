@@ -35,7 +35,7 @@ public class BadRequestParserTests {
                 .append("    \"id\": 4334431")
                 .append("  },")
                 .append("  \"content\": {")
-                .append("    \"fileUrl\":\"/tmp/test1.jpeg\"")
+                .append("    \"fileName\":\"test1.jpeg\"")
                 .append("  }")
                 .append("}");
 

@@ -109,8 +109,4 @@ public class DescriptionBox extends BmffBox {
 
         setToggle(toggle);
     }
-
-    public String getLabelWithEscapeCharacter() {
-        return CoreUtils.addEscapeCharacterToText(getLabel());
-    }
 }

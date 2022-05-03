@@ -47,13 +47,15 @@ public class ProtectionDescriptionBoxService extends BmffBoxService<ProtectionDe
         CoreUtils.writeIntAsSingleByteToOutputStream(protectionDescriptionBox.getMethodToggle(), fileOutputStream);
 
         if (protectionDescriptionBox.isProtectionExternallyReferenced()) {
-            CoreUtils.writeTextToOutputStream(protectionDescriptionBox.getEncLabelWithEscapeCharacter(),
-                    fileOutputStream);
+            final String encLabelWithEscapeCharacter = CoreUtils
+                    .addEscapeCharacterToText(protectionDescriptionBox.getEncLabel());
+            CoreUtils.writeTextToOutputStream(encLabelWithEscapeCharacter, fileOutputStream);
         }
 
         if (protectionDescriptionBox.accessRulesExist()) {
-            CoreUtils.writeTextToOutputStream(protectionDescriptionBox.getArLabelWithEscapeCharacter(),
-                    fileOutputStream);
+            final String arLabelWithEscapeCharacter = CoreUtils
+                    .addEscapeCharacterToText(protectionDescriptionBox.getArLabel());
+            CoreUtils.writeTextToOutputStream(arLabelWithEscapeCharacter, fileOutputStream);
         }
 
         if (protectionDescriptionBox.isAes256CbcWithIvProtection()) {
