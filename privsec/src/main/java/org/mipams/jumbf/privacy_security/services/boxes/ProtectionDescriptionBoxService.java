@@ -1,6 +1,6 @@
 package org.mipams.jumbf.privacy_security.services.boxes;
 
-import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
@@ -41,25 +41,25 @@ public class ProtectionDescriptionBoxService extends BmffBoxService<ProtectionDe
 
     @Override
     protected void writeBmffPayloadToJumbfFile(ProtectionDescriptionBox protectionDescriptionBox,
-            FileOutputStream fileOutputStream)
+            OutputStream outputStream)
             throws MipamsException {
 
-        CoreUtils.writeIntAsSingleByteToOutputStream(protectionDescriptionBox.getMethodToggle(), fileOutputStream);
+        CoreUtils.writeIntAsSingleByteToOutputStream(protectionDescriptionBox.getMethodToggle(), outputStream);
 
         if (protectionDescriptionBox.isProtectionExternallyReferenced()) {
             final String encLabelWithEscapeCharacter = CoreUtils
                     .addEscapeCharacterToText(protectionDescriptionBox.getEncLabel());
-            CoreUtils.writeTextToOutputStream(encLabelWithEscapeCharacter, fileOutputStream);
+            CoreUtils.writeTextToOutputStream(encLabelWithEscapeCharacter, outputStream);
         }
 
         if (protectionDescriptionBox.accessRulesExist()) {
             final String arLabelWithEscapeCharacter = CoreUtils
                     .addEscapeCharacterToText(protectionDescriptionBox.getArLabel());
-            CoreUtils.writeTextToOutputStream(arLabelWithEscapeCharacter, fileOutputStream);
+            CoreUtils.writeTextToOutputStream(arLabelWithEscapeCharacter, outputStream);
         }
 
         if (protectionDescriptionBox.isAes256CbcWithIvProtection()) {
-            CoreUtils.writeByteArrayToOutputStream(protectionDescriptionBox.getIv(), fileOutputStream);
+            CoreUtils.writeByteArrayToOutputStream(protectionDescriptionBox.getIv(), outputStream);
         }
 
     }

@@ -1,7 +1,7 @@
 package org.mipams.jumbf.core.services.boxes;
 
-import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.mipams.jumbf.core.entities.BoxInterface;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
@@ -11,7 +11,7 @@ public interface BoxServiceInterface<T extends BoxInterface> {
 
     public ServiceMetadata getServiceMetadata();
 
-    public void writeToJumbfFile(T inputBox, FileOutputStream output) throws MipamsException;
+    public void writeToJumbfFile(T inputBox, OutputStream output) throws MipamsException;
 
     public T parseFromJumbfFile(InputStream input, long availableBytesForBox) throws MipamsException;
 

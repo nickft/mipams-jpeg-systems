@@ -1,6 +1,6 @@
 package org.mipams.jumbf.core.services.content_types;
 
-import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.InputStream;
 import java.util.List;
 
@@ -31,10 +31,10 @@ public class CborContentType implements ContentTypeService {
     }
 
     @Override
-    public void writeContentBoxesToJumbfFile(List<BmffBox> inputBox, FileOutputStream fileOutputStream)
+    public void writeContentBoxesToJumbfFile(List<BmffBox> inputBox, OutputStream outputStream)
             throws MipamsException {
         CborBox jsonBox = (CborBox) inputBox.get(0);
-        cborBoxService.writeToJumbfFile(jsonBox, fileOutputStream);
+        cborBoxService.writeToJumbfFile(jsonBox, outputStream);
     }
 
 }

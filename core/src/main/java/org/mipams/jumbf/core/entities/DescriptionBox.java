@@ -75,6 +75,10 @@ public class DescriptionBox extends BmffBox {
         return CoreUtils.addEscapeCharacterToText(getLabel()).length();
     }
 
+    public void setAsRequestable() {
+        CoreUtils.setBitValueAtGivenPosition(toggle, 0, 1);
+    }
+
     public boolean isRequestable() {
         return CoreUtils.isBitAtGivenPositionSet(toggle, 0);
     }

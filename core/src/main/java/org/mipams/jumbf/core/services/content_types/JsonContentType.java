@@ -1,6 +1,6 @@
 package org.mipams.jumbf.core.services.content_types;
 
-import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.InputStream;
 import java.util.List;
 
@@ -30,10 +30,10 @@ public class JsonContentType implements ContentTypeService {
     }
 
     @Override
-    public void writeContentBoxesToJumbfFile(List<BmffBox> inputBox, FileOutputStream fileOutputStream)
+    public void writeContentBoxesToJumbfFile(List<BmffBox> inputBox, OutputStream outputStream)
             throws MipamsException {
         JsonBox jsonBox = (JsonBox) inputBox.get(0);
-        jsonBoxService.writeToJumbfFile(jsonBox, fileOutputStream);
+        jsonBoxService.writeToJumbfFile(jsonBox, outputStream);
     }
 
 }

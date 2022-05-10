@@ -1,6 +1,6 @@
 package org.mipams.jumbf.core.services.content_types;
 
-import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.InputStream;
 import java.util.List;
 
@@ -31,10 +31,10 @@ public class XmlContentType implements ContentTypeService {
     }
 
     @Override
-    public void writeContentBoxesToJumbfFile(List<BmffBox> inputBox, FileOutputStream fileOutputStream)
+    public void writeContentBoxesToJumbfFile(List<BmffBox> inputBox, OutputStream outputStream)
             throws MipamsException {
         XmlBox jsonBox = (XmlBox) inputBox.get(0);
-        xmlBoxService.writeToJumbfFile(jsonBox, fileOutputStream);
+        xmlBoxService.writeToJumbfFile(jsonBox, outputStream);
     }
 
 }

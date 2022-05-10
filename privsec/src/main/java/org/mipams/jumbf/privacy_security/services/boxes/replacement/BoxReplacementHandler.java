@@ -1,6 +1,6 @@
 package org.mipams.jumbf.privacy_security.services.boxes.replacement;
 
-import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,12 +20,12 @@ public class BoxReplacementHandler implements DataBoxHandler {
     JumbfBoxService jumbfBoxService;
 
     @Override
-    public void writeDataBoxToJumbfFile(List<BmffBox> replacementDataBoxList, FileOutputStream fileOutputStream)
+    public void writeDataBoxToJumbfFile(List<BmffBox> replacementDataBoxList, OutputStream outputStream)
             throws MipamsException {
 
         for (BmffBox contentBox : replacementDataBoxList) {
             JumbfBox jumbfBox = (JumbfBox) contentBox;
-            jumbfBoxService.writeToJumbfFile(jumbfBox, fileOutputStream);
+            jumbfBoxService.writeToJumbfFile(jumbfBox, outputStream);
         }
 
     }

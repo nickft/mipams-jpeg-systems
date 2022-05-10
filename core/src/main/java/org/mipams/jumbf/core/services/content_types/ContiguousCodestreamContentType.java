@@ -1,6 +1,6 @@
 package org.mipams.jumbf.core.services.content_types;
 
-import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.InputStream;
 import java.util.List;
 
@@ -31,9 +31,9 @@ public class ContiguousCodestreamContentType implements ContentTypeService {
     }
 
     @Override
-    public void writeContentBoxesToJumbfFile(List<BmffBox> inputBox, FileOutputStream fileOutputStream)
+    public void writeContentBoxesToJumbfFile(List<BmffBox> inputBox, OutputStream outputStream)
             throws MipamsException {
         ContiguousCodestreamBox jsonBox = (ContiguousCodestreamBox) inputBox.get(0);
-        contiguousCodestreamBoxService.writeToJumbfFile(jsonBox, fileOutputStream);
+        contiguousCodestreamBoxService.writeToJumbfFile(jsonBox, outputStream);
     }
 }

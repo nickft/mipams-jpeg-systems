@@ -1,8 +1,8 @@
 package org.mipams.jumbf.core.services.boxes;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.mipams.jumbf.core.entities.SingleFormatBox;
 import org.mipams.jumbf.core.util.CoreUtils;
@@ -16,13 +16,13 @@ public abstract class SingleFormatBoxService<T extends SingleFormatBox> extends 
     Properties properties;
 
     @Override
-    protected void writeBmffPayloadToJumbfFile(T singleFormatBox, FileOutputStream fileOutputStream)
+    protected void writeBmffPayloadToJumbfFile(T singleFormatBox, OutputStream outputStream)
             throws MipamsException {
 
         properties.checkIfFileSizeExceedApplicationLimits(singleFormatBox.getFileUrl());
 
         try {
-            CoreUtils.writeFileContentToOutput(singleFormatBox.getFileUrl(), fileOutputStream);
+            CoreUtils.writeFileContentToOutput(singleFormatBox.getFileUrl(), outputStream);
         } catch (IOException e) {
             throw new MipamsException("Could not locate " + singleFormatBox.getType() + " metadata file", e);
         }

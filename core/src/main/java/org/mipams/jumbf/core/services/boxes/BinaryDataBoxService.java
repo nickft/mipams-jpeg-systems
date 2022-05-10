@@ -1,7 +1,7 @@
 package org.mipams.jumbf.core.services.boxes;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import javax.annotation.PostConstruct;
 
@@ -38,29 +38,29 @@ public class BinaryDataBoxService extends SingleFormatBoxService<BinaryDataBox> 
     }
 
     @Override
-    protected void writeBmffPayloadToJumbfFile(BinaryDataBox binaryDataBox, FileOutputStream fileOutputStream)
+    protected void writeBmffPayloadToJumbfFile(BinaryDataBox binaryDataBox, OutputStream outputStream)
             throws MipamsException {
 
         if (binaryDataBox.isReferencedExternally()) {
-            writeUrlToJumbfBox(binaryDataBox, fileOutputStream);
+            writeUrlToJumbfBox(binaryDataBox, outputStream);
         } else {
-            writeFileToJumbfBox(binaryDataBox, fileOutputStream);
+            writeFileToJumbfBox(binaryDataBox, outputStream);
         }
     }
 
-    private void writeUrlToJumbfBox(BinaryDataBox binaryDataBox, FileOutputStream fileOutputStream)
+    private void writeUrlToJumbfBox(BinaryDataBox binaryDataBox, OutputStream outputStream)
             throws MipamsException {
         String fileUrlWithEscapeChar = CoreUtils.addEscapeCharacterToText(binaryDataBox.getFileUrl());
-        CoreUtils.writeTextToOutputStream(fileUrlWithEscapeChar, fileOutputStream);
+        CoreUtils.writeTextToOutputStream(fileUrlWithEscapeChar, outputStream);
     }
 
-    private void writeFileToJumbfBox(BinaryDataBox binaryDataBox, FileOutputStream fileOutputStream)
+    private void writeFileToJumbfBox(BinaryDataBox binaryDataBox, OutputStream outputStream)
             throws MipamsException {
 
         properties.checkIfFileSizeExceedApplicationLimits(binaryDataBox.getFileUrl());
 
         try {
-            CoreUtils.writeFileContentToOutput(binaryDataBox.getFileUrl(), fileOutputStream);
+            CoreUtils.writeFileContentToOutput(binaryDataBox.getFileUrl(), outputStream);
         } catch (IOException e) {
             throw new MipamsException("Could not locate " + binaryDataBox.getType() + " metadata file", e);
         }

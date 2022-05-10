@@ -1,8 +1,7 @@
 package org.mipams.jumbf.core.services.content_types;
 
-import java.io.FileOutputStream;
 import java.io.InputStream;
-
+import java.io.OutputStream;
 import java.util.List;
 
 import org.mipams.jumbf.core.entities.BmffBox;
@@ -15,7 +14,7 @@ public interface ContentTypeService {
         public List<BmffBox> parseContentBoxesFromJumbfFile(InputStream input, long availableBytesForBox)
                         throws MipamsException;
 
-        public void writeContentBoxesToJumbfFile(List<BmffBox> inputBox, FileOutputStream fileOutputStream)
+        public void writeContentBoxesToJumbfFile(List<BmffBox> inputBox, OutputStream outputStream)
                         throws MipamsException;
 
 }

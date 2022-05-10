@@ -1,7 +1,7 @@
 package org.mipams.jumbf.core.services.boxes;
 
-import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.util.CoreUtils;
@@ -16,22 +16,22 @@ public abstract class BmffBoxService<T extends BmffBox> implements BoxServiceInt
     private static final Logger logger = LoggerFactory.getLogger(BmffBoxService.class);
 
     @Override
-    public void writeToJumbfFile(T bmffBox, FileOutputStream fileOutputStream) throws MipamsException {
-        writeBmffHeadersToJumbfFile(bmffBox, fileOutputStream);
-        writeBmffPayloadToJumbfFile(bmffBox, fileOutputStream);
+    public void writeToJumbfFile(T bmffBox, OutputStream outputStream) throws MipamsException {
+        writeBmffHeadersToJumbfFile(bmffBox, outputStream);
+        writeBmffPayloadToJumbfFile(bmffBox, outputStream);
     }
 
-    private final void writeBmffHeadersToJumbfFile(T box, FileOutputStream fileOutputStream) throws MipamsException {
+    private final void writeBmffHeadersToJumbfFile(T box, OutputStream outputStream) throws MipamsException {
 
-        CoreUtils.writeIntToOutputStream(box.getLBox(), fileOutputStream);
-        CoreUtils.writeIntToOutputStream(box.getTBox(), fileOutputStream);
+        CoreUtils.writeIntToOutputStream(box.getLBox(), outputStream);
+        CoreUtils.writeIntToOutputStream(box.getTBox(), outputStream);
 
         if (box.isXBoxEnabled()) {
-            CoreUtils.writeLongToOutputStream(box.getXBox(), fileOutputStream);
+            CoreUtils.writeLongToOutputStream(box.getXBox(), outputStream);
         }
     }
 
-    protected abstract void writeBmffPayloadToJumbfFile(T box, FileOutputStream fileOutputStream)
+    protected abstract void writeBmffPayloadToJumbfFile(T box, OutputStream outputStream)
             throws MipamsException;
 
     @Override

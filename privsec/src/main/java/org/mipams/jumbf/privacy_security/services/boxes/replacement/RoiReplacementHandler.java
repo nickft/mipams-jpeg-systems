@@ -1,6 +1,6 @@
 package org.mipams.jumbf.privacy_security.services.boxes.replacement;
 
-import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.InputStream;
 import java.util.List;
 
@@ -19,11 +19,11 @@ public class RoiReplacementHandler implements DataBoxHandler {
     ContiguousCodestreamBoxService contiguousCodestreamBoxService;
 
     @Override
-    public void writeDataBoxToJumbfFile(List<BmffBox> replacementDataBoxList, FileOutputStream fileOutputStream)
+    public void writeDataBoxToJumbfFile(List<BmffBox> replacementDataBoxList, OutputStream outputStream)
             throws MipamsException {
 
         ContiguousCodestreamBox contiguousCodestreamBox = (ContiguousCodestreamBox) replacementDataBoxList.get(0);
-        contiguousCodestreamBoxService.writeToJumbfFile(contiguousCodestreamBox, fileOutputStream);
+        contiguousCodestreamBoxService.writeToJumbfFile(contiguousCodestreamBox, outputStream);
     }
 
     @Override

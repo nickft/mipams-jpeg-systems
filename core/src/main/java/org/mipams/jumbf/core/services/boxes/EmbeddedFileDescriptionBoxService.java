@@ -1,7 +1,7 @@
 package org.mipams.jumbf.core.services.boxes;
 
-import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.annotation.PostConstruct;
 
@@ -38,17 +38,17 @@ public class EmbeddedFileDescriptionBoxService extends BmffBoxService<EmbeddedFi
 
     @Override
     protected void writeBmffPayloadToJumbfFile(EmbeddedFileDescriptionBox embeddedFileDescriptionBox,
-            FileOutputStream fileOutputStream) throws MipamsException {
+            OutputStream outputStream) throws MipamsException {
 
-        CoreUtils.writeIntAsSingleByteToOutputStream(embeddedFileDescriptionBox.getToggle(), fileOutputStream);
+        CoreUtils.writeIntAsSingleByteToOutputStream(embeddedFileDescriptionBox.getToggle(), outputStream);
 
         final String mediaTypeAsString = embeddedFileDescriptionBox.getMediaType().toString();
 
-        CoreUtils.writeTextToOutputStream(CoreUtils.addEscapeCharacterToText(mediaTypeAsString), fileOutputStream);
+        CoreUtils.writeTextToOutputStream(CoreUtils.addEscapeCharacterToText(mediaTypeAsString), outputStream);
 
         if (embeddedFileDescriptionBox.fileNameExists()) {
             final String fileName = embeddedFileDescriptionBox.getFileName();
-            CoreUtils.writeTextToOutputStream(CoreUtils.addEscapeCharacterToText(fileName), fileOutputStream);
+            CoreUtils.writeTextToOutputStream(CoreUtils.addEscapeCharacterToText(fileName), outputStream);
         }
 
     }

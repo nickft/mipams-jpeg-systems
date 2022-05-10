@@ -1,6 +1,6 @@
 package org.mipams.jumbf.privacy_security.services.boxes;
 
-import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
@@ -43,13 +43,13 @@ public class ReplacementDescriptionBoxService extends BmffBoxService<Replacement
     }
 
     @Override
-    protected final void writeBmffPayloadToJumbfFile(ReplacementDescriptionBox box, FileOutputStream fileOutputStream)
+    protected final void writeBmffPayloadToJumbfFile(ReplacementDescriptionBox box, OutputStream outputStream)
             throws MipamsException {
 
-        CoreUtils.writeIntAsSingleByteToOutputStream(box.getReplacementTypeId(), fileOutputStream);
-        CoreUtils.writeIntAsSingleByteToOutputStream(box.getToggle(), fileOutputStream);
+        CoreUtils.writeIntAsSingleByteToOutputStream(box.getReplacementTypeId(), outputStream);
+        CoreUtils.writeIntAsSingleByteToOutputStream(box.getToggle(), outputStream);
 
-        box.getParamHandler().writeParamToBytes(fileOutputStream);
+        box.getParamHandler().writeParamToBytes(outputStream);
 
     }
 

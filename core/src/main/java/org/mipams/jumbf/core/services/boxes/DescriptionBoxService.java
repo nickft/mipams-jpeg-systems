@@ -1,7 +1,7 @@
 package org.mipams.jumbf.core.services.boxes;
 
-import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.annotation.PostConstruct;
 
@@ -43,23 +43,23 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
     }
 
     @Override
-    protected void writeBmffPayloadToJumbfFile(DescriptionBox descriptionBox, FileOutputStream fileOutputStream)
+    protected void writeBmffPayloadToJumbfFile(DescriptionBox descriptionBox, OutputStream outputStream)
             throws MipamsException {
 
-        CoreUtils.writeUuidToOutputStream(descriptionBox.getUuid(), fileOutputStream);
-        CoreUtils.writeIntAsSingleByteToOutputStream(descriptionBox.getToggle(), fileOutputStream);
+        CoreUtils.writeUuidToOutputStream(descriptionBox.getUuid(), outputStream);
+        CoreUtils.writeIntAsSingleByteToOutputStream(descriptionBox.getToggle(), outputStream);
 
         if (descriptionBox.labelExists()) {
             final String labelWithEscapeCharacter = CoreUtils.addEscapeCharacterToText(descriptionBox.getLabel());
-            CoreUtils.writeTextToOutputStream(labelWithEscapeCharacter, fileOutputStream);
+            CoreUtils.writeTextToOutputStream(labelWithEscapeCharacter, outputStream);
         }
 
         if (descriptionBox.idExists()) {
-            CoreUtils.writeIntToOutputStream(descriptionBox.getId(), fileOutputStream);
+            CoreUtils.writeIntToOutputStream(descriptionBox.getId(), outputStream);
         }
 
         if (descriptionBox.sha256HashExists()) {
-            CoreUtils.writeByteArrayToOutputStream(descriptionBox.getSha256Hash(), fileOutputStream);
+            CoreUtils.writeByteArrayToOutputStream(descriptionBox.getSha256Hash(), outputStream);
         }
 
     }

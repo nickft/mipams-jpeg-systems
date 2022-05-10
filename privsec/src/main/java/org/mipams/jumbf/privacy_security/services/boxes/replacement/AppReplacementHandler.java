@@ -1,6 +1,6 @@
 package org.mipams.jumbf.privacy_security.services.boxes.replacement;
 
-import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.InputStream;
 import java.util.List;
 
@@ -19,11 +19,11 @@ public class AppReplacementHandler implements DataBoxHandler {
     BinaryDataBoxService binaryDataBoxService;
 
     @Override
-    public void writeDataBoxToJumbfFile(List<BmffBox> replacementDataBoxList, FileOutputStream fileOutputStream)
+    public void writeDataBoxToJumbfFile(List<BmffBox> replacementDataBoxList, OutputStream outputStream)
             throws MipamsException {
 
         BinaryDataBox binaryDataBox = (BinaryDataBox) replacementDataBoxList.get(0);
-        binaryDataBoxService.writeToJumbfFile(binaryDataBox, fileOutputStream);
+        binaryDataBoxService.writeToJumbfFile(binaryDataBox, outputStream);
     }
 
     @Override

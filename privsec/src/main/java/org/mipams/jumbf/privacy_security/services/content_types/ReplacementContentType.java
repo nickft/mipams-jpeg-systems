@@ -1,6 +1,6 @@
 package org.mipams.jumbf.privacy_security.services.content_types;
 
-import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,12 +55,12 @@ public class ReplacementContentType implements ContentTypeService {
     }
 
     @Override
-    public void writeContentBoxesToJumbfFile(List<BmffBox> inputBox, FileOutputStream fileOutputStream)
+    public void writeContentBoxesToJumbfFile(List<BmffBox> inputBox, OutputStream outputStream)
             throws MipamsException {
 
         ReplacementDescriptionBox replacementDescriptionBox = (ReplacementDescriptionBox) inputBox.get(0);
 
-        replacementDescriptionBoxService.writeToJumbfFile(replacementDescriptionBox, fileOutputStream);
+        replacementDescriptionBoxService.writeToJumbfFile(replacementDescriptionBox, outputStream);
 
         ReplacementType replacementType = getReplacementType(replacementDescriptionBox);
         DataBoxHandler dataBoxHandler = dataBoxHandlerFactory.getDataBoxHandlerFromType(replacementType);
@@ -68,7 +68,7 @@ public class ReplacementContentType implements ContentTypeService {
         List<BmffBox> replacementDataBoxList = new ArrayList<>(inputBox);
         replacementDataBoxList.remove(0);
 
-        dataBoxHandler.writeDataBoxToJumbfFile(replacementDataBoxList, fileOutputStream);
+        dataBoxHandler.writeDataBoxToJumbfFile(replacementDataBoxList, outputStream);
     }
 
     ReplacementType getReplacementType(ReplacementDescriptionBox replacementDescriptionBox) throws MipamsException {

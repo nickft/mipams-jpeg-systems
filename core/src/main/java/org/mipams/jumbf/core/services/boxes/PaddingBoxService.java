@@ -1,6 +1,6 @@
 package org.mipams.jumbf.core.services.boxes;
 
-import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
@@ -43,10 +43,10 @@ public final class PaddingBoxService extends BmffBoxService<PaddingBox> {
     }
 
     @Override
-    protected void writeBmffPayloadToJumbfFile(PaddingBox paddingBox, FileOutputStream fileOutputStream)
+    protected void writeBmffPayloadToJumbfFile(PaddingBox paddingBox, OutputStream outputStream)
             throws MipamsException {
         CoreUtils.writePaddingToOutputStream(paddingBox.getPaddingSize(), PaddingBox.PADDING_VALUE,
-                fileOutputStream);
+                outputStream);
     }
 
     @Override

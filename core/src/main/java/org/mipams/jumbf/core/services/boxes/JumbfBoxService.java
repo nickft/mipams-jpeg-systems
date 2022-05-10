@@ -1,7 +1,7 @@
 package org.mipams.jumbf.core.services.boxes;
 
-import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -52,20 +52,20 @@ public final class JumbfBoxService extends BmffBoxService<JumbfBox> {
     }
 
     @Override
-    protected void writeBmffPayloadToJumbfFile(JumbfBox jumbfBox, FileOutputStream fileOutputStream)
+    protected void writeBmffPayloadToJumbfFile(JumbfBox jumbfBox, OutputStream outputStream)
             throws MipamsException {
 
-        descriptionBoxService.writeToJumbfFile(jumbfBox.getDescriptionBox(), fileOutputStream);
+        descriptionBoxService.writeToJumbfFile(jumbfBox.getDescriptionBox(), outputStream);
 
         String contentTypeUuid = jumbfBox.getDescriptionBox().getUuid();
 
         ContentTypeService contentTypeService = contentTypeDiscoveryManager
                 .getContentBoxServiceBasedOnContentUuid(contentTypeUuid);
 
-        contentTypeService.writeContentBoxesToJumbfFile(jumbfBox.getContentBoxList(), fileOutputStream);
+        contentTypeService.writeContentBoxesToJumbfFile(jumbfBox.getContentBoxList(), outputStream);
 
         if (jumbfBox.getPaddingBox() != null) {
-            paddingBoxService.writeToJumbfFile(jumbfBox.getPaddingBox(), fileOutputStream);
+            paddingBoxService.writeToJumbfFile(jumbfBox.getPaddingBox(), outputStream);
         }
 
     }

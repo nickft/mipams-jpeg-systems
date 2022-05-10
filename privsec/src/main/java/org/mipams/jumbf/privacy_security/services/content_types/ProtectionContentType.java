@@ -1,6 +1,6 @@
 package org.mipams.jumbf.privacy_security.services.content_types;
 
-import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.InputStream;
 import java.util.List;
 
@@ -43,14 +43,14 @@ public class ProtectionContentType implements ContentTypeService {
     }
 
     @Override
-    public void writeContentBoxesToJumbfFile(List<BmffBox> inputBox, FileOutputStream fileOutputStream)
+    public void writeContentBoxesToJumbfFile(List<BmffBox> inputBox, OutputStream outputStream)
             throws MipamsException {
 
         ProtectionDescriptionBox protectionDescriptionBox = (ProtectionDescriptionBox) inputBox.get(0);
-        protectionDescriptionBoxService.writeToJumbfFile(protectionDescriptionBox, fileOutputStream);
+        protectionDescriptionBoxService.writeToJumbfFile(protectionDescriptionBox, outputStream);
 
         BinaryDataBox binaryDataBox = (BinaryDataBox) inputBox.get(1);
-        binaryDataBoxService.writeToJumbfFile(binaryDataBox, fileOutputStream);
+        binaryDataBoxService.writeToJumbfFile(binaryDataBox, outputStream);
     }
 
 }

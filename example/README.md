@@ -136,18 +136,6 @@ Example to define an Embedded File JUMBF Box is shown below. Regarding the fileN
 #### (JPEG Systems Part 4: Privacy & Security): Protection boxes
 Firstly, let's generate a Protection Content Type JUMBF box containing the encrypted data that we have stored in the file "file.enc" which we assume that we have already created.
 
-We can use the Rest Client of our preference and perform the following POST request:
-
-```
-http://localhost:8080/core/v1/generateBox
-```
-
-We can optionally specify the name of the file that we want the jumbf file to be stored:
-
-```
-http://localhost:8080/core/v1/generateBox?targetFile=test1.jumbf
-```
-
 The body of this request should be the following JSON document describing the JUMBF structure that we want to generate.
 
 ```
