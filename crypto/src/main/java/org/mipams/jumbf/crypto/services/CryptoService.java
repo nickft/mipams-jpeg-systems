@@ -7,6 +7,7 @@ import javax.crypto.SecretKey;
 import org.mipams.jumbf.crypto.entities.CryptoException;
 import org.mipams.jumbf.crypto.entities.DigitalSignatureScheme;
 import org.mipams.jumbf.crypto.entities.EncryptionScheme;
+import org.mipams.jumbf.crypto.entities.RandomNumberGenerator;
 import org.mipams.jumbf.crypto.entities.ShaSignature;
 import org.mipams.jumbf.crypto.entities.SymmetricEncryption;
 import org.mipams.jumbf.crypto.entities.request.CryptoRequest;
@@ -58,5 +59,10 @@ public class CryptoService {
 
         DigitalSignatureScheme signScheme = new ShaSignature(credentials);
         return signScheme.verifySignature(signRequest);
+    }
+
+    public byte[] getRandomNumber(int numOfBytes) throws CryptoException {
+        RandomNumberGenerator rng = new RandomNumberGenerator();
+        return rng.getByteArray(numOfBytes);
     }
 }
