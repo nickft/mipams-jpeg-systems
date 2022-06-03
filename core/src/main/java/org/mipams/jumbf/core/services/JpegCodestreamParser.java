@@ -68,7 +68,7 @@ public class JpegCodestreamParser implements ParserInterface {
                     parseJumbfSegmentInApp11Marker(is, boxSegmentMap);
                 } else {
                     int markerSegmentSize = CoreUtils.readTwoByteWordAsInt(is);
-                    is.skip(markerSegmentSize - 2);
+                    is.skip(markerSegmentSize - CoreUtils.WORD_BYTE_SIZE);
                 }
             }
 
@@ -97,28 +97,36 @@ public class JpegCodestreamParser implements ParserInterface {
     private void parseJumbfSegmentInApp11Marker(InputStream is, Map<String, List<BoxSegment>> boxSegmentMap)
             throws MipamsException, IOException {
 
-        int markerSegmentSize = CoreUtils.readTwoByteWordAsInt(is);
+        int nominalMarkerSegmentSize = CoreUtils.readTwoByteWordAsInt(is);
+        int markerSegmentRemainingSize = nominalMarkerSegmentSize - CoreUtils.WORD_BYTE_SIZE;
 
-        byte[] commonIdentifierAsByteArray = CoreUtils.readBytesFromInputStream(is, 2);
+        byte[] commonIdentifierAsByteArray = CoreUtils.readBytesFromInputStream(is, CoreUtils.WORD_BYTE_SIZE);
+        markerSegmentRemainingSize -= CoreUtils.WORD_BYTE_SIZE;
+
         String commonIdentifier = Integer.toHexString(CoreUtils.readTwoByteWordAsInt(commonIdentifierAsByteArray));
 
         if (!commonIdentifier.equalsIgnoreCase("4A50")) {
-            is.skip(markerSegmentSize - 2 - 2);
+            is.skip(markerSegmentRemainingSize);
             return;
         }
 
         int boxInstanceNumber = CoreUtils.readTwoByteWordAsInt(is);
+        markerSegmentRemainingSize -= CoreUtils.WORD_BYTE_SIZE;
 
         int packetSequenceNumber = CoreUtils.readIntFromInputStream(is);
+        markerSegmentRemainingSize -= CoreUtils.INT_BYTE_SIZE;
 
         int boxLength = CoreUtils.readIntFromInputStream(is);
+        markerSegmentRemainingSize -= CoreUtils.INT_BYTE_SIZE;
 
         int boxType = CoreUtils.readIntFromInputStream(is);
+        markerSegmentRemainingSize -= CoreUtils.INT_BYTE_SIZE;
 
         Long boxLengthExtension = null;
 
         if (boxLength == 1) {
             boxLengthExtension = CoreUtils.readLongFromInputStream(is);
+            markerSegmentRemainingSize -= CoreUtils.LONG_BYTE_SIZE;
         }
 
         String boxSegmentId = String.format("%d-%d", boxType, boxInstanceNumber);
@@ -126,12 +134,10 @@ public class JpegCodestreamParser implements ParserInterface {
         String randomFileName = CoreUtils.randomStringGenerator();
         String payloadFileUrl = CoreUtils.getFullPath(properties.getFileDirectory(), randomFileName);
 
-        long payloadSize = markerSegmentSize - (2 + 2 + 2 + 4 + 4 + 4) - ((boxLengthExtension == null) ? 0 : 8);
+        CoreUtils.writeBytesFromInputStreamToFile(is, markerSegmentRemainingSize, payloadFileUrl);
 
-        CoreUtils.writeBytesFromInputStreamToFile(is, payloadSize, payloadFileUrl);
-
-        BoxSegment boxSegment = new BoxSegment(markerSegmentSize, boxInstanceNumber, packetSequenceNumber, boxLength,
-                boxType, boxLengthExtension, payloadFileUrl);
+        BoxSegment boxSegment = new BoxSegment(nominalMarkerSegmentSize, boxInstanceNumber, packetSequenceNumber,
+                boxLength, boxType, boxLengthExtension, payloadFileUrl);
 
         addBoxSegmentToMap(boxSegmentMap, boxSegmentId, boxSegment);
     }

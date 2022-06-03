@@ -22,8 +22,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class JpegCodestreamGenerator implements GeneratorInterface {
 
-    private static int MAX_APP_SIZE = 0xFFFF;
-
     @Autowired
     JpegCodestreamParser jpegCodestreamParser;
 
@@ -92,8 +90,7 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
             currentByte = CoreUtils.readSingleByteAsIntFromInputStream(is);
             CoreUtils.writeIntAsSingleByteToOutputStream(currentByte, os);
 
-            if (previousByte == 0xFF && currentByte != 0xFF && currentByte > 0x00
-                    && !(currentByte >= 0xD0 && currentByte <= 0xD7)) {
+            if (checkTerminationOfScanMarker(previousByte, currentByte)) {
                 break;
             }
 
@@ -101,39 +98,57 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
         }
     }
 
+    private boolean checkTerminationOfScanMarker(int previousByte, int currentByte) {
+
+        boolean previousByteTerminationCondition = previousByte == 0xFF;
+
+        boolean currentByteTerminationCondition = (currentByte != 0xFF) && (currentByte > 0x00)
+                && !(currentByte >= 0xD0 && currentByte <= 0xD7);
+
+        return previousByteTerminationCondition && currentByteTerminationCondition;
+    }
+
     private void generateJumbfSegmentInApp11Marker(InputStream is, OutputStream os,
             Map<String, List<BoxSegment>> boxSegmentMap, long numberOfNewJumbfBoxes) throws MipamsException {
 
-        byte[] appMarkerAsByteArray = CoreUtils.readBytesFromInputStream(is, 2);
-        CoreUtils.writeByteArrayToOutputStream(appMarkerAsByteArray, os);
+        byte[] markerSegmentSizeAsByteArray = CoreUtils.readBytesFromInputStream(is, CoreUtils.WORD_BYTE_SIZE);
+        CoreUtils.writeByteArrayToOutputStream(markerSegmentSizeAsByteArray, os);
+        int markerSegmentSize = CoreUtils.readTwoByteWordAsInt(markerSegmentSizeAsByteArray) - CoreUtils.WORD_BYTE_SIZE;
 
-        int markerSegmentSize = CoreUtils.readTwoByteWordAsInt(appMarkerAsByteArray);
-
-        byte[] commonIdentifierAsByteArray = CoreUtils.readBytesFromInputStream(is, 2);
+        byte[] commonIdentifierAsByteArray = CoreUtils.readBytesFromInputStream(is, CoreUtils.WORD_BYTE_SIZE);
+        markerSegmentSize -= CoreUtils.WORD_BYTE_SIZE;
         CoreUtils.writeByteArrayToOutputStream(commonIdentifierAsByteArray, os);
-
         String commonIdentifier = Integer.toHexString(CoreUtils.readTwoByteWordAsInt(commonIdentifierAsByteArray));
 
         if (!commonIdentifier.equalsIgnoreCase("4A50")) {
-            writeNextBytesToOutputStream(is, os, markerSegmentSize - 2 - 2);
+            writeNextBytesToOutputStream(is, os, markerSegmentSize);
             return;
         }
 
-        byte[] boxInstanceNumberAsByteArray = CoreUtils.readBytesFromInputStream(is, 2);
+        byte[] boxInstanceNumberAsByteArray = CoreUtils.readBytesFromInputStream(is, CoreUtils.WORD_BYTE_SIZE);
+        markerSegmentSize -= CoreUtils.WORD_BYTE_SIZE;
         CoreUtils.writeByteArrayToOutputStream(boxInstanceNumberAsByteArray, os);
-
         int boxInstanceNumber = CoreUtils.readTwoByteWordAsInt(boxInstanceNumberAsByteArray);
 
         int packetSequenceNumber = CoreUtils.readIntFromInputStream(is);
+        markerSegmentSize -= CoreUtils.INT_BYTE_SIZE;
         CoreUtils.writeIntToOutputStream(packetSequenceNumber, os);
 
         int boxLength = CoreUtils.readIntFromInputStream(is);
+        markerSegmentSize -= CoreUtils.INT_BYTE_SIZE;
         CoreUtils.writeIntToOutputStream(boxLength, os);
 
         int boxType = CoreUtils.readIntFromInputStream(is);
+        markerSegmentSize -= CoreUtils.INT_BYTE_SIZE;
         CoreUtils.writeIntToOutputStream(boxType, os);
 
-        writeNextBytesToOutputStream(is, os, markerSegmentSize - (2 + 2 + 2 + 4 + 4 + 4));
+        if (boxLength == 1) {
+            long boxExtendedLength = CoreUtils.readLongFromInputStream(is);
+            markerSegmentSize -= CoreUtils.LONG_BYTE_SIZE;
+            CoreUtils.writeLongToOutputStream(boxExtendedLength, os);
+        }
+
+        writeNextBytesToOutputStream(is, os, markerSegmentSize);
 
         deleteBoxSegment(boxSegmentMap, boxType, boxInstanceNumber, packetSequenceNumber);
 
@@ -205,12 +220,12 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
     }
 
     private void copyNextMarkerToOutputStream(InputStream is, OutputStream os) throws MipamsException {
-        byte[] appMarkerAsByteArray = CoreUtils.readBytesFromInputStream(is, 2);
+        byte[] appMarkerAsByteArray = CoreUtils.readBytesFromInputStream(is, CoreUtils.WORD_BYTE_SIZE);
 
         int markerSegmentSize = CoreUtils.readTwoByteWordAsInt(appMarkerAsByteArray);
         CoreUtils.writeByteArrayToOutputStream(appMarkerAsByteArray, os);
 
-        writeNextBytesToOutputStream(is, os, markerSegmentSize - 2);
+        writeNextBytesToOutputStream(is, os, markerSegmentSize - CoreUtils.WORD_BYTE_SIZE);
     }
 
     private void writeNextBytesToOutputStream(InputStream is, OutputStream os, long numberOfBytes)
@@ -241,7 +256,7 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
 
         String provisionalBoxSegmentId;
 
-        while (boxInstanceNumber <= MAX_APP_SIZE) {
+        while (boxInstanceNumber <= CoreUtils.MAX_APP_SEGMENT_SIZE) {
 
             provisionalBoxSegmentId = String.format("%d-%d", boxType, boxInstanceNumber);
 
@@ -261,6 +276,9 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
 
         List<BoxSegment> boxSegmentList = new ArrayList<>();
 
+        int bmffHeaderSize = CoreUtils.getBmffHeaderBuffer(jumbfBox.getLBox(), jumbfBox.getTBox(),
+                jumbfBox.getXlBox()).length;
+
         String boxSegmentId = String.format("%d-%d", jumbfBox.getTBox(), boxInstanceNumber);
         String jumbfFileUrl = CoreUtils.getFullPath(properties.getFileDirectory(), boxSegmentId);
 
@@ -268,7 +286,7 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
 
         int packetSequence = 1;
 
-        int maximumSegmentPayloadSize = MAX_APP_SIZE - (2 + 2 + 2 + 4);
+        int maximumSegmentPayloadSize = CoreUtils.getMaximumSizeForBmffBoxInAPPSegment();
 
         int remainingBytesInSegment = maximumSegmentPayloadSize;
 
@@ -289,10 +307,10 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
                 int segmentPayloadBytes = (is.available() >= remainingBytesInSegment) ? remainingBytesInSegment
                         : is.available();
 
-                int segmentBytes = segmentPayloadBytes + (2 + 2 + 2 + 4);
+                int segmentBytes = segmentPayloadBytes + CoreUtils.getAppSegmentHeaderSize();
 
                 if (packetSequence > 1) {
-                    segmentBytes += 4 + 4 + (jumbfBox.getXlBox() != null ? 8 : 0);
+                    segmentBytes += bmffHeaderSize;
                 }
 
                 CoreUtils.writeBytesFromInputStreamToFile(is, segmentPayloadBytes, boxSegmentPayloadUrl);

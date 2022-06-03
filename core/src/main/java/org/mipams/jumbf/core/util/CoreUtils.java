@@ -19,6 +19,10 @@ public class CoreUtils {
 
     public static final int UUID_BYTE_SIZE = 16;
 
+    public static final int WORD_BYTE_SIZE = 2;
+
+    public static final int MAX_APP_SEGMENT_SIZE = 0xFFFF;
+
     // public static final String
 
     public static void writeFileContentToOutput(String path, OutputStream outputStream) throws MipamsException {
@@ -346,5 +350,22 @@ public class CoreUtils {
 
     public static boolean isStartOfScanMarker(String appMarkerAsHex) {
         return appMarkerAsHex.equalsIgnoreCase("FFDA");
+    }
+
+    public static int getMaximumSizeForBmffBoxInAPPSegment() {
+        return MAX_APP_SEGMENT_SIZE - getAppSegmentHeaderSize();
+    }
+
+    public static int getAppSegmentHeaderSize() {
+        int segmentSizeByteLength = WORD_BYTE_SIZE;
+
+        int commonIdentifierByteLength = WORD_BYTE_SIZE;
+
+        int boxInstanceNumberByteLength = WORD_BYTE_SIZE;
+
+        int packetSequenceNumberByteLength = INT_BYTE_SIZE;
+
+        return segmentSizeByteLength + commonIdentifierByteLength + boxInstanceNumberByteLength
+                + packetSequenceNumberByteLength;
     }
 }
