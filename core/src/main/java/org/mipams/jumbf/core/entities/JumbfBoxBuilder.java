@@ -13,6 +13,10 @@ public class JumbfBoxBuilder {
         reset();
     }
 
+    public JumbfBoxBuilder(JumbfBox jumbfBox) {
+        this.jumbfBox = jumbfBox;
+    }
+
     void reset() {
         DescriptionBox dBox = new DescriptionBox();
         List<BmffBox> contentBoxList = new ArrayList<>();
