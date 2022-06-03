@@ -11,6 +11,7 @@ import org.mipams.jumbf.core.entities.BinaryDataBox;
 import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.entities.EmbeddedFileDescriptionBox;
 import org.mipams.jumbf.core.entities.JumbfBox;
+import org.mipams.jumbf.core.entities.JumbfBoxBuilder;
 import org.mipams.jumbf.core.services.CoreGeneratorService;
 import org.mipams.jumbf.core.services.CoreParserService;
 import org.mipams.jumbf.core.services.content_types.EmbeddedFileContentType;
@@ -45,7 +46,6 @@ public class EmbeddedFileBoxIntegrationTests extends AbstractIntegrationTests {
     void testEmbeddedFileBoxWithExternalReference() throws Exception {
 
         EmbeddedFileContentType embeddedFileContentType = new EmbeddedFileContentType();
-        String contentType = embeddedFileContentType.getContentTypeUuid();
 
         EmbeddedFileDescriptionBox embeddedFileDescriptionBox = new EmbeddedFileDescriptionBox();
         embeddedFileDescriptionBox.setFileName(TEST_FILE_NAME);
@@ -62,8 +62,13 @@ public class EmbeddedFileBoxIntegrationTests extends AbstractIntegrationTests {
         binaryDataBox.updateBmffHeadersBasedOnBox();
 
         List<BmffBox> contentBoxes = List.of(embeddedFileDescriptionBox, binaryDataBox);
-        JumbfBox givenJumbfBox = MockJumbfBoxCreation.generateJumbfBoxWithContent(contentBoxes, contentType, 10);
 
+        JumbfBoxBuilder builder = new JumbfBoxBuilder();
+        builder.setContentType(embeddedFileContentType);
+        builder.setPaddingSize(10);
+        builder.appendAllContentBoxes(contentBoxes);
+
+        JumbfBox givenJumbfBox = builder.getResult();
         JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 
         assertEquals(givenJumbfBox, parsedJumbfBox);
@@ -73,7 +78,6 @@ public class EmbeddedFileBoxIntegrationTests extends AbstractIntegrationTests {
     void testEmbeddedFileBoxWithInternalReference() throws Exception {
 
         EmbeddedFileContentType embeddedFileContentType = new EmbeddedFileContentType();
-        String contentType = embeddedFileContentType.getContentTypeUuid();
 
         EmbeddedFileDescriptionBox embeddedFileDescriptionBox = new EmbeddedFileDescriptionBox();
         embeddedFileDescriptionBox.setMediaTypeFromString("image/jpeg");
@@ -88,8 +92,13 @@ public class EmbeddedFileBoxIntegrationTests extends AbstractIntegrationTests {
         binaryDataBox.updateBmffHeadersBasedOnBox();
 
         List<BmffBox> contentBoxes = List.of(embeddedFileDescriptionBox, binaryDataBox);
-        JumbfBox givenJumbfBox = MockJumbfBoxCreation.generateJumbfBoxWithContent(contentBoxes, contentType, 10);
 
+        JumbfBoxBuilder builder = new JumbfBoxBuilder();
+        builder.setContentType(embeddedFileContentType);
+        builder.setPaddingSize(10);
+        builder.appendAllContentBoxes(contentBoxes);
+
+        JumbfBox givenJumbfBox = builder.getResult();
         JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 
         assertEquals(givenJumbfBox, parsedJumbfBox);

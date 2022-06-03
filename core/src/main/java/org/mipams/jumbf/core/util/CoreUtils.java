@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import java.nio.ByteBuffer;
-
 import java.util.UUID;
 
 import org.springframework.http.MediaType;
@@ -20,13 +19,17 @@ public class CoreUtils {
 
     public static final int UUID_BYTE_SIZE = 16;
 
-    public static void writeFileContentToOutput(String path, OutputStream outputStream) throws IOException {
+    // public static final String
+
+    public static void writeFileContentToOutput(String path, OutputStream outputStream) throws MipamsException {
 
         try (FileInputStream inputStream = new FileInputStream(path)) {
             int n;
             while ((n = inputStream.read()) != -1) {
                 outputStream.write(n);
             }
+        } catch (IOException e) {
+            throw new MipamsException(e);
         }
     }
 
@@ -64,6 +67,16 @@ public class CoreUtils {
 
     public static byte[] convertIntToByteArray(int num) {
         return ByteBuffer.allocate(4).putInt(num).array();
+    }
+
+    public static byte[] convertIntToTwoByteArray(int num) {
+
+        byte[] result = new byte[2];
+
+        result[1] = (byte) num;
+        result[0] = (byte) (num >> 8);
+
+        return result;
     }
 
     public static byte[] convertIntToSingleElementByteArray(int num) {
@@ -119,7 +132,7 @@ public class CoreUtils {
 
     public static int readSingleByteAsIntFromInputStream(InputStream input) throws MipamsException {
         byte[] intBuffer = readBytesFromInputStream(input, 1);
-        return (int) intBuffer[0];
+        return Byte.toUnsignedInt(intBuffer[0]);
     }
 
     public static int readIntFromInputStream(InputStream input) throws MipamsException {
@@ -150,6 +163,23 @@ public class CoreUtils {
         } catch (IOException e) {
             throw new MipamsException(e);
         }
+    }
+
+    public static String readTwoByteWordAsHex(InputStream input) throws MipamsException {
+        return Integer.toHexString(readTwoByteWordAsInt(input));
+    }
+
+    public static int readTwoByteWordAsInt(InputStream input) throws MipamsException {
+        byte[] byteArray = CoreUtils.readBytesFromInputStream(input, 2);
+        return readTwoByteWordAsInt(byteArray);
+    }
+
+    public static int readTwoByteWordAsInt(byte[] byteArray) throws MipamsException {
+
+        byte[] fullWordByteArray = new byte[4];
+
+        System.arraycopy(byteArray, 0, fullWordByteArray, 2, 2);
+        return convertByteArrayToInt(fullWordByteArray);
     }
 
     public static UUID convertByteArrayToUUID(byte[] bytes) {
@@ -211,11 +241,20 @@ public class CoreUtils {
             String fileUrl) throws MipamsException {
 
         try (FileOutputStream fileOutputStream = new FileOutputStream(fileUrl)) {
+            writeBytesFromInputStreamToOutputstream(input, nominalTotalSizeInBytes, fileOutputStream);
+        } catch (IOException e) {
+            throw new MipamsException("Could not read content", e);
+        }
+    }
 
+    public static void writeBytesFromInputStreamToOutputstream(InputStream input, long nominalTotalSizeInBytes,
+            OutputStream outputStream) throws MipamsException {
+
+        try {
             int actualBytes = 0, n;
 
             while ((actualBytes < nominalTotalSizeInBytes) && ((n = input.read()) != -1)) {
-                fileOutputStream.write(n);
+                outputStream.write(n);
                 actualBytes++;
             }
 
@@ -266,5 +305,46 @@ public class CoreUtils {
 
     public static int numberOfHexCharsToRepresentLong(long size) {
         return Long.toHexString(size).length();
+    }
+
+    public static byte[] getBmffHeaderBuffer(int boxLength, int boxType, Long boxLengthExtension) {
+
+        ByteBuffer bb;
+
+        if (boxLengthExtension != null) {
+            bb = ByteBuffer.wrap(new byte[INT_BYTE_SIZE * 2 + LONG_BYTE_SIZE]);
+            bb.put(convertIntToByteArray(boxLength));
+            bb.put(convertIntToByteArray(boxType));
+            bb.put(convertLongToByteArray(boxLengthExtension));
+        } else {
+            bb = ByteBuffer.wrap(new byte[INT_BYTE_SIZE * 2]);
+            bb.put(convertIntToByteArray(boxLength));
+            bb.put(convertIntToByteArray(boxType));
+        }
+
+        return bb.array();
+    }
+
+    public static void deleteFile(String fileUrl) {
+        File f = new File(fileUrl);
+        if (f.exists()) {
+            f.delete();
+        }
+    }
+
+    public static boolean isStartOfImageAppMarker(String appMarkerAsHex) {
+        return appMarkerAsHex.equalsIgnoreCase("FFD8");
+    }
+
+    public static boolean isEndOfImageAppMarker(String appMarkerAsHex) {
+        return appMarkerAsHex.equalsIgnoreCase("FFD9");
+    }
+
+    public static boolean isApp11Marker(String appMarkerAsHex) {
+        return appMarkerAsHex.equalsIgnoreCase("FFEB");
+    }
+
+    public static boolean isStartOfScanMarker(String appMarkerAsHex) {
+        return appMarkerAsHex.equalsIgnoreCase("FFDA");
     }
 }

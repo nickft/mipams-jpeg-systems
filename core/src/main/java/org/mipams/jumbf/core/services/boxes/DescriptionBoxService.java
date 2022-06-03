@@ -12,7 +12,7 @@ import org.mipams.jumbf.core.entities.DescriptionBox;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
-
+import org.mipams.jumbf.core.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +25,9 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
     ContentTypeDiscoveryManager contentBoxDiscoveryManager;
 
     ServiceMetadata serviceMetadata;
+
+    @Autowired
+    Properties properties;
 
     @PostConstruct
     void init() {
@@ -62,6 +65,9 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
             CoreUtils.writeByteArrayToOutputStream(descriptionBox.getSha256Hash(), outputStream);
         }
 
+        if (descriptionBox.privateFieldExists()) {
+            CoreUtils.writeFileContentToOutput(descriptionBox.getPrivateBmffBoxUrl(), outputStream);
+        }
     }
 
     @Override
@@ -72,24 +78,42 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
 
         String uuid = CoreUtils.readUuidFromInputStream(input);
         descriptionBox.setUuid(uuid);
+        availableBytesForBox -= CoreUtils.UUID_BYTE_SIZE;
 
         int toggleValue = CoreUtils.readSingleByteAsIntFromInputStream(input);
         descriptionBox.setToggle(toggleValue);
+        availableBytesForBox--;
 
         if (descriptionBox.labelExists()) {
             String label = CoreUtils.readStringFromInputStream(input);
-
             descriptionBox.setLabel(label);
+            availableBytesForBox -= CoreUtils.addEscapeCharacterToText(descriptionBox.getLabel()).length();
         }
 
         if (descriptionBox.idExists()) {
             int idVal = CoreUtils.readIntFromInputStream(input);
             descriptionBox.setId(idVal);
+            availableBytesForBox -= CoreUtils.INT_BYTE_SIZE;
         }
 
         if (descriptionBox.sha256HashExists()) {
             byte[] sha256Hash = CoreUtils.readBytesFromInputStream(input, 32);
             descriptionBox.setSha256Hash(sha256Hash);
+            availableBytesForBox -= 32;
+        }
+
+        if (descriptionBox.privateFieldExists()) {
+
+            if (availableBytesForBox <= 8) {
+                throw new MipamsException("The size of Private Field shall be more than 8 bytes");
+            }
+
+            String fileName = CoreUtils.randomStringGenerator() + "-privateField";
+            String fullPath = CoreUtils.getFullPath(properties.getFileDirectory(), fileName);
+            descriptionBox.setPrivateBmffBoxUrl(fullPath);
+
+            CoreUtils.writeBytesFromInputStreamToFile(input, availableBytesForBox,
+                    descriptionBox.getPrivateBmffBoxUrl());
         }
 
         logger.debug("Discovered box: " + descriptionBox.toString());

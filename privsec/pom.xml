@@ -7,13 +7,13 @@
 	<parent>  
 		<groupId>org.mipams.jumbf</groupId>
 		<artifactId>jumbf</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>1.0</version>
 	</parent>
 
 	<groupId>org.mipams.jumbf</groupId>
 	<artifactId>jumbf-privsec</artifactId>
 	<packaging>jar</packaging>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 
 	<name>Jumbf Privacy and Security Module</name>
 	<description>Module that contains the implementation of the Privacy and Security JUMBF functionality</description>
@@ -22,7 +22,7 @@
 		<dependency>
 			<groupId>org.mipams.jumbf</groupId>  
 			<artifactId>jumbf-core</artifactId>
-			<version>${project.version}</version>  
+			<version>2.0</version>  
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>

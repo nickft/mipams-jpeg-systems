@@ -8,12 +8,12 @@ import java.util.List;
 
 import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.services.boxes.JumbfBoxService;
-import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.CorruptedJumbfFileException;
 import org.mipams.jumbf.core.util.MipamsException;
-import org.mipams.jumbf.core.util.Properties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,15 +25,10 @@ public class CoreParserService implements ParserInterface {
     @Autowired
     JumbfBoxService superBoxService;
 
-    @Autowired
-    Properties properties;
-
     @Override
-    public List<JumbfBox> parseMetadataFromJumbfFile(String fileName) throws MipamsException {
+    public List<JumbfBox> parseMetadataFromFile(String assetUrl) throws MipamsException {
 
-        String path = CoreUtils.getFullPath(properties.getFileDirectory(), fileName);
-
-        try (InputStream input = new FileInputStream(path)) {
+        try (InputStream input = new FileInputStream(assetUrl)) {
 
             List<JumbfBox> bmffBoxList = new ArrayList<>();
 
@@ -48,7 +43,7 @@ public class CoreParserService implements ParserInterface {
 
             return bmffBoxList;
         } catch (IOException e) {
-            throw new CorruptedJumbfFileException("Could not open file: " + path, e);
+            throw new CorruptedJumbfFileException("Could not open file: " + assetUrl, e);
         }
 
     }

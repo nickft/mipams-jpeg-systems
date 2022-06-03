@@ -95,7 +95,7 @@ public class BmffBoxServiceTests {
         long expectedSize = CoreUtils.INT_BYTE_SIZE * 2 + CoreUtils.LONG_BYTE_SIZE + mockBox.PAYLOAD_SIZE;
 
         assertTrue(mockBox.getLBox() == 1);
-        assertEquals(expectedSize, mockBox.getXBox());
+        assertEquals(expectedSize, mockBox.getXlBox());
     }
 
     @Test
@@ -103,7 +103,7 @@ public class BmffBoxServiceTests {
         MockLongBox mockBox = new MockLongBox();
 
         mockBox.setLBox(34);
-        mockBox.setXBox(Long.valueOf(Integer.MAX_VALUE));
+        mockBox.setXlBox(Long.valueOf(Integer.MAX_VALUE));
 
         assertTrue(!mockBox.isXBoxEnabled());
     }
@@ -113,7 +113,7 @@ public class BmffBoxServiceTests {
         MockLongBox mockBox = new MockLongBox();
 
         mockBox.setLBox(1);
-        mockBox.setXBox(null);
+        mockBox.setXlBox(null);
 
         assertTrue(!mockBox.isXBoxEnabled());
     }

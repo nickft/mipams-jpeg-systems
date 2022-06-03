@@ -8,9 +8,9 @@ import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mipams.jumbf.core.entities.DescriptionBox;
 import org.mipams.jumbf.core.entities.JsonBox;
 import org.mipams.jumbf.core.entities.JumbfBox;
+import org.mipams.jumbf.core.entities.JumbfBoxBuilder;
 import org.mipams.jumbf.core.services.content_types.JsonContentType;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
@@ -35,7 +35,7 @@ public class LongBoxTests extends AbstractIntegrationTests {
     void testLongBox() throws MipamsException {
         JumbfBox givenJumbfBox = generateMockLongBox();
 
-        String test = testGenerateJumbfFileFromBox(List.of(givenJumbfBox), JUMBF_FILE_NAME);
+        String test = testGenerateJumbfFileFromBox(List.of(givenJumbfBox), JUMBF_FILE_PATH);
 
         assertTrue(test != null);
     }
@@ -48,18 +48,17 @@ public class LongBoxTests extends AbstractIntegrationTests {
         jsonBox.setFileUrl(TEST_FILE_PATH);
         jsonBox.updateBmffHeadersBasedOnBox();
 
-        DescriptionBox dBox = new DescriptionBox();
+        JumbfBoxBuilder builder = new JumbfBoxBuilder();
+        builder.setId(12345);
+        builder.setContentType(jsonContentType);
+        builder.setPaddingSize(10);
+        builder.appendContentBox(jsonBox);
 
-        dBox.setUuid(jsonContentType.getContentTypeUuid());
-        dBox.setId(12345);
-        dBox.computeAndSetToggleBasedOnFields();
-        dBox.updateBmffHeadersBasedOnBox();
+        JumbfBox givenJumbfBox = builder.getResult();
 
-        JumbfBox box = MockJumbfBoxCreation.generateJumbfBox(dBox, List.of(jsonBox), 10);
-
-        box.setXBox(Long.valueOf(box.getLBox() + CoreUtils.LONG_BYTE_SIZE));
-        box.setLBox(1);
-        return box;
+        givenJumbfBox.setXlBox(Long.valueOf(givenJumbfBox.getLBox() + CoreUtils.LONG_BYTE_SIZE));
+        givenJumbfBox.setLBox(1);
+        return givenJumbfBox;
     }
 
 }

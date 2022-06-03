@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -374,18 +375,6 @@ public class CoreUtilsTests {
         }
     }
 
-    @Test
-    void testWriteFileContentToFailingOutput() throws MipamsException, FileNotFoundException, IOException {
-
-        String inputFileName = getTestFilePath();
-
-        try (FailingOutputStream os = new FailingOutputStream();) {
-            assertThrows(IOException.class, () -> {
-                CoreUtils.writeFileContentToOutput(inputFileName, os);
-            });
-        }
-    }
-
     public class FailingOutputStream extends OutputStream {
         @Override
         public void write(int test) throws IOException {
@@ -524,6 +513,34 @@ public class CoreUtilsTests {
 
             assertEquals("Padding is corrupted. It should be contain only values of 0x00", exception.getMessage());
         }
+    }
+
+    @Test
+    void testGetBmffHeader() {
+        byte[] test = CoreUtils.getBmffHeaderBuffer(5, 5, Long.parseLong("100"));
+        assertEquals(CoreUtils.INT_BYTE_SIZE + CoreUtils.INT_BYTE_SIZE + CoreUtils.LONG_BYTE_SIZE, test.length);
+    }
+
+    @Test
+    void testDeleteInexistentFile() {
+        String testString = CoreUtils.randomStringGenerator();
+        CoreUtils.deleteFile(testString);
+    }
+
+    @Test
+    void testWriteToInexistentFile() {
+        String testString = TEST_DIRECTORY;
+        assertThrows(MipamsException.class, () -> {
+            CoreUtils.writeBytesFromInputStreamToFile(new ByteArrayInputStream(new byte[4]), 4, testString);
+        });
+    }
+
+    @Test
+    void testWriteFromInexistentFile() {
+        String testString = CoreUtils.randomStringGenerator();
+        assertThrows(MipamsException.class, () -> {
+            CoreUtils.writeFileContentToOutput(testString, new ByteArrayOutputStream());
+        });
     }
 
 }

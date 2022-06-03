@@ -16,7 +16,7 @@ public abstract class AbstractIntegrationTests {
     protected static String TEST_DIRECTORY = "/tmp/jumbf-tests/";
     protected static String TEST_FILE_NAME = "test.jpeg";
     protected static String TEST_FILE_PATH = TEST_DIRECTORY + TEST_FILE_NAME;
-    protected static String JUMBF_FILE_NAME = "test.jumbf";
+    protected static String JUMBF_FILE_PATH = TEST_DIRECTORY + "test.jumbf";
 
     @Autowired
     protected CoreGeneratorService coreGeneratorService;
@@ -56,17 +56,17 @@ public abstract class AbstractIntegrationTests {
     }
 
     protected List<JumbfBox> generateJumbfFileAndParseBox(List<JumbfBox> givenJumbfBoxList) throws MipamsException {
-        testGenerateJumbfFileFromBox(givenJumbfBoxList, JUMBF_FILE_NAME);
-        return testParseMetadataFromJumbfFile(JUMBF_FILE_NAME);
+        testGenerateJumbfFileFromBox(givenJumbfBoxList, JUMBF_FILE_PATH);
+        return testParseMetadataFromJumbfFile(JUMBF_FILE_PATH);
     }
 
-    protected String testGenerateJumbfFileFromBox(List<JumbfBox> givenJumbfBoxList, String fileName)
+    protected String testGenerateJumbfFileFromBox(List<JumbfBox> givenJumbfBoxList, String assetUrl)
             throws MipamsException {
-        return coreGeneratorService.generateJumbfFileFromBox(givenJumbfBoxList, fileName);
+        return coreGeneratorService.generateJumbfMetadataToFile(givenJumbfBoxList, assetUrl);
     }
 
-    protected List<JumbfBox> testParseMetadataFromJumbfFile(String fileName) throws MipamsException {
-        return coreParserService.parseMetadataFromJumbfFile(fileName);
+    protected List<JumbfBox> testParseMetadataFromJumbfFile(String assetUrl) throws MipamsException {
+        return coreParserService.parseMetadataFromFile(assetUrl);
     }
 
 }

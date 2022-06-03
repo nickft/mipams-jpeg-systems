@@ -7,6 +7,6 @@ import org.mipams.jumbf.core.util.MipamsException;
 
 public interface ParserInterface {
 
-    public List<JumbfBox> parseMetadataFromJumbfFile(String path) throws MipamsException;
+    public List<JumbfBox> parseMetadataFromFile(String assetUrl) throws MipamsException;
 
 }

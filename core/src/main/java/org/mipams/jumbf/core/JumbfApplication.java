@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication(scanBasePackages = "org.mipams.jumbf.core")
+@SpringBootApplication
 public class JumbfApplication {
 	private static final Logger logger = LoggerFactory.getLogger(JumbfApplication.class);
 

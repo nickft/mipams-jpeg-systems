@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.core.util.Properties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @SpringBootTest
 public class CoreGeneratorServiceTests {
@@ -43,16 +42,10 @@ public class CoreGeneratorServiceTests {
 
     @Test
     void testGenerateJumbfFileFromBoxWithDirInsteadOfFile() {
-
-        properties = new Properties();
-        ReflectionTestUtils.setField(properties, "IMAGE_FOLDER", "\\tmp");
-
         CoreGeneratorService coreGeneratorService = new CoreGeneratorService();
-        ReflectionTestUtils.setField(coreGeneratorService, "properties", properties);
 
         assertThrows(MipamsException.class, () -> {
-            coreGeneratorService.generateJumbfFileFromBox(null, TEST_DIRECTORY);
+            coreGeneratorService.generateJumbfMetadataToFile(null, TEST_DIRECTORY);
         });
-
     }
 }

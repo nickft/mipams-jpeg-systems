@@ -27,7 +27,7 @@ public abstract class BmffBoxService<T extends BmffBox> implements BoxServiceInt
         CoreUtils.writeIntToOutputStream(box.getTBox(), outputStream);
 
         if (box.isXBoxEnabled()) {
-            CoreUtils.writeLongToOutputStream(box.getXBox(), outputStream);
+            CoreUtils.writeLongToOutputStream(box.getXlBox(), outputStream);
         }
     }
 
@@ -71,8 +71,8 @@ public abstract class BmffBoxService<T extends BmffBox> implements BoxServiceInt
         box.setTBox(tBox);
 
         if (box.getLBox() == 1) {
-            long xBox = CoreUtils.readLongFromInputStream(input);
-            box.setXBox(xBox);
+            long xlBox = CoreUtils.readLongFromInputStream(input);
+            box.setXlBox(xlBox);
         }
     }
 

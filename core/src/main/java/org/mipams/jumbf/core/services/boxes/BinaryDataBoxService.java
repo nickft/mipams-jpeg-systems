@@ -1,6 +1,5 @@
 package org.mipams.jumbf.core.services.boxes;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.annotation.PostConstruct;
@@ -58,11 +57,6 @@ public class BinaryDataBoxService extends SingleFormatBoxService<BinaryDataBox> 
             throws MipamsException {
 
         properties.checkIfFileSizeExceedApplicationLimits(binaryDataBox.getFileUrl());
-
-        try {
-            CoreUtils.writeFileContentToOutput(binaryDataBox.getFileUrl(), outputStream);
-        } catch (IOException e) {
-            throw new MipamsException("Could not locate " + binaryDataBox.getType() + " metadata file", e);
-        }
+        CoreUtils.writeFileContentToOutput(binaryDataBox.getFileUrl(), outputStream);
     }
 }

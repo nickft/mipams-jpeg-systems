@@ -7,13 +7,13 @@
 	<parent>  
 		<groupId>org.mipams.jumbf</groupId>  
 		<artifactId>jumbf</artifactId>  
-		<version>0.0.1-SNAPSHOT</version>  
+		<version>1.0</version>  
 	</parent>
 
 	<groupId>org.mipams.jumbf</groupId>
 	<artifactId>jumbf-core</artifactId>
 	<packaging>jar</packaging>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>2.0</version>
 	
 	<name>Jumbf Core Module</name>
 	<description>Module that contains the implementation of the core JUMBF structure</description>

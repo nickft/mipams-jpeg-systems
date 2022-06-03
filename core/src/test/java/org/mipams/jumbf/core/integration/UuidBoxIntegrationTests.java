@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.mipams.jumbf.core.entities.JumbfBox;
+import org.mipams.jumbf.core.entities.JumbfBoxBuilder;
 import org.mipams.jumbf.core.entities.UuidBox;
 import org.mipams.jumbf.core.services.CoreGeneratorService;
 import org.mipams.jumbf.core.services.CoreParserService;
@@ -43,16 +44,18 @@ public class UuidBoxIntegrationTests extends AbstractIntegrationTests {
     void testUuidBox() throws Exception {
 
         UuidContentType uuidContentType = new UuidContentType();
-        String contentTypeUuidAsString = uuidContentType.getContentTypeUuid();
 
         UuidBox uuidBox = new UuidBox();
         uuidBox.setUuid(CoreUtils.randomStringGenerator().toUpperCase());
         uuidBox.setFileUrl(TEST_FILE_PATH);
         uuidBox.updateBmffHeadersBasedOnBox();
 
-        JumbfBox givenJumbfBox = MockJumbfBoxCreation.generateJumbfBoxWithContent(List.of(uuidBox),
-                contentTypeUuidAsString, 10);
+        JumbfBoxBuilder builder = new JumbfBoxBuilder();
+        builder.setContentType(uuidContentType);
+        builder.setPaddingSize(10);
+        builder.appendContentBox(uuidBox);
 
+        JumbfBox givenJumbfBox = builder.getResult();
         JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 
         assertEquals(givenJumbfBox, parsedJumbfBox);

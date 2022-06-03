@@ -1,7 +1,6 @@
 package org.mipams.jumbf.core.services.boxes;
 
 import java.io.OutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
@@ -51,11 +50,7 @@ public class UuidBoxService extends BmffBoxService<UuidBox> {
 
         properties.checkIfFileSizeExceedApplicationLimits(uuidBox.getFileUrl());
 
-        try {
-            CoreUtils.writeFileContentToOutput(uuidBox.getFileUrl(), outputStream);
-        } catch (IOException e) {
-            throw new MipamsException("Could not locate " + uuidBox.getType() + " metadata file", e);
-        }
+        CoreUtils.writeFileContentToOutput(uuidBox.getFileUrl(), outputStream);
     }
 
     @Override

@@ -8,10 +8,11 @@ import java.io.IOException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.core.util.Properties;
+
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @SpringBootTest
 public class CoreParserServiceTests {
@@ -43,14 +44,10 @@ public class CoreParserServiceTests {
     @Test
     void testGenerateJumbfFileFromBoxWithDirInsteadOfFile() {
 
-        properties = new Properties();
-        ReflectionTestUtils.setField(properties, "IMAGE_FOLDER", "\\tmp");
-
         CoreParserService coreParserService = new CoreParserService();
-        ReflectionTestUtils.setField(coreParserService, "properties", properties);
 
         assertThrows(MipamsException.class, () -> {
-            coreParserService.parseMetadataFromJumbfFile(TEST_DIRECTORY);
+            coreParserService.parseMetadataFromFile(TEST_DIRECTORY);
         });
 
     }

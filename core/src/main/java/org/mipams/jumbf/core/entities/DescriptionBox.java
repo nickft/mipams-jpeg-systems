@@ -24,6 +24,8 @@ public class DescriptionBox extends BmffBox {
 
     protected @Getter @Setter byte[] sha256Hash;
 
+    protected @Getter @Setter String privateBmffBoxUrl;
+
     @Override
     public int getTypeId() {
         return 0x6A756D64;
@@ -50,6 +52,10 @@ public class DescriptionBox extends BmffBox {
 
         if (sha256HashExists()) {
             sum += getSignatureSize();
+        }
+
+        if (privateFieldExists()) {
+            sum += CoreUtils.getFileSizeFromPath(getPrivateBmffBoxUrl());
         }
 
         return sum;
@@ -95,6 +101,10 @@ public class DescriptionBox extends BmffBox {
         return CoreUtils.isBitAtGivenPositionSet(toggle, 3);
     }
 
+    public boolean privateFieldExists() {
+        return CoreUtils.isBitAtGivenPositionSet(toggle, 4);
+    }
+
     public void computeAndSetToggleBasedOnFields() {
 
         int toggle = 0;
@@ -109,6 +119,10 @@ public class DescriptionBox extends BmffBox {
 
         if (getSha256Hash() != null) {
             toggle = toggle | 8;
+        }
+
+        if (getPrivateBmffBoxUrl() != null) {
+            toggle = toggle | 16;
         }
 
         setToggle(toggle);

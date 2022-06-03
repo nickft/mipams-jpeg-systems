@@ -10,6 +10,7 @@ import org.mipams.jumbf.core.entities.CborBox;
 import org.mipams.jumbf.core.entities.ContiguousCodestreamBox;
 import org.mipams.jumbf.core.entities.JsonBox;
 import org.mipams.jumbf.core.entities.JumbfBox;
+import org.mipams.jumbf.core.entities.JumbfBoxBuilder;
 import org.mipams.jumbf.core.entities.XmlBox;
 import org.mipams.jumbf.core.services.CoreGeneratorService;
 import org.mipams.jumbf.core.services.CoreParserService;
@@ -77,7 +78,11 @@ public class MultipleContentBoxIntegrationTests extends AbstractIntegrationTests
         jsonBox.setFileUrl(TEST_FILE_PATH);
         jsonBox.updateBmffHeadersBasedOnBox();
 
-        return MockJumbfBoxCreation.generateJumbfBoxWithContent(List.of(jsonBox), jsonContentType.getContentTypeUuid());
+        JumbfBoxBuilder builder = new JumbfBoxBuilder();
+        builder.setContentType(jsonContentType);
+        builder.appendContentBox(jsonBox);
+
+        return builder.getResult();
     }
 
     private JumbfBox createXmlJumbfBox() throws MipamsException {
@@ -88,7 +93,11 @@ public class MultipleContentBoxIntegrationTests extends AbstractIntegrationTests
         xmlBox.setFileUrl(TEST_FILE_PATH);
         xmlBox.updateBmffHeadersBasedOnBox();
 
-        return MockJumbfBoxCreation.generateJumbfBoxWithContent(List.of(xmlBox), xmlContentType.getContentTypeUuid());
+        JumbfBoxBuilder builder = new JumbfBoxBuilder();
+        builder.setContentType(xmlContentType);
+        builder.appendContentBox(xmlBox);
+
+        return builder.getResult();
     }
 
     private JumbfBox createJp2cJumbfBox() throws MipamsException {
@@ -98,7 +107,11 @@ public class MultipleContentBoxIntegrationTests extends AbstractIntegrationTests
         jp2cBox.setFileUrl(TEST_FILE_PATH);
         jp2cBox.updateBmffHeadersBasedOnBox();
 
-        return MockJumbfBoxCreation.generateJumbfBoxWithContent(List.of(jp2cBox), contentType.getContentTypeUuid());
+        JumbfBoxBuilder builder = new JumbfBoxBuilder();
+        builder.setContentType(contentType);
+        builder.appendContentBox(jp2cBox);
+
+        return builder.getResult();
     }
 
     private JumbfBox createCborJumbfBox() throws MipamsException {
@@ -108,7 +121,11 @@ public class MultipleContentBoxIntegrationTests extends AbstractIntegrationTests
         cborBox.setFileUrl(TEST_FILE_PATH);
         cborBox.updateBmffHeadersBasedOnBox();
 
-        return MockJumbfBoxCreation.generateJumbfBoxWithContent(List.of(cborBox), cborContentType.getContentTypeUuid());
+        JumbfBoxBuilder builder = new JumbfBoxBuilder();
+        builder.setContentType(cborContentType);
+        builder.appendContentBox(cborBox);
+
+        return builder.getResult();
     }
 
 }

@@ -16,7 +16,7 @@ public abstract class BmffBox implements BoxInterface {
 
     private @Getter @Setter int TBox;
 
-    private @Getter @Setter Long XBox;
+    private @Getter @Setter Long XlBox;
 
     @Override
     public final long getBoxSize() {
@@ -37,11 +37,11 @@ public abstract class BmffBox implements BoxInterface {
     }
 
     public final long getBoxSizeFromBmffHeaders() {
-        return isXBoxEnabled() ? getXBox() : getLBox();
+        return isXBoxEnabled() ? getXlBox() : getLBox();
     }
 
     public final boolean isXBoxEnabled() {
-        return LBox == 1 && (XBox != null);
+        return LBox == 1 && (getXlBox() != null);
     }
 
     public final void updateBmffHeadersBasedOnBox() throws MipamsException {
@@ -52,7 +52,7 @@ public abstract class BmffBox implements BoxInterface {
 
         if (isXBoxRequiredBasedOnSize(size)) {
             setLBox(1);
-            setXBox(size);
+            setXlBox(size);
         } else {
             setLBox((int) size);
         }
