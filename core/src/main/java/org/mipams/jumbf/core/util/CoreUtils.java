@@ -329,11 +329,36 @@ public class CoreUtils {
         return bb.array();
     }
 
-    public static void deleteFile(String fileUrl) {
-        File f = new File(fileUrl);
-        if (f.exists()) {
-            f.delete();
+    public static boolean deleteDir(String dirUrl) {
+
+        File dir = new File(dirUrl);
+        if (!dir.exists()) {
+            return true;
         }
+
+        for (String name : dir.list()) {
+
+            String absolutePath = getFullPath(dir.getAbsolutePath(), name);
+
+            File t = new File(absolutePath);
+
+            if (t.isDirectory()) {
+                deleteDir(absolutePath);
+            } else {
+                deleteFile(absolutePath);
+            }
+        }
+
+        return dir.delete();
+    }
+
+    public static boolean deleteFile(String fileUrl) {
+        File f = new File(fileUrl);
+        if (!f.exists()) {
+            return true;
+        }
+
+        return f.delete();
     }
 
     public static boolean isStartOfImageAppMarker(String appMarkerAsHex) {

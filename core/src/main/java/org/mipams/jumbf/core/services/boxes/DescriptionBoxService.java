@@ -13,7 +13,6 @@ import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
-import org.mipams.jumbf.core.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,9 +25,6 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
     ContentTypeDiscoveryManager contentBoxDiscoveryManager;
 
     ServiceMetadata serviceMetadata;
-
-    @Autowired
-    Properties properties;
 
     @PostConstruct
     void init() {
@@ -110,7 +106,7 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
             }
 
             String fileName = CoreUtils.randomStringGenerator() + "-privateField";
-            String fullPath = CoreUtils.getFullPath(properties.getFileDirectory(), fileName);
+            String fullPath = CoreUtils.getFullPath(parseMetadata.getParentDirectory(), fileName);
             descriptionBox.setPrivateBmffBoxUrl(fullPath);
 
             CoreUtils.writeBytesFromInputStreamToFile(input, availableBytesForBox,

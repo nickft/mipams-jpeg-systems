@@ -8,6 +8,7 @@ import java.util.List;
 import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.services.CoreGeneratorService;
 import org.mipams.jumbf.core.services.CoreParserService;
+import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -40,19 +41,7 @@ public abstract class AbstractIntegrationTests {
     }
 
     static void fileCleanUp() throws IOException {
-
-        File dir = new File(TEST_DIRECTORY);
-        if (!dir.exists()) {
-            return;
-        }
-
-        File[] directoryListing = dir.listFiles();
-
-        for (File file : directoryListing) {
-            file.delete();
-        }
-
-        dir.delete();
+        CoreUtils.deleteDir(TEST_DIRECTORY);
     }
 
     protected List<JumbfBox> generateJumbfFileAndParseBox(List<JumbfBox> givenJumbfBoxList) throws MipamsException {

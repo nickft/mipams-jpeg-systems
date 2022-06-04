@@ -38,7 +38,7 @@ public class CoreUtilsTests {
     static void generateFile() throws IOException {
         File file = new File(TEST_DIRECTORY);
         if (file.exists()) {
-            return;
+            CoreUtils.deleteDir(TEST_DIRECTORY);
         }
 
         file.mkdir();
@@ -52,19 +52,7 @@ public class CoreUtilsTests {
 
     @AfterAll
     static void fileCleanUp() throws IOException {
-
-        File dir = new File(TEST_DIRECTORY);
-        if (!dir.exists()) {
-            return;
-        }
-
-        File[] directoryListing = dir.listFiles();
-
-        for (File file : directoryListing) {
-            file.delete();
-        }
-
-        dir.delete();
+        CoreUtils.deleteDir(TEST_DIRECTORY);
     }
 
     static String getTestFilePath() {
@@ -170,8 +158,7 @@ public class CoreUtilsTests {
     }
 
     @Test
-    void testParseStringFromFile() throws MipamsException {
-
+    void testParseStringFromFile() throws MipamsException, IOException {
         String existentFileName = getTestFilePath();
 
         String test = CoreUtils.parseStringFromFile(existentFileName);
@@ -331,7 +318,7 @@ public class CoreUtilsTests {
     }
 
     @Test
-    void testGetFileSizeFromPath() throws MipamsException {
+    void testGetFileSizeFromPath() throws MipamsException, IOException {
         long resultSize = CoreUtils.getFileSizeFromPath(getTestFilePath());
         assertEquals(11, resultSize);
     }

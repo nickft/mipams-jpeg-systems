@@ -7,20 +7,12 @@ import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.entities.SingleFormatBox;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
-import org.mipams.jumbf.core.util.Properties;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class SingleFormatBoxService<T extends SingleFormatBox> extends BmffBoxService<T> {
-
-    @Autowired
-    Properties properties;
 
     @Override
     protected void writeBmffPayloadToJumbfFile(T singleFormatBox, OutputStream outputStream)
             throws MipamsException {
-
-        properties.checkIfFileSizeExceedApplicationLimits(singleFormatBox.getFileUrl());
-
         CoreUtils.writeFileContentToOutput(singleFormatBox.getFileUrl(), outputStream);
     }
 
@@ -30,7 +22,7 @@ public abstract class SingleFormatBoxService<T extends SingleFormatBox> extends 
 
         String fileName = getFileName();
 
-        String fullPath = CoreUtils.getFullPath(properties.getFileDirectory(), fileName);
+        String fullPath = CoreUtils.getFullPath(parseMetadata.getParentDirectory(), fileName);
 
         singleFormatBox.setFileUrl(fullPath);
 
