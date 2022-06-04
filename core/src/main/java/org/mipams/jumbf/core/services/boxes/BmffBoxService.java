@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.mipams.jumbf.core.entities.BmffBox;
+import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.core.util.CorruptedJumbfFileException;
@@ -35,7 +36,7 @@ public abstract class BmffBoxService<T extends BmffBox> implements BoxServiceInt
             throws MipamsException;
 
     @Override
-    public final T parseFromJumbfFile(InputStream input, long availableBytesForBox) throws MipamsException {
+    public final T parseFromJumbfFile(InputStream input, ParseMetadata parseMetadata) throws MipamsException {
 
         logger.debug("Start parsing a new BMFF Box");
 
@@ -43,8 +44,11 @@ public abstract class BmffBoxService<T extends BmffBox> implements BoxServiceInt
 
         populateHeadersFromJumbfFile(bmffBox, input);
 
-        availableBytesForBox = bmffBox.getPayloadSizeFromBmffHeaders();
-        populatePayloadFromJumbfFile(bmffBox, availableBytesForBox, input);
+        ParseMetadata bmffPayloadParseMetadata = new ParseMetadata();
+        bmffPayloadParseMetadata.setAvailableBytesForBox(bmffBox.getPayloadSizeFromBmffHeaders());
+        bmffPayloadParseMetadata.setParentDirectory(parseMetadata.getParentDirectory());
+
+        populatePayloadFromJumbfFile(bmffBox, bmffPayloadParseMetadata, input);
 
         verifyBoxSizeEqualsToSizeSpecifiedInBmffHeaders(bmffBox);
 
@@ -91,6 +95,6 @@ public abstract class BmffBoxService<T extends BmffBox> implements BoxServiceInt
         return (actualBoxSize == boxSizeAsInBmffHeaders);
     }
 
-    protected abstract void populatePayloadFromJumbfFile(T box, long availableBytesForBox, InputStream input)
+    protected abstract void populatePayloadFromJumbfFile(T box, ParseMetadata parseMetadata, InputStream input)
             throws MipamsException;
 }

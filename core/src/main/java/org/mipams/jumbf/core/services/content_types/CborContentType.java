@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.entities.CborBox;
+import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.services.boxes.CborBoxService;
 import org.mipams.jumbf.core.util.MipamsException;
 
@@ -24,9 +25,9 @@ public class CborContentType implements ContentTypeService {
     }
 
     @Override
-    public List<BmffBox> parseContentBoxesFromJumbfFile(InputStream input, long availableBytesForBox)
+    public List<BmffBox> parseContentBoxesFromJumbfFile(InputStream input, ParseMetadata parseMetadata)
             throws MipamsException {
-        CborBox cborBox = cborBoxService.parseFromJumbfFile(input, availableBytesForBox);
+        CborBox cborBox = cborBoxService.parseFromJumbfFile(input, parseMetadata);
         return List.of(cborBox);
     }
 

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.mipams.jumbf.core.entities.ContiguousCodestreamBox;
+import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.services.boxes.ContiguousCodestreamBoxService;
 import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.util.MipamsException;
@@ -27,11 +28,11 @@ public class RoiReplacementHandler implements DataBoxHandler {
     }
 
     @Override
-    public List<BmffBox> parseDataBoxFromJumbfFile(InputStream inputStream, long availableBytesForBox)
+    public List<BmffBox> parseDataBoxFromJumbfFile(InputStream inputStream, ParseMetadata parseMetadata)
             throws MipamsException {
 
         ContiguousCodestreamBox contiguousCodestreamBox = contiguousCodestreamBoxService.parseFromJumbfFile(inputStream,
-                availableBytesForBox);
+                parseMetadata);
         return List.of(contiguousCodestreamBox);
     }
 

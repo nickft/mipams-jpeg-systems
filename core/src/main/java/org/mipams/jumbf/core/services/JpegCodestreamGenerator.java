@@ -167,6 +167,7 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
         for (BoxSegment bs : new ArrayList<>(boxSegmentList)) {
             if (bs.getPacketSequenceNumber() == packetSequenceNumber) {
                 boxSegmentList.remove(bs);
+                CoreUtils.deleteFile(bs.getPayloadUrl());
             }
         }
 

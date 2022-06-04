@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.entities.JsonBox;
+import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.services.boxes.JsonBoxService;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,9 @@ public class JsonContentType implements ContentTypeService {
     }
 
     @Override
-    public List<BmffBox> parseContentBoxesFromJumbfFile(InputStream input, long availableBytesForBox)
+    public List<BmffBox> parseContentBoxesFromJumbfFile(InputStream input, ParseMetadata parseMetadata)
             throws MipamsException {
-        JsonBox jsonBox = jsonBoxService.parseFromJumbfFile(input, availableBytesForBox);
+        JsonBox jsonBox = jsonBoxService.parseFromJumbfFile(input, parseMetadata);
         return List.of(jsonBox);
     }
 

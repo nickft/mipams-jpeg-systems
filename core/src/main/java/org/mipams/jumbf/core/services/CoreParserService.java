@@ -7,10 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mipams.jumbf.core.entities.JumbfBox;
+import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.services.boxes.JumbfBoxService;
 import org.mipams.jumbf.core.util.CorruptedJumbfFileException;
 import org.mipams.jumbf.core.util.MipamsException;
-
+import org.mipams.jumbf.core.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,8 +26,14 @@ public class CoreParserService implements ParserInterface {
     @Autowired
     JumbfBoxService superBoxService;
 
+    @Autowired
+    Properties properties;
+
     @Override
     public List<JumbfBox> parseMetadataFromFile(String assetUrl) throws MipamsException {
+
+        ParseMetadata parseMetadata = new ParseMetadata();
+        parseMetadata.setParentDirectory(properties.getFileDirectory());
 
         try (InputStream input = new FileInputStream(assetUrl)) {
 
@@ -34,8 +41,7 @@ public class CoreParserService implements ParserInterface {
 
             while (input.available() > 0) {
 
-                JumbfBox jumbfBox = superBoxService.parseSuperBox(input);
-
+                JumbfBox jumbfBox = superBoxService.parseSuperBox(input, parseMetadata);
                 logger.debug("New box discovered: " + jumbfBox.toString());
 
                 bmffBoxList.add(jumbfBox);

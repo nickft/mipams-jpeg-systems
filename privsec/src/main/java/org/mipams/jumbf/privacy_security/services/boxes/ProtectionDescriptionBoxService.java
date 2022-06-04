@@ -5,6 +5,7 @@ import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
 
+import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.services.boxes.BmffBoxService;
 import org.mipams.jumbf.core.util.CoreUtils;
@@ -66,7 +67,7 @@ public class ProtectionDescriptionBoxService extends BmffBoxService<ProtectionDe
 
     @Override
     protected void populatePayloadFromJumbfFile(ProtectionDescriptionBox protectionDescriptionBox,
-            long availableBytesForBox, InputStream input)
+            ParseMetadata parseMetadata, InputStream input)
             throws MipamsException {
 
         logger.debug("Protection Description box");

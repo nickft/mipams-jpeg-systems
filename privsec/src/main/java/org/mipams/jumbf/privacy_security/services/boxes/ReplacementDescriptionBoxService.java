@@ -5,6 +5,7 @@ import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
 
+import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.services.boxes.BmffBoxService;
 import org.mipams.jumbf.core.util.CoreUtils;
@@ -54,10 +55,10 @@ public class ReplacementDescriptionBoxService extends BmffBoxService<Replacement
     }
 
     @Override
-    protected final void populatePayloadFromJumbfFile(ReplacementDescriptionBox box, long availableBytesForBox,
+    protected final void populatePayloadFromJumbfFile(ReplacementDescriptionBox box, ParseMetadata parseMetadata,
             InputStream input) throws MipamsException {
 
-        long remainingBytes = availableBytesForBox;
+        long remainingBytes = parseMetadata.getAvailableBytesForBox();
 
         int value = CoreUtils.readSingleByteAsIntFromInputStream(input);
         box.setReplacementTypeId(value);

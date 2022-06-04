@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mipams.jumbf.core.entities.BmffBox;
+import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.services.content_types.ContentTypeService;
 import org.mipams.jumbf.core.util.MipamsException;
 
@@ -33,19 +34,22 @@ public class ReplacementContentType implements ContentTypeService {
     }
 
     @Override
-    public List<BmffBox> parseContentBoxesFromJumbfFile(InputStream inputStream, long availableBytesForBox)
+    public List<BmffBox> parseContentBoxesFromJumbfFile(InputStream inputStream, ParseMetadata parseMetadata)
             throws MipamsException {
 
         ReplacementDescriptionBox replacementDescriptionBox = replacementDescriptionBoxService.parseFromJumbfFile(
-                inputStream, availableBytesForBox);
+                inputStream, parseMetadata);
 
-        availableBytesForBox -= replacementDescriptionBox.getBoxSize();
+        ParseMetadata replacementDataParseMetadata = new ParseMetadata();
+        replacementDataParseMetadata.setAvailableBytesForBox(
+                parseMetadata.getAvailableBytesForBox() - replacementDescriptionBox.getBoxSize());
+        replacementDataParseMetadata.setParentDirectory(parseMetadata.getParentDirectory());
 
         ReplacementType replacementType = getReplacementType(replacementDescriptionBox);
         DataBoxHandler dataBoxHandler = dataBoxHandlerFactory.getDataBoxHandlerFromType(replacementType);
 
         List<BmffBox> replacementDataBoxList = dataBoxHandler.parseDataBoxFromJumbfFile(inputStream,
-                availableBytesForBox);
+                replacementDataParseMetadata);
 
         List<BmffBox> contentBoxList = new ArrayList<>();
         contentBoxList.add(replacementDescriptionBox);

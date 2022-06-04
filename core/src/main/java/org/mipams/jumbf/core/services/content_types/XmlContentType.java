@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.mipams.jumbf.core.entities.BmffBox;
+import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.entities.XmlBox;
 import org.mipams.jumbf.core.services.boxes.XmlBoxService;
 import org.mipams.jumbf.core.util.MipamsException;
@@ -24,9 +25,9 @@ public class XmlContentType implements ContentTypeService {
     }
 
     @Override
-    public List<BmffBox> parseContentBoxesFromJumbfFile(InputStream input, long availableBytesForBox)
+    public List<BmffBox> parseContentBoxesFromJumbfFile(InputStream input, ParseMetadata parseMetadata)
             throws MipamsException {
-        XmlBox xmlBox = xmlBoxService.parseFromJumbfFile(input, availableBytesForBox);
+        XmlBox xmlBox = xmlBoxService.parseFromJumbfFile(input, parseMetadata);
         return List.of(xmlBox);
     }
 

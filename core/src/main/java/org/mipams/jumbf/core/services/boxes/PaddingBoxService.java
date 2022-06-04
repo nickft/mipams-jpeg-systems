@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.mipams.jumbf.core.ContentTypeDiscoveryManager;
 import org.mipams.jumbf.core.entities.PaddingBox;
+import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
@@ -50,12 +51,13 @@ public final class PaddingBoxService extends BmffBoxService<PaddingBox> {
     }
 
     @Override
-    protected void populatePayloadFromJumbfFile(PaddingBox paddingBox, long availableBytesForBox, InputStream input)
+    protected void populatePayloadFromJumbfFile(PaddingBox paddingBox, ParseMetadata parseMetadata, InputStream input)
             throws MipamsException {
 
         logger.debug("Padding box");
 
-        long actualSize = CoreUtils.parsePaddingFromInputStream(input, PaddingBox.PADDING_VALUE, availableBytesForBox);
+        long actualSize = CoreUtils.parsePaddingFromInputStream(input, PaddingBox.PADDING_VALUE,
+                parseMetadata.getAvailableBytesForBox());
         paddingBox.setPaddingSize(actualSize);
 
         logger.debug("Discovered box: " + paddingBox.toString());

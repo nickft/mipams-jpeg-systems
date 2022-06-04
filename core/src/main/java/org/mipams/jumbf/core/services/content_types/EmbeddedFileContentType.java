@@ -7,6 +7,7 @@ import java.util.List;
 import org.mipams.jumbf.core.entities.BinaryDataBox;
 import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.entities.EmbeddedFileDescriptionBox;
+import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.services.boxes.BinaryDataBoxService;
 import org.mipams.jumbf.core.services.boxes.EmbeddedFileDescriptionBoxService;
 import org.mipams.jumbf.core.util.MipamsException;
@@ -29,13 +30,13 @@ public class EmbeddedFileContentType implements ContentTypeService {
     }
 
     @Override
-    public List<BmffBox> parseContentBoxesFromJumbfFile(InputStream inputStream, long availableBytesForBox)
+    public List<BmffBox> parseContentBoxesFromJumbfFile(InputStream inputStream, ParseMetadata parseMetadata)
             throws MipamsException {
 
         EmbeddedFileDescriptionBox dBox = embeddedFileDescriptionBoxService.parseFromJumbfFile(inputStream,
-                availableBytesForBox);
+                parseMetadata);
 
-        BinaryDataBox binaryDataBox = binaryDataBoxService.parseFromJumbfFile(inputStream, availableBytesForBox);
+        BinaryDataBox binaryDataBox = binaryDataBoxService.parseFromJumbfFile(inputStream, parseMetadata);
         binaryDataBox.setReferencedExternally(dBox.isContentReferencedExternally());
 
         return List.of(dBox, binaryDataBox);

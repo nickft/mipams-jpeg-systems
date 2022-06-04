@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.entities.ContiguousCodestreamBox;
+import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.services.boxes.ContiguousCodestreamBoxService;
 import org.mipams.jumbf.core.util.MipamsException;
 
@@ -23,10 +24,10 @@ public class ContiguousCodestreamContentType implements ContentTypeService {
     }
 
     @Override
-    public List<BmffBox> parseContentBoxesFromJumbfFile(InputStream input, long availableBytesForBox)
+    public List<BmffBox> parseContentBoxesFromJumbfFile(InputStream input, ParseMetadata parseMetadata)
             throws MipamsException {
         ContiguousCodestreamBox contiguousCodestreamBox = contiguousCodestreamBoxService.parseFromJumbfFile(input,
-                availableBytesForBox);
+                parseMetadata);
         return List.of(contiguousCodestreamBox);
     }
 

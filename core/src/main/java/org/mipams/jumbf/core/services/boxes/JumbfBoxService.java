@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.entities.PaddingBox;
+import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.services.content_types.ContentTypeService;
 import org.mipams.jumbf.core.ContentTypeDiscoveryManager;
@@ -71,14 +72,18 @@ public final class JumbfBoxService extends BmffBoxService<JumbfBox> {
     }
 
     @Override
-    protected void populatePayloadFromJumbfFile(JumbfBox jumbfBox, long availableBytesForBox, InputStream input)
+    protected void populatePayloadFromJumbfFile(JumbfBox jumbfBox, ParseMetadata parseMetadata, InputStream input)
             throws MipamsException {
 
         logger.debug("Jumbf box");
 
         final long nominalPayloadSize = jumbfBox.getPayloadSizeFromBmffHeaders();
 
-        jumbfBox.setDescriptionBox(descriptionBoxService.parseFromJumbfFile(input, nominalPayloadSize));
+        ParseMetadata descriptionParseMetadata = new ParseMetadata();
+        descriptionParseMetadata.setAvailableBytesForBox(nominalPayloadSize);
+        descriptionParseMetadata.setParentDirectory(parseMetadata.getParentDirectory());
+
+        jumbfBox.setDescriptionBox(descriptionBoxService.parseFromJumbfFile(input, descriptionParseMetadata));
 
         long actualSize = jumbfBox.getDescriptionBox().getBoxSizeFromBmffHeaders();
 
@@ -87,22 +92,29 @@ public final class JumbfBoxService extends BmffBoxService<JumbfBox> {
         ContentTypeService contentTypeService = contentTypeDiscoveryManager
                 .getContentBoxServiceBasedOnContentUuid(contentTypeUuid);
 
-        long remainingBytes = nominalPayloadSize - actualSize;
+        ParseMetadata contentParseMetadata = new ParseMetadata();
+        contentParseMetadata.setAvailableBytesForBox(nominalPayloadSize - actualSize);
+        contentParseMetadata.setParentDirectory(parseMetadata.getParentDirectory());
 
-        List<BmffBox> contentBoxList = contentTypeService.parseContentBoxesFromJumbfFile(input, remainingBytes);
+        List<BmffBox> contentBoxList = contentTypeService.parseContentBoxesFromJumbfFile(input, contentParseMetadata);
         jumbfBox.setContentBoxList(contentBoxList);
 
         actualSize += jumbfBox.calculateContentBoxListSize(contentBoxList);
 
         if (!actualBoxSizeEqualsToSizeSpecifiedInBmffHeaders(jumbfBox)) {
-            PaddingBox paddingBox = paddingBoxService.parseFromJumbfFile(input, nominalPayloadSize - actualSize);
+
+            ParseMetadata paddingParseMetadata = new ParseMetadata();
+            paddingParseMetadata.setAvailableBytesForBox(nominalPayloadSize - actualSize);
+            paddingParseMetadata.setParentDirectory(parseMetadata.getParentDirectory());
+
+            PaddingBox paddingBox = paddingBoxService.parseFromJumbfFile(input, paddingParseMetadata);
             jumbfBox.setPaddingBox(paddingBox);
         }
 
         logger.debug("Discovered box: " + jumbfBox.toString());
     }
 
-    public JumbfBox parseSuperBox(InputStream input) throws MipamsException {
-        return super.parseFromJumbfFile(input, -1);
+    public JumbfBox parseSuperBox(InputStream input, ParseMetadata parseMetadata) throws MipamsException {
+        return super.parseFromJumbfFile(input, parseMetadata);
     }
 }

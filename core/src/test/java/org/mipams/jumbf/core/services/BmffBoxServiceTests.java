@@ -12,6 +12,7 @@ import java.io.InputStream;
 import org.junit.jupiter.api.Test;
 import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.entities.JsonBox;
+import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.entities.UuidBox;
 import org.mipams.jumbf.core.services.boxes.JsonBoxService;
@@ -55,9 +56,12 @@ public class BmffBoxServiceTests {
         System.arraycopy(CoreUtils.convertIntToByteArray(8), 0, bmffHeaderInput, 0, 4);
         System.arraycopy(CoreUtils.convertIntToByteArray(uuidBox.getTypeId() + 3), 0, bmffHeaderInput, 4, 4);
 
+        ParseMetadata parseMetadata = new ParseMetadata();
+        parseMetadata.setAvailableBytesForBox(8);
+
         try (InputStream input = new ByteArrayInputStream(bmffHeaderInput);) {
             assertThrows(MipamsException.class, () -> {
-                uuidBoxService.parseFromJumbfFile(input, 8);
+                uuidBoxService.parseFromJumbfFile(input, parseMetadata);
             });
         }
     }
@@ -79,9 +83,12 @@ public class BmffBoxServiceTests {
         System.arraycopy(CoreUtils.convertIntToByteArray(uuidBox.getTypeId()), 0, bmffHeaderInput, 4, 4);
         System.arraycopy(CoreUtils.convertLongToByteArray(xBoxValue), 0, bmffHeaderInput, 8, 8);
 
+        ParseMetadata parseMetadata = new ParseMetadata();
+        parseMetadata.setAvailableBytesForBox(16);
+
         try (InputStream input = new ByteArrayInputStream(bmffHeaderInput);) {
             assertThrows(MipamsException.class, () -> {
-                uuidBoxService.parseFromJumbfFile(input, 16);
+                uuidBoxService.parseFromJumbfFile(input, parseMetadata);
             });
         }
     }

@@ -13,6 +13,7 @@ import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.core.util.Properties;
 
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @SpringBootTest
 public class CoreParserServiceTests {
@@ -44,7 +45,11 @@ public class CoreParserServiceTests {
     @Test
     void testGenerateJumbfFileFromBoxWithDirInsteadOfFile() {
 
+        Properties properties = new Properties();
+        ReflectionTestUtils.setField(properties, "IMAGE_FOLDER", "1");
+
         CoreParserService coreParserService = new CoreParserService();
+        ReflectionTestUtils.setField(coreParserService, "properties", properties);
 
         assertThrows(MipamsException.class, () -> {
             coreParserService.parseMetadataFromFile(TEST_DIRECTORY);

@@ -3,6 +3,7 @@ package org.mipams.jumbf.core.services.boxes;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.entities.SingleFormatBox;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
@@ -24,7 +25,7 @@ public abstract class SingleFormatBoxService<T extends SingleFormatBox> extends 
     }
 
     @Override
-    protected void populatePayloadFromJumbfFile(T singleFormatBox, long availableBytesForBox, InputStream input)
+    protected void populatePayloadFromJumbfFile(T singleFormatBox, ParseMetadata parseMetadata, InputStream input)
             throws MipamsException {
 
         String fileName = getFileName();

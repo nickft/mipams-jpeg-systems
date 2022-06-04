@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import javax.annotation.PostConstruct;
 
 import org.mipams.jumbf.core.entities.EmbeddedFileDescriptionBox;
+import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
@@ -55,7 +56,7 @@ public class EmbeddedFileDescriptionBoxService extends BmffBoxService<EmbeddedFi
 
     @Override
     protected void populatePayloadFromJumbfFile(EmbeddedFileDescriptionBox embeddedFileDescriptionBox,
-            long availableBytesForBox, InputStream input) throws MipamsException {
+            ParseMetadata parseMetadata, InputStream input) throws MipamsException {
         logger.debug("Embedded File Description box");
 
         int toggleValue = CoreUtils.readSingleByteAsIntFromInputStream(input);

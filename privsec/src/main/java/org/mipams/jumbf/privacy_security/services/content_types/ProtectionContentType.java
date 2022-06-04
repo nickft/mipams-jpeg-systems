@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.mipams.jumbf.core.entities.BinaryDataBox;
 import org.mipams.jumbf.core.entities.BmffBox;
+import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.services.boxes.BinaryDataBoxService;
 import org.mipams.jumbf.core.services.content_types.ContentTypeService;
 import org.mipams.jumbf.core.util.MipamsException;
@@ -31,13 +32,13 @@ public class ProtectionContentType implements ContentTypeService {
     }
 
     @Override
-    public List<BmffBox> parseContentBoxesFromJumbfFile(InputStream input, long availableBytesForBox)
+    public List<BmffBox> parseContentBoxesFromJumbfFile(InputStream input, ParseMetadata parseMetadata)
             throws MipamsException {
 
         ProtectionDescriptionBox protectionDescriptionBox = protectionDescriptionBoxService.parseFromJumbfFile(input,
-                availableBytesForBox);
+                parseMetadata);
 
-        BinaryDataBox binaryDataBox = binaryDataBoxService.parseFromJumbfFile(input, availableBytesForBox);
+        BinaryDataBox binaryDataBox = binaryDataBoxService.parseFromJumbfFile(input, parseMetadata);
 
         return List.of(protectionDescriptionBox, binaryDataBox);
     }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.mipams.jumbf.core.entities.BinaryDataBox;
 import org.mipams.jumbf.core.entities.BmffBox;
+import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.services.boxes.BinaryDataBoxService;
 import org.mipams.jumbf.core.util.MipamsException;
 
@@ -27,10 +28,10 @@ public class AppReplacementHandler implements DataBoxHandler {
     }
 
     @Override
-    public List<BmffBox> parseDataBoxFromJumbfFile(InputStream inputStream, long availableBytesForBox)
+    public List<BmffBox> parseDataBoxFromJumbfFile(InputStream inputStream, ParseMetadata parseMetadata)
             throws MipamsException {
 
-        BinaryDataBox binaryDataBox = binaryDataBoxService.parseFromJumbfFile(inputStream, availableBytesForBox);
+        BinaryDataBox binaryDataBox = binaryDataBoxService.parseFromJumbfFile(inputStream, parseMetadata);
         return List.of(binaryDataBox);
     }
 

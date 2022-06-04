@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.mipams.jumbf.core.ContentTypeDiscoveryManager;
 import org.mipams.jumbf.core.entities.DescriptionBox;
+import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
@@ -71,14 +72,14 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
     }
 
     @Override
-    protected void populatePayloadFromJumbfFile(DescriptionBox descriptionBox, long availableBytesForBox,
+    protected void populatePayloadFromJumbfFile(DescriptionBox descriptionBox, ParseMetadata parseMetadata,
             InputStream input) throws MipamsException {
 
         logger.debug("Description box");
 
         String uuid = CoreUtils.readUuidFromInputStream(input);
         descriptionBox.setUuid(uuid);
-        availableBytesForBox -= CoreUtils.UUID_BYTE_SIZE;
+        long availableBytesForBox = parseMetadata.getAvailableBytesForBox() - CoreUtils.UUID_BYTE_SIZE;
 
         int toggleValue = CoreUtils.readSingleByteAsIntFromInputStream(input);
         descriptionBox.setToggle(toggleValue);
