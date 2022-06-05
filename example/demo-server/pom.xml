@@ -56,7 +56,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.mipams.fake-media</groupId>  
+			<groupId>org.mipams.fake_media</groupId>  
 			<artifactId>jumbf-provenance</artifactId>
 			<version>1.0</version>  
 		</dependency>

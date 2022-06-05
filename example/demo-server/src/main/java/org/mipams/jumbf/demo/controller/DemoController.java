@@ -47,7 +47,7 @@ public class DemoController {
     public ResponseEntity<?> uploadJumbf(@ModelAttribute UploadRequest request) throws MipamsException {
         String fileName = fileUploader.saveFileToDiskAndGetFileName(request, true);
         try {
-            List<JumbfBox> boxList = parserService.parseMetadataFromJumbfFile(fileName);
+            List<JumbfBox> boxList = parserService.parseMetadataFromFile(fileName);
             return ResponseEntity.ok().body(prepareResponse(boxList));
         } catch (MipamsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -64,7 +64,7 @@ public class DemoController {
     @GetMapping("/parseMetadata")
     public ResponseEntity<?> parseJumbfMetadataFromPath(@RequestParam String fileName) {
         try {
-            List<JumbfBox> boxList = parserService.parseMetadataFromJumbfFile(fileName);
+            List<JumbfBox> boxList = parserService.parseMetadataFromFile(fileName);
             return ResponseEntity.ok().body(prepareResponse(boxList));
         } catch (MipamsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -103,7 +103,7 @@ public class DemoController {
         try {
             List<JumbfBox> boxList = demoRequestParser.generateBoxFromRequest(requestBody);
 
-            String filePath = generatorService.generateJumbfFileFromBox(boxList, outputFileName);
+            String filePath = generatorService.generateJumbfMetadataToFile(boxList, outputFileName);
 
             String result = generateResultMessage(boxList, filePath);
             return ResponseEntity.ok().body(result);
