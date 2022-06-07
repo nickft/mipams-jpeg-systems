@@ -332,4 +332,87 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
 
         return boxSegmentList;
     }
+
+    public void stripJumbfMetadataWithTBoxEqualTo(String assetUrl, String outputUrl, int targetTBox)
+            throws MipamsException {
+
+        String appMarkerAsHex;
+        try (InputStream is = new FileInputStream(assetUrl);
+                OutputStream os = new FileOutputStream(outputUrl);) {
+
+            appMarkerAsHex = CoreUtils.readTwoByteWordAsHex(is);
+
+            if (!CoreUtils.isStartOfImageAppMarker(appMarkerAsHex)) {
+                throw new MipamsException("Start of image (SOI) marker is missing.");
+            }
+
+            CoreUtils.writeByteArrayToOutputStream(DatatypeConverter.parseHexBinary(appMarkerAsHex), os);
+
+            while (is.available() > 0) {
+
+                appMarkerAsHex = CoreUtils.readTwoByteWordAsHex(is);
+                CoreUtils.writeByteArrayToOutputStream(DatatypeConverter.parseHexBinary(appMarkerAsHex), os);
+
+                if (CoreUtils.isEndOfImageAppMarker(appMarkerAsHex)) {
+                    break;
+                } else if (CoreUtils.isStartOfScanMarker(appMarkerAsHex)) {
+                    copyStartOfScanMarker(is, os);
+                } else if (CoreUtils.isApp11Marker(appMarkerAsHex)) {
+                    filterApp11MarkerBasedOnTBox(is, os, targetTBox);
+                } else {
+                    copyNextMarkerToOutputStream(is, os);
+                }
+            }
+
+        } catch (IOException e) {
+            throw new MipamsException(e);
+        }
+    }
+
+    private void filterApp11MarkerBasedOnTBox(InputStream is, OutputStream os, int targetTBox) throws MipamsException {
+        byte[] markerSegmentSizeAsByteArray = CoreUtils.readBytesFromInputStream(is, CoreUtils.WORD_BYTE_SIZE);
+        int markerSegmentSize = CoreUtils.readTwoByteWordAsInt(markerSegmentSizeAsByteArray) - CoreUtils.WORD_BYTE_SIZE;
+
+        byte[] commonIdentifierAsByteArray = CoreUtils.readBytesFromInputStream(is, CoreUtils.WORD_BYTE_SIZE);
+        markerSegmentSize -= CoreUtils.WORD_BYTE_SIZE;
+        String commonIdentifier = Integer.toHexString(CoreUtils.readTwoByteWordAsInt(commonIdentifierAsByteArray));
+
+        if (!commonIdentifier.equalsIgnoreCase("4A50")) {
+            CoreUtils.writeByteArrayToOutputStream(markerSegmentSizeAsByteArray, os);
+            CoreUtils.writeByteArrayToOutputStream(commonIdentifierAsByteArray, os);
+            writeNextBytesToOutputStream(is, os, markerSegmentSize);
+            return;
+        }
+
+        byte[] boxInstanceNumberAsByteArray = CoreUtils.readBytesFromInputStream(is, CoreUtils.WORD_BYTE_SIZE);
+        markerSegmentSize -= CoreUtils.WORD_BYTE_SIZE;
+
+        int packetSequenceNumber = CoreUtils.readIntFromInputStream(is);
+        markerSegmentSize -= CoreUtils.INT_BYTE_SIZE;
+
+        int boxLength = CoreUtils.readIntFromInputStream(is);
+        markerSegmentSize -= CoreUtils.INT_BYTE_SIZE;
+
+        int boxType = CoreUtils.readIntFromInputStream(is);
+        markerSegmentSize -= CoreUtils.INT_BYTE_SIZE;
+
+        if (boxType == targetTBox) {
+            return;
+        }
+
+        CoreUtils.writeByteArrayToOutputStream(markerSegmentSizeAsByteArray, os);
+        CoreUtils.writeByteArrayToOutputStream(commonIdentifierAsByteArray, os);
+        CoreUtils.writeByteArrayToOutputStream(boxInstanceNumberAsByteArray, os);
+        CoreUtils.writeIntToOutputStream(packetSequenceNumber, os);
+        CoreUtils.writeIntToOutputStream(boxLength, os);
+        CoreUtils.writeIntToOutputStream(boxType, os);
+
+        if (boxLength == 1) {
+            long boxExtendedLength = CoreUtils.readLongFromInputStream(is);
+            markerSegmentSize -= CoreUtils.LONG_BYTE_SIZE;
+            CoreUtils.writeLongToOutputStream(boxExtendedLength, os);
+        }
+
+        writeNextBytesToOutputStream(is, os, markerSegmentSize);
+    }
 }
