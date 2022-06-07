@@ -329,6 +329,23 @@ public class CoreUtils {
         return bb.array();
     }
 
+    public static String createSubdirectory(String parentDirectory, String subDirectory) throws MipamsException {
+
+        String subDirectoryPath = CoreUtils.getFullPath(parentDirectory, subDirectory);
+
+        File f = new File(subDirectoryPath);
+
+        if (!f.exists()) {
+            f.mkdirs();
+        } else {
+            if (!f.isDirectory()) {
+                throw new MipamsException("Failed to create subdirectory: There is already a file with the same name");
+            }
+        }
+
+        return subDirectoryPath;
+    }
+
     public static boolean deleteDir(String dirUrl) {
 
         File dir = new File(dirUrl);
@@ -392,5 +409,9 @@ public class CoreUtils {
 
         return segmentSizeByteLength + commonIdentifierByteLength + boxInstanceNumberByteLength
                 + packetSequenceNumberByteLength;
+    }
+
+    public static String getBoxSegmentId(int boxType, int boxInstanceNumber) {
+        return String.format("%d-%d", boxType, boxInstanceNumber);
     }
 }

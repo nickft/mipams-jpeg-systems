@@ -333,8 +333,12 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
         return boxSegmentList;
     }
 
-    public void stripJumbfMetadataWithTBoxEqualTo(String assetUrl, String outputUrl, int targetTBox)
+    public void stripJumbfMetadataWithUuidEqualTo(String assetUrl, String outputUrl, String targetUuid)
             throws MipamsException {
+
+        Map<String, List<BoxSegment>> boxSegmentMap = jpegCodestreamParser.parseBoxSegmentMapFromFile(assetUrl);
+
+        List<String> targetboxSegmentIdList = getBoxSegmentIdFromUuid(boxSegmentMap, targetUuid);
 
         String appMarkerAsHex;
         try (InputStream is = new FileInputStream(assetUrl);
@@ -358,7 +362,7 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
                 } else if (CoreUtils.isStartOfScanMarker(appMarkerAsHex)) {
                     copyStartOfScanMarker(is, os);
                 } else if (CoreUtils.isApp11Marker(appMarkerAsHex)) {
-                    filterApp11MarkerBasedOnTBox(is, os, targetTBox);
+                    filterApp11MarkerBasedOnBoxSegmentIdList(is, os, targetboxSegmentIdList);
                 } else {
                     copyNextMarkerToOutputStream(is, os);
                 }
@@ -369,7 +373,33 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
         }
     }
 
-    private void filterApp11MarkerBasedOnTBox(InputStream is, OutputStream os, int targetTBox) throws MipamsException {
+    private List<String> getBoxSegmentIdFromUuid(Map<String, List<BoxSegment>> boxSegmentMap, String targetUuid)
+            throws MipamsException {
+
+        List<String> result = new ArrayList<>();
+
+        if (targetUuid == null) {
+            return result;
+        }
+
+        Map<String, JumbfBox> map = jpegCodestreamParser.mergeBoxSegmentsToJumbfBoxes(boxSegmentMap);
+
+        JumbfBox jumbfBox;
+        for (String boxInstanceNumber : map.keySet()) {
+
+            jumbfBox = map.get(boxInstanceNumber);
+
+            if (targetUuid.equalsIgnoreCase(jumbfBox.getDescriptionBox().getUuid())) {
+                result.add(boxInstanceNumber);
+            }
+        }
+
+        return result;
+    }
+
+    private void filterApp11MarkerBasedOnBoxSegmentIdList(InputStream is, OutputStream os,
+            List<String> targetBoxInstanceNumberList) throws MipamsException, IOException {
+
         byte[] markerSegmentSizeAsByteArray = CoreUtils.readBytesFromInputStream(is, CoreUtils.WORD_BYTE_SIZE);
         int markerSegmentSize = CoreUtils.readTwoByteWordAsInt(markerSegmentSizeAsByteArray) - CoreUtils.WORD_BYTE_SIZE;
 
@@ -386,6 +416,7 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
 
         byte[] boxInstanceNumberAsByteArray = CoreUtils.readBytesFromInputStream(is, CoreUtils.WORD_BYTE_SIZE);
         markerSegmentSize -= CoreUtils.WORD_BYTE_SIZE;
+        int boxInstanceNumber = CoreUtils.readTwoByteWordAsInt(boxInstanceNumberAsByteArray);
 
         int packetSequenceNumber = CoreUtils.readIntFromInputStream(is);
         markerSegmentSize -= CoreUtils.INT_BYTE_SIZE;
@@ -396,7 +427,10 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
         int boxType = CoreUtils.readIntFromInputStream(is);
         markerSegmentSize -= CoreUtils.INT_BYTE_SIZE;
 
-        if (boxType == targetTBox) {
+        String boxSegmentId = CoreUtils.getBoxSegmentId(boxType, boxInstanceNumber);
+
+        if (targetBoxInstanceNumberList.contains(boxSegmentId)) {
+            is.skip(markerSegmentSize);
             return;
         }
 

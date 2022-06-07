@@ -36,8 +36,7 @@ public class JpegCodestreamParser implements ParserInterface {
     public List<JumbfBox> parseMetadataFromFile(String assetUrl) throws MipamsException {
 
         Map<String, List<BoxSegment>> boxSegmentMap = parseBoxSegmentMapFromFile(assetUrl);
-
-        return mergeBoxSegmentsAndParseJumbfBoxes(boxSegmentMap);
+        return new ArrayList<>(mergeBoxSegmentsToJumbfBoxes(boxSegmentMap).values());
     }
 
     public Map<String, List<BoxSegment>> parseBoxSegmentMapFromFile(String assetUrl) throws MipamsException {
@@ -129,7 +128,7 @@ public class JpegCodestreamParser implements ParserInterface {
             markerSegmentRemainingSize -= CoreUtils.LONG_BYTE_SIZE;
         }
 
-        String boxSegmentId = String.format("%d-%d", boxType, boxInstanceNumber);
+        String boxSegmentId = CoreUtils.getBoxSegmentId(boxType, boxInstanceNumber);
 
         String randomFileName = CoreUtils.randomStringGenerator();
         String payloadFileUrl = CoreUtils.getFullPath(properties.getFileDirectory(), randomFileName);
@@ -156,10 +155,10 @@ public class JpegCodestreamParser implements ParserInterface {
         boxSegmentMap.put(boxSegmentId, boxSegmentList);
     }
 
-    private List<JumbfBox> mergeBoxSegmentsAndParseJumbfBoxes(Map<String, List<BoxSegment>> boxSegmentMap)
+    public Map<String, JumbfBox> mergeBoxSegmentsToJumbfBoxes(Map<String, List<BoxSegment>> boxSegmentMap)
             throws MipamsException {
 
-        List<JumbfBox> result = new ArrayList<>();
+        Map<String, JumbfBox> result = new HashMap<>();
 
         for (String boxSegmentId : boxSegmentMap.keySet()) {
 
@@ -186,7 +185,7 @@ public class JpegCodestreamParser implements ParserInterface {
                 }
 
                 List<JumbfBox> boxList = coreParserService.parseMetadataFromFile(jumbfFileUrl);
-                result.addAll(boxList);
+                result.put(boxSegmentId, boxList.get(0));
 
                 deleteBoxSegmentFiles(boxSegmentList);
             } catch (IOException e) {
@@ -195,6 +194,7 @@ public class JpegCodestreamParser implements ParserInterface {
         }
 
         return result;
+
     }
 
     private void deleteBoxSegmentFiles(List<BoxSegment> boxSegmentList) {
