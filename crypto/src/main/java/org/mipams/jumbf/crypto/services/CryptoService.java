@@ -4,6 +4,7 @@ import java.security.KeyPair;
 
 import javax.crypto.SecretKey;
 
+import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.crypto.entities.CryptoException;
 import org.mipams.jumbf.crypto.entities.DigitalSignatureScheme;
 import org.mipams.jumbf.crypto.entities.EncryptionScheme;
@@ -64,5 +65,9 @@ public class CryptoService {
     public byte[] getRandomNumber(int numOfBytes) throws CryptoException {
         RandomNumberGenerator rng = new RandomNumberGenerator();
         return rng.getByteArray(numOfBytes);
+    }
+
+    public boolean accessRulesVerifiedSuccessfully(String username, String roleList, JumbfBox accessRulesJumbfBox) {
+        return true;
     }
 }
