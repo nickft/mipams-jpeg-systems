@@ -67,7 +67,8 @@ public class CryptoService {
         return rng.getByteArray(numOfBytes);
     }
 
-    public boolean accessRulesVerifiedSuccessfully(String username, String roleList, JumbfBox accessRulesJumbfBox) {
+    public boolean accessRulesVerifiedSuccessfully(String username, String roleList, JumbfBox accessRulesJumbfBox)
+            throws CryptoException {
         return true;
     }
 }

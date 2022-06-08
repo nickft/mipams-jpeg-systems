@@ -34,7 +34,6 @@ public class JpegCodestreamParser implements ParserInterface {
 
     @Override
     public List<JumbfBox> parseMetadataFromFile(String assetUrl) throws MipamsException {
-
         Map<String, List<BoxSegment>> boxSegmentMap = parseBoxSegmentMapFromFile(assetUrl);
         return new ArrayList<>(mergeBoxSegmentsToJumbfBoxes(boxSegmentMap).values());
     }
@@ -194,7 +193,6 @@ public class JpegCodestreamParser implements ParserInterface {
         }
 
         return result;
-
     }
 
     private void deleteBoxSegmentFiles(List<BoxSegment> boxSegmentList) {

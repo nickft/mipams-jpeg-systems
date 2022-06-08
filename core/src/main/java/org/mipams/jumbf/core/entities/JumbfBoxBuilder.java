@@ -64,7 +64,7 @@ public class JumbfBoxBuilder {
         this.jumbfBox.getContentBoxList().add(box);
     }
 
-    public void appendAllContentBoxes(List<BmffBox> boxList) {
+    public void appendAllContentBoxes(List<? extends BmffBox> boxList) {
         this.jumbfBox.getContentBoxList().addAll(boxList);
     }
 

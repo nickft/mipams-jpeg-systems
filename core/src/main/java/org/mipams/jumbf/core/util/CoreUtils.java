@@ -8,8 +8,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.UUID;
 
+import org.mipams.jumbf.core.entities.JumbfBox;
 import org.springframework.http.MediaType;
 
 public class CoreUtils {
@@ -413,5 +415,23 @@ public class CoreUtils {
 
     public static String getBoxSegmentId(int boxType, int boxInstanceNumber) {
         return String.format("%d-%d", boxType, boxInstanceNumber);
+    }
+
+    public static JumbfBox locateJumbfBoxFromLabel(List<JumbfBox> assertionJumbfBoxList, String label)
+            throws MipamsException {
+        JumbfBox result = null;
+
+        if (label == null) {
+            return result;
+        }
+
+        for (JumbfBox jumbfBox : assertionJumbfBoxList) {
+            if (label.equals(jumbfBox.getDescriptionBox().getLabel())) {
+                result = jumbfBox;
+                break;
+            }
+        }
+
+        return result;
     }
 }

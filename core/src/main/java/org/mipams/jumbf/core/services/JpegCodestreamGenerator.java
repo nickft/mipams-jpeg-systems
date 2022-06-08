@@ -355,17 +355,21 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
             while (is.available() > 0) {
 
                 appMarkerAsHex = CoreUtils.readTwoByteWordAsHex(is);
-                CoreUtils.writeByteArrayToOutputStream(DatatypeConverter.parseHexBinary(appMarkerAsHex), os);
 
-                if (CoreUtils.isEndOfImageAppMarker(appMarkerAsHex)) {
-                    break;
-                } else if (CoreUtils.isStartOfScanMarker(appMarkerAsHex)) {
-                    copyStartOfScanMarker(is, os);
-                } else if (CoreUtils.isApp11Marker(appMarkerAsHex)) {
-                    filterApp11MarkerBasedOnBoxSegmentIdList(is, os, targetboxSegmentIdList);
+                if (CoreUtils.isApp11Marker(appMarkerAsHex)) {
+                    filterApp11MarkerBasedOnBoxSegmentIdList(is, os, appMarkerAsHex, targetboxSegmentIdList);
                 } else {
-                    copyNextMarkerToOutputStream(is, os);
+                    CoreUtils.writeByteArrayToOutputStream(DatatypeConverter.parseHexBinary(appMarkerAsHex), os);
+
+                    if (CoreUtils.isEndOfImageAppMarker(appMarkerAsHex)) {
+                        break;
+                    } else if (CoreUtils.isStartOfScanMarker(appMarkerAsHex)) {
+                        copyStartOfScanMarker(is, os);
+                    } else {
+                        copyNextMarkerToOutputStream(is, os);
+                    }
                 }
+
             }
 
         } catch (IOException e) {
@@ -398,7 +402,7 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
     }
 
     private void filterApp11MarkerBasedOnBoxSegmentIdList(InputStream is, OutputStream os,
-            List<String> targetBoxInstanceNumberList) throws MipamsException, IOException {
+            String appMarkerAsHex, List<String> targetBoxInstanceNumberList) throws MipamsException, IOException {
 
         byte[] markerSegmentSizeAsByteArray = CoreUtils.readBytesFromInputStream(is, CoreUtils.WORD_BYTE_SIZE);
         int markerSegmentSize = CoreUtils.readTwoByteWordAsInt(markerSegmentSizeAsByteArray) - CoreUtils.WORD_BYTE_SIZE;
@@ -434,6 +438,7 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
             return;
         }
 
+        CoreUtils.writeByteArrayToOutputStream(DatatypeConverter.parseHexBinary(appMarkerAsHex), os);
         CoreUtils.writeByteArrayToOutputStream(markerSegmentSizeAsByteArray, os);
         CoreUtils.writeByteArrayToOutputStream(commonIdentifierAsByteArray, os);
         CoreUtils.writeByteArrayToOutputStream(boxInstanceNumberAsByteArray, os);
