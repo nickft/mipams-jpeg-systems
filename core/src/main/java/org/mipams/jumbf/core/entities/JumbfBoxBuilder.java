@@ -68,6 +68,14 @@ public class JumbfBoxBuilder {
         this.jumbfBox.getContentBoxList().addAll(boxList);
     }
 
+    public void removeContentBox(BmffBox box) {
+        this.jumbfBox.getContentBoxList().remove(box);
+    }
+
+    public void emptyContentBoxList() {
+        this.jumbfBox.setContentBoxList(new ArrayList<>());
+    }
+
     public JumbfBox getResult() throws MipamsException {
 
         this.jumbfBox.getDescriptionBox().computeAndSetToggleBasedOnFields();
