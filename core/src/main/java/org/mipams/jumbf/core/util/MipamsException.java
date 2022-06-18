@@ -23,6 +23,7 @@ public class MipamsException extends Exception {
 
     public MipamsException(Throwable cause) {
         super(cause);
+        cause.printStackTrace();
         logger.error(cause.getMessage(), cause);
     }
 }

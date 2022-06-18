@@ -16,12 +16,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.mipams.jumbf.core.services.CoreParserService;
+import org.mipams.jumbf.core.services.JpegCodestreamParser;
 import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.services.CoreGeneratorService;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.demo.entities.UploadRequest;
 import org.mipams.jumbf.demo.services.DemoRequestParser;
 import org.mipams.jumbf.demo.services.FileUploader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +33,13 @@ import org.springframework.http.ResponseEntity;
 @RequestMapping("/demo")
 public class DemoController {
 
+    private static final Logger logger = LoggerFactory.getLogger(DemoController.class);
+
     @Autowired
     CoreParserService parserService;
+
+    @Autowired
+    JpegCodestreamParser jpegCodestreamParser;
 
     @Autowired
     CoreGeneratorService generatorService;
@@ -47,7 +55,19 @@ public class DemoController {
     public ResponseEntity<?> uploadJumbf(@ModelAttribute UploadRequest request) throws MipamsException {
         String fileName = fileUploader.saveFileToDiskAndGetFileName(request, true);
         try {
-            List<JumbfBox> boxList = parserService.parseMetadataFromFile(fileName);
+
+            List<JumbfBox> boxList;
+
+            logger.info(request.getFile().getOriginalFilename());
+
+            if (request.getFile().getOriginalFilename().endsWith(".jumbf")) {
+                boxList = parserService.parseMetadataFromFile(fileName);
+            } else {
+                String fileUrl = fileUploader.getFileUrl(fileName);
+                logger.info(fileUrl);
+                boxList = jpegCodestreamParser.parseMetadataFromFile(fileUrl);
+            }
+
             return ResponseEntity.ok().body(prepareResponse(boxList));
         } catch (MipamsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

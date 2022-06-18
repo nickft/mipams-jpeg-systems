@@ -39,6 +39,10 @@ public class FileUploader {
         }
     }
 
+    public String getFileUrl(String fileName) {
+        return CoreUtils.getFullPath(ASSET_DIRECTORY, fileName);
+    }
+
     public ResponseEntity<?> createOctetResponse(String fileName) throws MipamsException {
         UrlResource urlResource;
 

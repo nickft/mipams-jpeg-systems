@@ -42,14 +42,13 @@ public class SymmetricEncryption implements EncryptionScheme {
 
         logger.info(algParams.toString());
 
-        String outputFileName = request.getContentFileUrl() + ".enc";
-        String outputFilePath = "/tmp/" + outputFileName;
+        String outputFileUrl = request.getContentFileUrl() + ".enc";
 
-        performCipherAndWriteToFileUsing(cipher, request.getContentFileUrl(), outputFilePath);
+        performCipherAndWriteToFileUsing(cipher, request.getContentFileUrl(), outputFileUrl);
 
         logger.debug("Encryption request finished");
 
-        return outputFilePath;
+        return outputFileUrl;
     }
 
     @Override
@@ -59,14 +58,13 @@ public class SymmetricEncryption implements EncryptionScheme {
 
         Cipher cipher = getCipherInstance(Cipher.DECRYPT_MODE, request.getIv());
 
-        String outputFileName = request.getContentFileUrl() + ".dec";
-        String outputFilePath = "/tmp/" + outputFileName;
+        String outputFileUrl = request.getContentFileUrl() + ".dec";
 
-        performCipherAndWriteToFileUsing(cipher, request.getContentFileUrl(), outputFilePath);
+        performCipherAndWriteToFileUsing(cipher, request.getContentFileUrl(), outputFileUrl);
 
         logger.debug("Decryption request finished");
 
-        return outputFilePath;
+        return outputFileUrl;
     }
 
     private Cipher getCipherInstance(int opMode, String ivAsString) throws CryptoException {
