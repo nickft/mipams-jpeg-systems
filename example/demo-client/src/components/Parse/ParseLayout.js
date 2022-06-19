@@ -64,7 +64,7 @@ const ParseLayout = (props) => {
 
             >
                 <label htmlFor="contained-button-file">
-                    <Input accept=".jumbf,image/*" id="contained-button-file" multiple type="file" onChange={handleFileUploadChange} />
+                    <Input accept="*" id="contained-button-file" multiple type="file" onChange={handleFileUploadChange} />
                     <Button disabled={loading} variant="contained" component="span" onClick={onFileUploadClick}>
                         Upload JUMBF File
                     </Button>

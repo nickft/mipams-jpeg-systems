@@ -54,6 +54,8 @@ public class DemoController {
             MediaType.MULTIPART_FORM_DATA_VALUE }, produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadJumbf(@ModelAttribute UploadRequest request) throws MipamsException {
         String fileName = fileUploader.saveFileToDiskAndGetFileName(request, true);
+        String fileUrl = fileUploader.getFileUrl(fileName);
+
         try {
 
             List<JumbfBox> boxList;
@@ -61,10 +63,8 @@ public class DemoController {
             logger.info(request.getFile().getOriginalFilename());
 
             if (request.getFile().getOriginalFilename().endsWith(".jumbf")) {
-                boxList = parserService.parseMetadataFromFile(fileName);
+                boxList = parserService.parseMetadataFromFile(fileUrl);
             } else {
-                String fileUrl = fileUploader.getFileUrl(fileName);
-                logger.info(fileUrl);
                 boxList = jpegCodestreamParser.parseMetadataFromFile(fileUrl);
             }
 
@@ -83,8 +83,9 @@ public class DemoController {
 
     @GetMapping("/parseMetadata")
     public ResponseEntity<?> parseJumbfMetadataFromPath(@RequestParam String fileName) {
+        String fileUrl = fileUploader.getFileUrl(fileName);
         try {
-            List<JumbfBox> boxList = parserService.parseMetadataFromFile(fileName);
+            List<JumbfBox> boxList = parserService.parseMetadataFromFile(fileUrl);
             return ResponseEntity.ok().body(prepareResponse(boxList));
         } catch (MipamsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -119,13 +120,14 @@ public class DemoController {
     public ResponseEntity<?> generateJumbfBytes(@RequestParam(required = false) String targetFile,
             @RequestBody JsonNode requestBody) {
         String outputFileName = targetFile == null ? "test.jumbf" : targetFile;
+        String fileUrl = fileUploader.getFileUrl(outputFileName);
 
         try {
             List<JumbfBox> boxList = demoRequestParser.generateBoxFromRequest(requestBody);
 
-            String filePath = generatorService.generateJumbfMetadataToFile(boxList, outputFileName);
+            fileUrl = generatorService.generateJumbfMetadataToFile(boxList, fileUrl);
 
-            String result = generateResultMessage(boxList, filePath);
+            String result = generateResultMessage(boxList, fileUrl);
             return ResponseEntity.ok().body(result);
         } catch (MipamsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

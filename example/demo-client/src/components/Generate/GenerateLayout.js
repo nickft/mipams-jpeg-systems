@@ -116,7 +116,7 @@ const GenerateLayout = (props) => {
                 {download ?
 
                     <a
-                        href={jumbfFileName ? "http://localhost:8080/demo/download?targetFile=" + jumbfFileName : "http://localhost:8080/demo/download"}
+                        href={jumbfFileName ? "http://localhost:8081/demo/download?targetFile=" + jumbfFileName : "http://localhost:8081/demo/download"}
                         download={jumbfFileName ? jumbfFileName : "test.jumbf"}
                         style={{ textDecoration: 'none' }}
                     >
