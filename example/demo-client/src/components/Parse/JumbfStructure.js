@@ -25,7 +25,7 @@ const JumbfStructure = (props) => {
 
     function getLeafBmffNode(id, bmffNode) {
 
-        const arr = ['boxSize', 'requestable', 'lbox', 'tbox', 'xboxEnabled', 'xlbox', 'payloadSizeFromBmffHeaders', 'boxSizeFromBmffHeaders', 'labelWithEscapeCharacter', 'typeId', 'type'];
+        const arr = ['boxSize', 'requestable', 'lbox', 'tbox', 'xboxEnabled', 'xlBox', 'payloadSizeFromBmffHeaders', 'boxSizeFromBmffHeaders', 'labelWithEscapeCharacter', 'typeId', 'type'];
 
         id += 1
         const parentId = id;
