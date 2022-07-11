@@ -1,7 +1,7 @@
 package org.mipams.jumbf.crypto.services;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -108,9 +108,9 @@ public class CryptoService {
         XmlBox accessRulesXmlBox = (XmlBox) accessRulesJumbfBox.getContentBoxList().get(0);
         String policyInXACML = null;
 
-        try (FileInputStream fis = new FileInputStream(accessRulesXmlBox.getFileUrl())) {
+        try (ByteArrayInputStream bis = new ByteArrayInputStream(accessRulesXmlBox.getContent())) {
             logger.debug("Extracting policy from JUMBF Box");
-            policyInXACML = new BufferedReader(new InputStreamReader(fis)).lines().collect(Collectors.joining("\n"));
+            policyInXACML = new BufferedReader(new InputStreamReader(bis)).lines().collect(Collectors.joining("\n"));
             logger.debug(policyInXACML);
         } catch (IOException e) {
             throw new CryptoException(e);

@@ -24,7 +24,7 @@ public class DescriptionBox extends BmffBox {
 
     protected @Getter @Setter byte[] sha256Hash;
 
-    protected @Getter @Setter String privateBmffBoxUrl;
+    protected @Getter @Setter byte[] privateField;
 
     @Override
     public int getTypeId() {
@@ -55,7 +55,7 @@ public class DescriptionBox extends BmffBox {
         }
 
         if (privateFieldExists()) {
-            sum += CoreUtils.getFileSizeFromPath(getPrivateBmffBoxUrl());
+            sum += getPrivateFieldSize();
         }
 
         return sum;
@@ -69,6 +69,10 @@ public class DescriptionBox extends BmffBox {
         return 1;
     }
 
+    long getLabelSize() {
+        return CoreUtils.addEscapeCharacterToText(getLabel()).length();
+    }
+
     int getIdSize() {
         return CoreUtils.INT_BYTE_SIZE;
     }
@@ -77,8 +81,8 @@ public class DescriptionBox extends BmffBox {
         return 32;
     }
 
-    long getLabelSize() {
-        return CoreUtils.addEscapeCharacterToText(getLabel()).length();
+    long getPrivateFieldSize() {
+        return getPrivateField().length;
     }
 
     public void setAsRequestable() {
@@ -121,7 +125,7 @@ public class DescriptionBox extends BmffBox {
             toggle = toggle | 8;
         }
 
-        if (getPrivateBmffBoxUrl() != null) {
+        if (getPrivateField() != null) {
             toggle = toggle | 16;
         }
 

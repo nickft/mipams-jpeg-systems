@@ -18,6 +18,8 @@ public abstract class AbstractIntegrationTests {
     protected static String TEST_FILE_PATH = TEST_DIRECTORY + TEST_FILE_NAME;
     protected static String JUMBF_FILE_PATH = TEST_DIRECTORY + "test.jumbf";
 
+    protected final static String TEST_CONTENT = "Hello world";
+
     @Autowired
     protected CoreGeneratorService coreGeneratorService;
 
@@ -35,7 +37,7 @@ public abstract class AbstractIntegrationTests {
         file = new File(TEST_DIRECTORY);
 
         try (FileOutputStream fos = new FileOutputStream(TEST_FILE_PATH)) {
-            fos.write("Hello world".getBytes());
+            fos.write(TEST_CONTENT.getBytes());
         }
     }
 

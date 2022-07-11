@@ -63,8 +63,7 @@ public class EmbeddedFileBoxIntegrationTests extends AbstractIntegrationTests {
 
         List<BmffBox> contentBoxes = List.of(embeddedFileDescriptionBox, binaryDataBox);
 
-        JumbfBoxBuilder builder = new JumbfBoxBuilder();
-        builder.setContentType(embeddedFileContentType);
+        JumbfBoxBuilder builder = new JumbfBoxBuilder(embeddedFileContentType);
         builder.setPaddingSize(10);
         builder.appendAllContentBoxes(contentBoxes);
 
@@ -93,8 +92,7 @@ public class EmbeddedFileBoxIntegrationTests extends AbstractIntegrationTests {
 
         List<BmffBox> contentBoxes = List.of(embeddedFileDescriptionBox, binaryDataBox);
 
-        JumbfBoxBuilder builder = new JumbfBoxBuilder();
-        builder.setContentType(embeddedFileContentType);
+        JumbfBoxBuilder builder = new JumbfBoxBuilder(embeddedFileContentType);
         builder.setPaddingSize(10);
         builder.appendAllContentBoxes(contentBoxes);
 

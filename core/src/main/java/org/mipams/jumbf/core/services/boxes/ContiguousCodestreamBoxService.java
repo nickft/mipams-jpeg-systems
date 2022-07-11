@@ -8,7 +8,7 @@ import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ContiguousCodestreamBoxService extends SingleFormatBoxService<ContiguousCodestreamBox> {
+public class ContiguousCodestreamBoxService extends FileBoxService<ContiguousCodestreamBox> {
 
     ServiceMetadata serviceMetadata;
 

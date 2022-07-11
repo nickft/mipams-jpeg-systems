@@ -7,7 +7,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode(callSuper = false)
-public class JsonBox extends SingleFormatBox {
+public class JsonBox extends MemoryBox {
 
     @Override
     public int getTypeId() {

@@ -7,7 +7,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode(callSuper = false)
-public class ContiguousCodestreamBox extends SingleFormatBox {
+public class ContiguousCodestreamBox extends FileBox {
 
     @Override
     public int getTypeId() {

@@ -31,7 +31,7 @@ public class BmffBoxServiceTests {
         JsonBoxService jsonBoxService = new JsonBoxService();
 
         JsonBox jsonBox = new JsonBox();
-        jsonBox.setFileUrl("test");
+        jsonBox.setContent("test".getBytes());
         jsonBox.updateBmffHeadersBasedOnBox();
 
         jsonBox.setLBox(-1);

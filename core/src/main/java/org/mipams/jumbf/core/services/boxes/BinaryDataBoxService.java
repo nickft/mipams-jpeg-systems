@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BinaryDataBoxService extends SingleFormatBoxService<BinaryDataBox> {
+public class BinaryDataBoxService extends FileBoxService<BinaryDataBox> {
 
     @Autowired
     Properties properties;

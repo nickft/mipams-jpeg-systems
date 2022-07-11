@@ -9,8 +9,9 @@ import org.mipams.jumbf.core.util.MipamsException;
 public class JumbfBoxBuilder {
     private JumbfBox jumbfBox;
 
-    public JumbfBoxBuilder() {
+    public JumbfBoxBuilder(ContentTypeService contentTypeService) {
         reset();
+        setContentType(contentTypeService);
     }
 
     public JumbfBoxBuilder(JumbfBox jumbfBox) {
@@ -33,7 +34,7 @@ public class JumbfBoxBuilder {
         this.jumbfBox.getDescriptionBox().setAsRequestable();
     }
 
-    public void setContentType(ContentTypeService contentTypeService) {
+    private void setContentType(ContentTypeService contentTypeService) {
         this.jumbfBox.getDescriptionBox().setUuid(contentTypeService.getContentTypeUuid());
     }
 
@@ -49,8 +50,8 @@ public class JumbfBoxBuilder {
         this.jumbfBox.getDescriptionBox().setSha256Hash(digest);
     }
 
-    public void setPrivateField(String privateFieldUrl) {
-        this.jumbfBox.getDescriptionBox().setPrivateBmffBoxUrl(privateFieldUrl);
+    public void setPrivateField(byte[] privateFieldContent) {
+        this.jumbfBox.getDescriptionBox().setPrivateField(privateFieldContent);
     }
 
     public void setPaddingSize(long numberOfBytes) throws MipamsException {

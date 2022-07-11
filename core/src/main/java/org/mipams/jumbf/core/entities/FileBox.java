@@ -8,7 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @ToString
-public abstract class SingleFormatBox extends BmffBox {
+public abstract class FileBox extends BmffBox {
     protected @Getter @Setter String fileUrl;
 
     @Override

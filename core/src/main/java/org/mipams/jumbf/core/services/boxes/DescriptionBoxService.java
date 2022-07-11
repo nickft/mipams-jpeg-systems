@@ -63,7 +63,7 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
         }
 
         if (descriptionBox.privateFieldExists()) {
-            CoreUtils.writeFileContentToOutput(descriptionBox.getPrivateBmffBoxUrl(), outputStream);
+            CoreUtils.writeByteArrayToOutputStream(descriptionBox.getPrivateField(), outputStream);
         }
     }
 
@@ -71,7 +71,7 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
     protected void populatePayloadFromJumbfFile(DescriptionBox descriptionBox, ParseMetadata parseMetadata,
             InputStream input) throws MipamsException {
 
-        logger.debug("Description box");
+        logger.debug("Parsing Description box");
 
         String uuid = CoreUtils.readUuidFromInputStream(input);
         descriptionBox.setUuid(uuid);
@@ -105,12 +105,7 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
                 throw new MipamsException("The size of Private Field shall be more than 8 bytes");
             }
 
-            String fileName = CoreUtils.randomStringGenerator() + "-privateField";
-            String fullPath = CoreUtils.getFullPath(parseMetadata.getParentDirectory(), fileName);
-            descriptionBox.setPrivateBmffBoxUrl(fullPath);
-
-            CoreUtils.writeBytesFromInputStreamToFile(input, availableBytesForBox,
-                    descriptionBox.getPrivateBmffBoxUrl());
+            descriptionBox.setPrivateField(CoreUtils.readBytesFromInputStream(input, availableBytesForBox));
         }
 
         logger.debug("Discovered box: " + descriptionBox.toString());

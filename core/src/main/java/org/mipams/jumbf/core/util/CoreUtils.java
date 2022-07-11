@@ -1,5 +1,6 @@
 package org.mipams.jumbf.core.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
@@ -156,19 +157,17 @@ public class CoreUtils {
         return convertByteArrayToUUID(uuidTemp).toString().toUpperCase();
     }
 
-    public static byte[] readBytesFromInputStream(InputStream input, int numberOfBytes) throws MipamsException {
-        try {
+    public static byte[] readBytesFromInputStream(InputStream input, long numberOfBytes) throws MipamsException {
 
-            byte[] buffer = new byte[numberOfBytes % 256];
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-            if (input.read(buffer) == -1) {
-                throw new MipamsException();
-            }
+        writeBytesFromInputStreamToOutputstream(input, numberOfBytes, outputStream);
 
-            return buffer;
-        } catch (IOException e) {
-            throw new MipamsException(e);
+        if (numberOfBytes != outputStream.toByteArray().length) {
+            throw new MipamsException("Failed to read requested bytes from input stream");
         }
+
+        return outputStream.toByteArray();
     }
 
     public static String readTwoByteWordAsHex(InputStream input) throws MipamsException {

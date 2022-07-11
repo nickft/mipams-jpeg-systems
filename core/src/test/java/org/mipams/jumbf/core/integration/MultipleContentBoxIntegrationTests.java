@@ -75,11 +75,10 @@ public class MultipleContentBoxIntegrationTests extends AbstractIntegrationTests
         JsonContentType jsonContentType = new JsonContentType();
 
         JsonBox jsonBox = new JsonBox();
-        jsonBox.setFileUrl(TEST_FILE_PATH);
+        jsonBox.setContent(TEST_CONTENT.getBytes());
         jsonBox.updateBmffHeadersBasedOnBox();
 
-        JumbfBoxBuilder builder = new JumbfBoxBuilder();
-        builder.setContentType(jsonContentType);
+        JumbfBoxBuilder builder = new JumbfBoxBuilder(jsonContentType);
         builder.appendContentBox(jsonBox);
 
         return builder.getResult();
@@ -90,11 +89,10 @@ public class MultipleContentBoxIntegrationTests extends AbstractIntegrationTests
         XmlContentType xmlContentType = new XmlContentType();
 
         XmlBox xmlBox = new XmlBox();
-        xmlBox.setFileUrl(TEST_FILE_PATH);
+        xmlBox.setContent(TEST_CONTENT.getBytes());
         xmlBox.updateBmffHeadersBasedOnBox();
 
-        JumbfBoxBuilder builder = new JumbfBoxBuilder();
-        builder.setContentType(xmlContentType);
+        JumbfBoxBuilder builder = new JumbfBoxBuilder(xmlContentType);
         builder.appendContentBox(xmlBox);
 
         return builder.getResult();
@@ -107,8 +105,7 @@ public class MultipleContentBoxIntegrationTests extends AbstractIntegrationTests
         jp2cBox.setFileUrl(TEST_FILE_PATH);
         jp2cBox.updateBmffHeadersBasedOnBox();
 
-        JumbfBoxBuilder builder = new JumbfBoxBuilder();
-        builder.setContentType(contentType);
+        JumbfBoxBuilder builder = new JumbfBoxBuilder(contentType);
         builder.appendContentBox(jp2cBox);
 
         return builder.getResult();
@@ -118,11 +115,10 @@ public class MultipleContentBoxIntegrationTests extends AbstractIntegrationTests
         CborContentType cborContentType = new CborContentType();
 
         CborBox cborBox = new CborBox();
-        cborBox.setFileUrl(TEST_FILE_PATH);
+        cborBox.setContent(TEST_CONTENT.getBytes());
         cborBox.updateBmffHeadersBasedOnBox();
 
-        JumbfBoxBuilder builder = new JumbfBoxBuilder();
-        builder.setContentType(cborContentType);
+        JumbfBoxBuilder builder = new JumbfBoxBuilder(cborContentType);
         builder.appendContentBox(cborBox);
 
         return builder.getResult();

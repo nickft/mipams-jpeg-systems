@@ -7,7 +7,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode(callSuper = false)
-public class CborBox extends SingleFormatBox {
+public class CborBox extends MemoryBox {
 
     @Override
     public int getTypeId() {

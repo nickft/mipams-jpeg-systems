@@ -8,7 +8,7 @@ import org.mipams.jumbf.core.entities.JsonBox;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 
 @Service
-public class JsonBoxService extends SingleFormatBoxService<JsonBox> {
+public class JsonBoxService extends MemoryBoxService<JsonBox> {
 
     ServiceMetadata serviceMetadata;
 
@@ -26,10 +26,5 @@ public class JsonBoxService extends SingleFormatBoxService<JsonBox> {
     @Override
     public ServiceMetadata getServiceMetadata() {
         return serviceMetadata;
-    }
-
-    @Override
-    protected String getExtension() {
-        return "json";
     }
 }

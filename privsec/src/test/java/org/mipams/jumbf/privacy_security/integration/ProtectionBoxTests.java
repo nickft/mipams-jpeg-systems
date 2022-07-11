@@ -76,7 +76,7 @@ public class ProtectionBoxTests extends AbstractIntegrationTests {
         JumbfBox protectionJumbfBox = getProtectionJumbfBoxBasedOnProtectionDescriptionBox(protectionDescriptionBox);
 
         JsonBox jsonBox = new JsonBox();
-        jsonBox.setFileUrl(TEST_FILE_PATH);
+        jsonBox.setContent(TEST_CONTENT.getBytes());
         jsonBox.updateBmffHeadersBasedOnBox();
 
         JsonContentType jsonContentType = new JsonContentType();
@@ -106,7 +106,7 @@ public class ProtectionBoxTests extends AbstractIntegrationTests {
         JumbfBox protectionJumbfBox = getProtectionJumbfBoxBasedOnProtectionDescriptionBox(protectionDescriptionBox);
 
         XmlBox xmlBox = new XmlBox();
-        xmlBox.setFileUrl(TEST_FILE_PATH);
+        xmlBox.setContent(TEST_CONTENT.getBytes());
         xmlBox.updateBmffHeadersBasedOnBox();
 
         XmlContentType xmlContentType = new XmlContentType();

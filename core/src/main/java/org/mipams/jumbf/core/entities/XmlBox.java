@@ -7,7 +7,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode(callSuper = false)
-public class XmlBox extends SingleFormatBox {
+public class XmlBox extends MemoryBox {
 
     @Override
     public int getTypeId() {

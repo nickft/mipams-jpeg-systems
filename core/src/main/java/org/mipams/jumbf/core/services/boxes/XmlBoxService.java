@@ -8,7 +8,7 @@ import org.mipams.jumbf.core.entities.XmlBox;
 import org.springframework.stereotype.Service;
 
 @Service
-public class XmlBoxService extends SingleFormatBoxService<XmlBox> {
+public class XmlBoxService extends MemoryBoxService<XmlBox> {
 
     ServiceMetadata serviceMetadata;
 
@@ -26,10 +26,5 @@ public class XmlBoxService extends SingleFormatBoxService<XmlBox> {
     @Override
     public ServiceMetadata getServiceMetadata() {
         return serviceMetadata;
-    }
-
-    @Override
-    protected String getExtension() {
-        return "xml";
     }
 }

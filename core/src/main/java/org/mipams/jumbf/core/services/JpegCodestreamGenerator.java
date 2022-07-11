@@ -369,7 +369,6 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
                         copyNextMarkerToOutputStream(is, os);
                     }
                 }
-
             }
 
         } catch (IOException e) {

@@ -66,7 +66,7 @@ The following diagram illustrates the entities structures. Privacy & Security mo
 
 Finally, we need to define the JUMBF Box Content Types. A Content Type is defined based on the Content Type UUID that is defined in the JUMBF box's Description box. A ContentType class is a service which defines the way to parse/generate the Content Boxes (it could be more than one content boxes) that are specified in a Content Type JUMBF Box according to the standard.
 
-![Content Type UML Entities](./entities.jpg "Content Type class relationship")
+![Content Type UML Entities](./contents.jpg "Content Type class relationship")
 
 
 ### Implementing a BoxService

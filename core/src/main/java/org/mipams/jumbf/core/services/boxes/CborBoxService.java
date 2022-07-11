@@ -9,7 +9,7 @@ import org.mipams.jumbf.core.entities.CborBox;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CborBoxService extends SingleFormatBoxService<CborBox> {
+public class CborBoxService extends MemoryBoxService<CborBox> {
 
     ServiceMetadata serviceMetadata;
 
@@ -27,10 +27,5 @@ public class CborBoxService extends SingleFormatBoxService<CborBox> {
     @Override
     public ServiceMetadata getServiceMetadata() {
         return serviceMetadata;
-    }
-
-    @Override
-    protected String getExtension() {
-        return "cbor";
     }
 }

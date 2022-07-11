@@ -4,9 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 
 import javax.xml.bind.DatatypeConverter;
@@ -21,7 +19,6 @@ import org.mipams.jumbf.core.entities.JumbfBoxBuilder;
 import org.mipams.jumbf.core.services.CoreGeneratorService;
 import org.mipams.jumbf.core.services.CoreParserService;
 import org.mipams.jumbf.core.services.content_types.JsonContentType;
-import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -52,11 +49,10 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
         JsonContentType jsonContentType = new JsonContentType();
 
         JsonBox jsonBox = new JsonBox();
-        jsonBox.setFileUrl(TEST_FILE_PATH);
+        jsonBox.setContent(TEST_CONTENT.getBytes());
         jsonBox.updateBmffHeadersBasedOnBox();
 
-        JumbfBoxBuilder builder = new JumbfBoxBuilder();
-        builder.setContentType(jsonContentType);
+        JumbfBoxBuilder builder = new JumbfBoxBuilder(jsonContentType);
         builder.setLabel("Test label");
         builder.setJumbfBoxAsRequestable();
         builder.setPaddingSize(10);
@@ -74,14 +70,13 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
         JsonContentType jsonContentType = new JsonContentType();
 
         JsonBox jsonBox = new JsonBox();
-        jsonBox.setFileUrl(TEST_FILE_PATH);
+        jsonBox.setContent(TEST_CONTENT.getBytes());
         jsonBox.updateBmffHeadersBasedOnBox();
 
-        JumbfBoxBuilder builder = new JumbfBoxBuilder();
+        JumbfBoxBuilder builder = new JumbfBoxBuilder(jsonContentType);
         builder.setId(12345);
         builder.setSha256Hash(
                 DatatypeConverter.parseHexBinary("321242ad321242aa321242ad321242aa321242ad321242aa321242ad321242aa"));
-        builder.setContentType(jsonContentType);
         builder.setPaddingSize(10);
         builder.appendContentBox(jsonBox);
 
@@ -98,35 +93,28 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
         JsonContentType jsonContentType = new JsonContentType();
 
         JsonBox jsonBox = new JsonBox();
-        jsonBox.setFileUrl(TEST_FILE_PATH);
+        jsonBox.setContent(TEST_CONTENT.getBytes());
         jsonBox.updateBmffHeadersBasedOnBox();
 
         DescriptionBox dBox = new DescriptionBox();
 
         dBox.setUuid(jsonContentType.getContentTypeUuid());
 
-        String tempFileUrl = TEST_DIRECTORY + "private-field";
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream("123321123".getBytes());) {
 
-        try (ByteArrayInputStream inputStream = new ByteArrayInputStream("123321123".getBytes());
-                OutputStream outputStream = new FileOutputStream(tempFileUrl);) {
-            outputStream.write(inputStream.readAllBytes());
+            JumbfBoxBuilder builder = new JumbfBoxBuilder(jsonContentType);
+            builder.setPrivateField(inputStream.readAllBytes());
+            builder.appendContentBox(jsonBox);
+
+            JumbfBox givenJumbfBox = builder.getResult();
+            assertEquals(givenJumbfBox.getDescriptionBox().isRequestable(), false);
+
+            JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
+            givenJumbfBox.getDescriptionBox()
+                    .setPrivateField(parsedJumbfBox.getDescriptionBox().getPrivateField());
+
+            assertEquals(givenJumbfBox, parsedJumbfBox);
         }
-
-        JumbfBoxBuilder builder = new JumbfBoxBuilder();
-        builder.setContentType(jsonContentType);
-        builder.setPrivateField(tempFileUrl);
-        builder.appendContentBox(jsonBox);
-
-        JumbfBox givenJumbfBox = builder.getResult();
-        assertEquals(givenJumbfBox.getDescriptionBox().isRequestable(), false);
-
-        JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
-        givenJumbfBox.getDescriptionBox()
-                .setPrivateBmffBoxUrl(parsedJumbfBox.getDescriptionBox().getPrivateBmffBoxUrl());
-
-        assertEquals(givenJumbfBox, parsedJumbfBox);
-
-        CoreUtils.deleteFile(tempFileUrl);
     }
 
     @Test
@@ -135,32 +123,24 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
         JsonContentType jsonContentType = new JsonContentType();
 
         JsonBox jsonBox = new JsonBox();
-        jsonBox.setFileUrl(TEST_FILE_PATH);
+        jsonBox.setContent(TEST_CONTENT.getBytes());
         jsonBox.updateBmffHeadersBasedOnBox();
 
         DescriptionBox dBox = new DescriptionBox();
-
         dBox.setUuid(jsonContentType.getContentTypeUuid());
 
-        String tempFileUrl = TEST_DIRECTORY + CoreUtils.randomStringGenerator() + "-privateField";
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream("12".getBytes())) {
 
-        try (ByteArrayInputStream inputStream = new ByteArrayInputStream("12".getBytes());
-                OutputStream outputStream = new FileOutputStream(tempFileUrl);) {
-            outputStream.write(inputStream.readAllBytes());
+            JumbfBoxBuilder builder = new JumbfBoxBuilder(jsonContentType);
+            builder.setPrivateField(inputStream.readAllBytes());
+            builder.appendContentBox(jsonBox);
+
+            JumbfBox givenJumbfBox = builder.getResult();
+            assertEquals(givenJumbfBox.getDescriptionBox().isRequestable(), false);
+
+            assertThrows(MipamsException.class, () -> {
+                generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
+            });
         }
-
-        JumbfBoxBuilder builder = new JumbfBoxBuilder();
-        builder.setContentType(jsonContentType);
-        builder.setPrivateField(tempFileUrl);
-        builder.appendContentBox(jsonBox);
-
-        JumbfBox givenJumbfBox = builder.getResult();
-        assertEquals(givenJumbfBox.getDescriptionBox().isRequestable(), false);
-
-        assertThrows(MipamsException.class, () -> {
-            generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
-        });
-
-        CoreUtils.deleteFile(tempFileUrl);
     }
 }

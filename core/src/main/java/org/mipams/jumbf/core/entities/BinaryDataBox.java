@@ -12,7 +12,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode(callSuper = true)
-public class BinaryDataBox extends SingleFormatBox {
+public class BinaryDataBox extends FileBox {
 
     private @Getter @Setter boolean referencedExternally = false;
 

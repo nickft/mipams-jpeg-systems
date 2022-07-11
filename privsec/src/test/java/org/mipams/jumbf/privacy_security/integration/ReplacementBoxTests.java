@@ -53,7 +53,7 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
                 boxParamHandler.setOffset(Long.parseLong("123123123123"));
 
                 JsonBox jsonBox = new JsonBox();
-                jsonBox.setFileUrl(TEST_FILE_PATH);
+                jsonBox.setContent(TEST_CONTENT.getBytes());
                 jsonBox.updateBmffHeadersBasedOnBox();
 
                 JsonContentType jsonContentType = new JsonContentType();
@@ -77,7 +77,7 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
                 boxParamHandler.setOffset(boxParamHandler.getMaxLongValue());
 
                 JsonBox jsonBox = new JsonBox();
-                jsonBox.setFileUrl(TEST_FILE_PATH);
+                jsonBox.setContent(TEST_CONTENT.getBytes());
                 jsonBox.updateBmffHeadersBasedOnBox();
 
                 JsonContentType jsonContentType = new JsonContentType();
@@ -100,7 +100,7 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
                 ParamHandlerInterface paramHandler = paramHandlerFactory.getParamHandler(ReplacementType.BOX, 0);
 
                 JsonBox jsonBox = new JsonBox();
-                jsonBox.setFileUrl(TEST_FILE_PATH);
+                jsonBox.setContent(TEST_CONTENT.getBytes());
                 jsonBox.updateBmffHeadersBasedOnBox();
 
                 JsonContentType jsonContentType = new JsonContentType();
@@ -124,7 +124,7 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
                 boxParamHandler.setOffset(boxParamHandler.getMaxLongValue());
 
                 JsonBox jsonBox = new JsonBox();
-                jsonBox.setFileUrl(TEST_FILE_PATH);
+                jsonBox.setContent(TEST_CONTENT.getBytes());
                 jsonBox.updateBmffHeadersBasedOnBox();
 
                 JsonContentType jsonContentType = new JsonContentType();
