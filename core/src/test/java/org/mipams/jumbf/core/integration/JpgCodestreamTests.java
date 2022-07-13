@@ -2,7 +2,6 @@ package org.mipams.jumbf.core.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -11,12 +10,14 @@ import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mipams.jumbf.core.entities.ContiguousCodestreamBox;
 import org.mipams.jumbf.core.entities.JsonBox;
 import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.entities.JumbfBoxBuilder;
 import org.mipams.jumbf.core.entities.XmlBox;
 import org.mipams.jumbf.core.services.JpegCodestreamGenerator;
 import org.mipams.jumbf.core.services.JpegCodestreamParser;
+import org.mipams.jumbf.core.services.content_types.ContiguousCodestreamContentType;
 import org.mipams.jumbf.core.services.content_types.JsonContentType;
 import org.mipams.jumbf.core.services.content_types.XmlContentType;
 import org.mipams.jumbf.core.util.MipamsException;
@@ -50,15 +51,33 @@ public class JpgCodestreamTests extends AbstractIntegrationTests {
     }
 
     @Test
+    void verifyJp2cParsing() throws MipamsException, FileNotFoundException {
+
+        List<JumbfBox> jumbfBoxList = List.of(createJp2cJumbfFile(0));
+        String assetFileUrl = ResourceUtils.getFile("classpath:sample.jpeg").getAbsolutePath();
+
+        String targetUrl = assetFileUrl + "-new";
+
+        jpegCodestreamGenerator.generateJumbfMetadataToFile(jumbfBoxList, assetFileUrl, targetUrl);
+
+        List<JumbfBox> resultList = jpegCodestreamParser.parseMetadataFromFile(targetUrl);
+
+        assertEquals(1, resultList.size());
+    }
+
+    @Test
     void verifyParsing() throws MipamsException, FileNotFoundException {
 
         List<JumbfBox> jumbfBoxList = List.of(createJsonJumbfFile(10));
         String assetFileUrl = ResourceUtils.getFile("classpath:sample.jpeg").getAbsolutePath();
 
-        String resultUrl = jpegCodestreamGenerator.generateJumbfMetadataToFile(jumbfBoxList, assetFileUrl);
-        resultUrl = jpegCodestreamGenerator.generateJumbfMetadataToFile(jumbfBoxList, resultUrl);
+        String targetUrl1 = assetFileUrl + "-new1";
+        String targetUrl2 = assetFileUrl + "-new2";
 
-        List<JumbfBox> resultList = jpegCodestreamParser.parseMetadataFromFile(resultUrl);
+        jpegCodestreamGenerator.generateJumbfMetadataToFile(jumbfBoxList, assetFileUrl, targetUrl1);
+        jpegCodestreamGenerator.generateJumbfMetadataToFile(jumbfBoxList, targetUrl1, targetUrl2);
+
+        List<JumbfBox> resultList = jpegCodestreamParser.parseMetadataFromFile(targetUrl2);
 
         assertEquals(2, resultList.size());
     }
@@ -68,10 +87,14 @@ public class JpgCodestreamTests extends AbstractIntegrationTests {
         List<JumbfBox> jumbfBoxList = List.of(createJsonJumbfFile(0xFFFF));
 
         String assetFileUrl = ResourceUtils.getFile("classpath:sample.jpeg").getAbsolutePath();
-        String resultUrl = jpegCodestreamGenerator.generateJumbfMetadataToFile(jumbfBoxList, assetFileUrl);
-        resultUrl = jpegCodestreamGenerator.generateJumbfMetadataToFile(jumbfBoxList, resultUrl);
 
-        List<JumbfBox> resultList = jpegCodestreamParser.parseMetadataFromFile(resultUrl);
+        String targetUrl1 = assetFileUrl + "-new1";
+        String targetUrl2 = assetFileUrl + "-new2";
+
+        jpegCodestreamGenerator.generateJumbfMetadataToFile(jumbfBoxList, assetFileUrl, targetUrl1);
+        jpegCodestreamGenerator.generateJumbfMetadataToFile(jumbfBoxList, targetUrl1, targetUrl2);
+
+        List<JumbfBox> resultList = jpegCodestreamParser.parseMetadataFromFile(targetUrl2);
 
         assertEquals(2, resultList.size());
     }
@@ -81,10 +104,13 @@ public class JpgCodestreamTests extends AbstractIntegrationTests {
         List<JumbfBox> jumbfBoxList = List.of(createJsonJumbfFile(0), createXmlJumbfFile(0));
 
         String assetFileUrl = ResourceUtils.getFile("classpath:sample.jpeg").getAbsolutePath();
-        String resultUrl = jpegCodestreamGenerator.generateJumbfMetadataToFile(jumbfBoxList, assetFileUrl);
 
-        String strippedAsset = resultUrl + ".tmp";
-        jpegCodestreamGenerator.stripJumbfMetadataWithUuidEqualTo(resultUrl, strippedAsset,
+        String targetUrl = assetFileUrl + "-new";
+
+        jpegCodestreamGenerator.generateJumbfMetadataToFile(jumbfBoxList, assetFileUrl, targetUrl);
+
+        String strippedAsset = targetUrl + ".tmp";
+        jpegCodestreamGenerator.stripJumbfMetadataWithUuidEqualTo(targetUrl, strippedAsset,
                 (new JsonContentType()).getContentTypeUuid());
 
         List<JumbfBox> resultList = jpegCodestreamParser.parseMetadataFromFile(strippedAsset);
@@ -96,8 +122,10 @@ public class JpgCodestreamTests extends AbstractIntegrationTests {
         List<JumbfBox> jumbfBoxList = List.of(createJsonJumbfFile(0));
 
         String assetFileUrl = TEST_FILE_PATH;
+        String targetUrl = assetFileUrl + "-new";
+
         assertThrows(MipamsException.class, () -> {
-            jpegCodestreamGenerator.generateJumbfMetadataToFile(jumbfBoxList, assetFileUrl);
+            jpegCodestreamGenerator.generateJumbfMetadataToFile(jumbfBoxList, assetFileUrl, targetUrl);
         });
     }
 
@@ -107,10 +135,9 @@ public class JpgCodestreamTests extends AbstractIntegrationTests {
 
         XmlBox xmlBox = new XmlBox();
         xmlBox.setContent(TEST_CONTENT.getBytes());
-        xmlBox.updateBmffHeadersBasedOnBox();
 
         JumbfBoxBuilder builder = new JumbfBoxBuilder(xmlContentType);
-        builder.setPaddingSize(10);
+        builder.setPaddingSize(padding);
         builder.appendContentBox(xmlBox);
 
         JumbfBox givenJumbfBox = builder.getResult();
@@ -123,11 +150,25 @@ public class JpgCodestreamTests extends AbstractIntegrationTests {
 
         JsonBox jsonBox = new JsonBox();
         jsonBox.setContent(TEST_CONTENT.getBytes());
-        jsonBox.updateBmffHeadersBasedOnBox();
 
         JumbfBoxBuilder builder = new JumbfBoxBuilder(jsonContentType);
-        builder.setPaddingSize(10);
+        builder.setPaddingSize(padding);
         builder.appendContentBox(jsonBox);
+
+        JumbfBox givenJumbfBox = builder.getResult();
+        return givenJumbfBox;
+    }
+
+    private JumbfBox createJp2cJumbfFile(int padding) throws MipamsException, FileNotFoundException {
+
+        String assetFileUrl = ResourceUtils.getFile("classpath:sample.jpeg").getAbsolutePath();
+
+        ContiguousCodestreamBox jp2c = new ContiguousCodestreamBox();
+        jp2c.setFileUrl(assetFileUrl);
+
+        JumbfBoxBuilder builder = new JumbfBoxBuilder(new ContiguousCodestreamContentType());
+        builder.setPaddingSize(padding);
+        builder.appendContentBox(jp2c);
 
         JumbfBox givenJumbfBox = builder.getResult();
         return givenJumbfBox;

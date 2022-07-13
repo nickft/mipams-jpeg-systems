@@ -1,5 +1,6 @@
 package org.mipams.jumbf.core.services;
 
+import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,7 +36,7 @@ public class CoreParserService implements ParserInterface {
         ParseMetadata parseMetadata = new ParseMetadata();
         parseMetadata.setParentDirectory(properties.getFileDirectory());
 
-        try (InputStream input = new FileInputStream(assetUrl)) {
+        try (InputStream input = new BufferedInputStream(new FileInputStream(assetUrl), 8)) {
 
             List<JumbfBox> bmffBoxList = new ArrayList<>();
 

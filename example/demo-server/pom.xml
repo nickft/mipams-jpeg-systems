@@ -56,6 +56,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.mipams.jumbf</groupId>  
+			<artifactId>jumbf-jlink</artifactId>
+			<version>1.0</version>  
+		</dependency>
+
+		<dependency>
 			<groupId>org.mipams.fake_media</groupId>  
 			<artifactId>jumbf-provenance</artifactId>
 			<version>1.0</version>  

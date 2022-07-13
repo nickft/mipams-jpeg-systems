@@ -14,7 +14,8 @@ export const contentTypeUuidToText = {
     '6D70636C-0011-0010-8000-00AA00389B71': 'Claim Content type JUMBF box',
     '6D706373-0011-0010-8000-00AA00389B71': 'Claim Signature Content type JUMBF box',
     '6D706173-C65D-11EC-9D64-0242AC120002': 'Assertion Store Content type JUMBF box',
-    '6D707663-0011-0010-8000-00AA00389B71': 'Credentials Store Content type JUMBF box'
+    '6D707663-0011-0010-8000-00AA00389B71': 'Credentials Store Content type JUMBF box',
+    '4C494E4B-0011-0010-8000-00AA00389B71': 'JLINK Content Type JUMBF box'
 }
 
 export const bmffBoxTypeToText = {

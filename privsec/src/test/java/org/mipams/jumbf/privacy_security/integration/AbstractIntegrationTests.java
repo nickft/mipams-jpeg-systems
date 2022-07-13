@@ -62,9 +62,9 @@ public abstract class AbstractIntegrationTests {
         return testParseMetadataFromJumbfFile(JUMBF_FILE_PATH);
     }
 
-    protected String testGenerateJumbfFileFromBox(List<JumbfBox> givenJumbfBoxList, String assetUrl)
+    protected void testGenerateJumbfFileFromBox(List<JumbfBox> givenJumbfBoxList, String assetUrl)
             throws MipamsException {
-        return coreGeneratorService.generateJumbfMetadataToFile(givenJumbfBoxList, assetUrl);
+        coreGeneratorService.generateJumbfMetadataToFile(givenJumbfBoxList, assetUrl);
     }
 
     protected List<JumbfBox> testParseMetadataFromJumbfFile(String assetUrl) throws MipamsException {

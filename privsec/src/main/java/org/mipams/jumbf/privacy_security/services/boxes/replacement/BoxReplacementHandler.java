@@ -9,6 +9,7 @@ import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.services.boxes.JumbfBoxService;
 import org.mipams.jumbf.core.entities.BmffBox;
+import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,10 @@ public class BoxReplacementHandler implements DataBoxHandler {
         ParseMetadata jumbfParseMetadata;
 
         while (availableBytesForBox > 0) {
+
+            if (CoreUtils.isPaddingBoxNext(inputStream)) {
+                break;
+            }
 
             jumbfParseMetadata = new ParseMetadata();
             jumbfParseMetadata.setAvailableBytesForBox(availableBytesForBox);
