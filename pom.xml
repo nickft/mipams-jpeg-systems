@@ -22,7 +22,6 @@
 		<module>crypto</module>
         <module>core</module>
 		<module>privsec</module>
-		<module>jlink</module>
     </modules>
 
 	<properties>
