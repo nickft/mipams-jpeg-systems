@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class JpegCodestreamGenerator implements GeneratorInterface {
+public class JpegCodestreamGenerator {
 
     @Autowired
     JpegCodestreamParser jpegCodestreamParser;
@@ -31,8 +31,8 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
     @Autowired
     Properties properties;
 
-    @Override
-    public String generateJumbfMetadataToFile(List<JumbfBox> jumbfBoxList, String assetUrl) throws MipamsException {
+    public void generateJumbfMetadataToFile(List<JumbfBox> jumbfBoxList, String assetUrl, String outputUrl)
+            throws MipamsException {
 
         Map<String, List<BoxSegment>> boxSegmentMap = jpegCodestreamParser.parseBoxSegmentMapFromFile(assetUrl);
 
@@ -40,12 +40,9 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
 
         addBoxSegmentsFromJumbfBoxList(boxSegmentMap, jumbfBoxList);
 
-        String resultAssetUrl = CoreUtils.getFullPath(properties.getFileDirectory(),
-                assetUrl.substring(assetUrl.lastIndexOf("/") + 1) + "-new");
-
         String appMarkerAsHex;
         try (InputStream is = new FileInputStream(assetUrl);
-                OutputStream os = new FileOutputStream(resultAssetUrl);) {
+                OutputStream os = new FileOutputStream(outputUrl);) {
 
             appMarkerAsHex = CoreUtils.readTwoByteWordAsHex(is);
 
@@ -74,8 +71,6 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
                     copyNextMarkerToOutputStream(is, os);
                 }
             }
-
-            return resultAssetUrl;
         } catch (IOException e) {
             throw new MipamsException(e);
         }
@@ -302,7 +297,8 @@ public class JpegCodestreamGenerator implements GeneratorInterface {
                     packetSequence++;
                     boxSegmentPayloadUrl = CoreUtils.getFullPath(properties.getFileDirectory(),
                             boxSegmentId + "-" + packetSequence);
-                    remainingBytesInSegment = maximumSegmentPayloadSize;
+                    remainingBytesInSegment = (packetSequence == 1) ? maximumSegmentPayloadSize
+                            : maximumSegmentPayloadSize - bmffHeaderSize;
                 }
 
                 int segmentPayloadBytes = (is.available() >= remainingBytesInSegment) ? remainingBytesInSegment

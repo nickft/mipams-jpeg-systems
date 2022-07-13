@@ -125,7 +125,7 @@ public class DemoController {
         try {
             List<JumbfBox> boxList = demoRequestParser.generateBoxFromRequest(requestBody);
 
-            fileUrl = generatorService.generateJumbfMetadataToFile(boxList, fileUrl);
+            generatorService.generateJumbfMetadataToFile(boxList, fileUrl);
 
             String result = generateResultMessage(boxList, fileUrl);
             return ResponseEntity.ok().body(result);

@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class JsonBoxParser extends SingleFormatParser<JsonBox> implements ContentTypeParser {
+public class JsonBoxParser extends MemoryBoxParser<JsonBox> implements ContentTypeParser {
 
     @Autowired
     JsonContentType jsonContentType;

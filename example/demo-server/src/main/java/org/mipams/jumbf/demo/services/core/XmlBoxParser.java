@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class XmlBoxParser extends SingleFormatParser<XmlBox> implements ContentTypeParser {
+public class XmlBoxParser extends MemoryBoxParser<XmlBox> implements ContentTypeParser {
 
     @Autowired
     XmlContentType xmlContentType;

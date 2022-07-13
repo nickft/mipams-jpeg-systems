@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CborBoxParser extends SingleFormatParser<CborBox> implements ContentTypeParser {
+public class CborBoxParser extends MemoryBoxParser<CborBox> implements ContentTypeParser {
 
     @Autowired
     CborContentType cborContentType;
