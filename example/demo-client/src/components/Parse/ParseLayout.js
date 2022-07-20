@@ -1,4 +1,4 @@
-import { Box, Paper } from '@mui/material'
+import { Box, Modal, Paper } from '@mui/material'
 import React from 'react'
 
 import { styled } from '@mui/material/styles';
@@ -15,9 +15,21 @@ const Input = styled('input')({
     display: 'none',
 });
 
-const ParseLayout = (props) => {
+const ParseLayout = React.forwardRef((props, ref) => {
 
-    const { jumbfStructure, errorMessage, setErrorMessage, expandedList, handleToggle, loading, handleFileUploadChange, onFileUploadClick } = props;
+    const {
+        jumbfStructure,
+        errorMessage,
+        setErrorMessage,
+        expandedList,
+        handleToggle,
+        loading,
+        handleFileUploadChange,
+        onFileUploadClick,
+        modalContent,
+        addModalContent,
+        closeModalContent
+    } = props;
 
     let output = null;
 
@@ -39,6 +51,7 @@ const ParseLayout = (props) => {
                     jumbfStructure={jumbfStructure}
                     expandedList={expandedList}
                     handleToggle={handleToggle}
+                    addModalContent={addModalContent}
                 />
             </Paper>
     }
@@ -70,8 +83,23 @@ const ParseLayout = (props) => {
                     </Button>
                 </label>
             </StyledBox>
+            <Modal
+                open={modalContent !== null}
+                onClose={closeModalContent}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}
+            >
+                <div readonly="true" style={{ border: 'none', width: '70%', height: '70vh', overflow: 'auto', backgroundColor: 'white' }}>
+                    {modalContent}
+                </div>
+            </Modal>
         </StyledBox >
     )
-}
+});
 
 export default ParseLayout
