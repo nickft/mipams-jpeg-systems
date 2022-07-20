@@ -9,6 +9,10 @@ import TreeItem from '@mui/lab/TreeItem';
 import TreeView from '@mui/lab/TreeView';
 
 import BmffBoxLabel from './BmffBoxLabel';
+import { Box } from '@mui/system';
+import { IconButton } from '@mui/material';
+import OpenInNewOutlinedIcon from '@mui/icons-material/OpenInNewOutlined';
+
 
 
 function isJumbf(bmffBox) {
@@ -21,7 +25,7 @@ const StyledTreeView = styled(TreeView)(({ theme }) => ({
 
 const JumbfStructure = (props) => {
 
-    const { jumbfStructure, expandedList, handleToggle } = props;
+    const { jumbfStructure, expandedList, handleToggle, addModalContent } = props;
 
     function getLeafBmffNode(id, bmffNode) {
 
@@ -34,7 +38,24 @@ const JumbfStructure = (props) => {
 
             id += 1
 
-            const label = key + ": " + bmffNode['' + key + ''];
+            let label = null;
+
+            if (key === 'content') {
+
+                // const text = JSON.stringify(atob(bmffNode['' + key + '']));
+
+                const text = atob(bmffNode['' + key + '']);
+
+                label = <Box>
+                    {key}
+                    ": view here"
+                    <IconButton onClick={() => addModalContent(text)}>
+                        <OpenInNewOutlinedIcon />
+                    </IconButton>
+                </Box>
+            } else {
+                label = key + ": " + bmffNode['' + key + ''];
+            }
 
             return (<TreeItem
                 key={id}
@@ -71,12 +92,9 @@ const JumbfStructure = (props) => {
                 id += 1
 
                 let descriptionInfo = getLeafBmffNode(id, box['descriptionBox']);
-                console.log(descriptionInfo)
 
                 const contentListInfo = getTreeItemsForBmffList(descriptionInfo.id, box['contentBoxList']);
                 lastUsedId = contentListInfo[contentListInfo.length - 1].id;
-
-                console.log(contentListInfo)
 
                 output = <TreeItem
                     key={id}
@@ -121,6 +139,6 @@ const JumbfStructure = (props) => {
             {getTreeItemsForBmffList(0, jumbfStructure).map(object => (object.output))}
         </StyledTreeView>
     )
-}
+};
 
 export default JumbfStructure

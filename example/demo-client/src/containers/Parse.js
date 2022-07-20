@@ -13,6 +13,10 @@ const Parse = () => {
     const [errorMessage, setErrorMessage] = useState();
     const [expanded, setExpanded] = useState([]);
 
+    const [modalContent, setModalContent] = useState(null);
+    const addModalContent = (content) => { setModalContent(content) };
+    const closeModalContent = () => { setModalContent(null) };
+
     const [uploadedFileName, setUploadedFileName] = useState();
 
     const handleToggle = (event, nodeIds) => {
@@ -69,6 +73,9 @@ const Parse = () => {
             loading={loading}
             handleFileUploadChange={handleFileUploadChange}
             onFileUploadClick={onFileUploadClick}
+            modalContent={modalContent}
+            addModalContent={addModalContent}
+            closeModalContent={closeModalContent}
         />
     )
 }
