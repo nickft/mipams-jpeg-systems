@@ -56,29 +56,37 @@ public class JpegCodestreamGenerator {
                 appendNewBoxSegmentsToAsset(os, boxSegmentMap);
             }
 
+            appMarkerAsHex = null;
+
             while (is.available() > 0) {
 
-                appMarkerAsHex = CoreUtils.readTwoByteWordAsHex(is);
-                CoreUtils.writeByteArrayToOutputStream(DatatypeConverter.parseHexBinary(appMarkerAsHex), os);
+                if (appMarkerAsHex == null) {
+                    appMarkerAsHex = CoreUtils.readTwoByteWordAsHex(is);
+                    CoreUtils.writeByteArrayToOutputStream(DatatypeConverter.parseHexBinary(appMarkerAsHex), os);
+                }
 
                 if (CoreUtils.isEndOfImageAppMarker(appMarkerAsHex)) {
                     break;
                 } else if (CoreUtils.isStartOfScanMarker(appMarkerAsHex)) {
-                    copyStartOfScanMarker(is, os);
+                    appMarkerAsHex = copyStartOfScanMarker(is, os);
+                    continue;
                 } else if (CoreUtils.isApp11Marker(appMarkerAsHex)) {
                     generateJumbfSegmentInApp11Marker(is, os, boxSegmentMap, jumbfBoxList.size());
                 } else {
                     copyNextMarkerToOutputStream(is, os);
                 }
+
+                appMarkerAsHex = null;
+
             }
         } catch (IOException e) {
             throw new MipamsException(e);
         }
     }
 
-    private void copyStartOfScanMarker(InputStream is, OutputStream os) throws MipamsException, IOException {
+    private String copyStartOfScanMarker(InputStream is, OutputStream os) throws MipamsException, IOException {
 
-        int currentByte, previousByte = 0;
+        int currentByte = 0, previousByte = 0;
 
         while (is.available() > 0) {
 
@@ -86,11 +94,13 @@ public class JpegCodestreamGenerator {
             CoreUtils.writeIntAsSingleByteToOutputStream(currentByte, os);
 
             if (checkTerminationOfScanMarker(previousByte, currentByte)) {
-                break;
+                return "ff" + Integer.toHexString(currentByte);
             }
 
             previousByte = currentByte;
         }
+
+        return "ffd9";
     }
 
     private boolean checkTerminationOfScanMarker(int previousByte, int currentByte) {

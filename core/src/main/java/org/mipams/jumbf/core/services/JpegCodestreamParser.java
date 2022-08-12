@@ -51,23 +51,28 @@ public class JpegCodestreamParser implements ParserInterface {
                 throw new MipamsException("Start of image (SOI) marker is missing.");
             }
 
+            appMarkerAsHex = null;
+
             while (is.available() > 0) {
 
-                appMarkerAsHex = CoreUtils.readTwoByteWordAsHex(is);
+                if (appMarkerAsHex == null) {
+                    appMarkerAsHex = CoreUtils.readTwoByteWordAsHex(is);
+                }
 
                 logger.debug(appMarkerAsHex);
 
                 if (CoreUtils.isEndOfImageAppMarker(appMarkerAsHex)) {
                     break;
                 } else if (CoreUtils.isStartOfScanMarker(appMarkerAsHex)) {
-                    skipStartOfScanMarker(is);
-                    continue;
+                    appMarkerAsHex = skipStartOfScanMarker(is);
                 } else if (CoreUtils.isApp11Marker(appMarkerAsHex)) {
                     parseJumbfSegmentInApp11Marker(is, boxSegmentMap);
                 } else {
                     int markerSegmentSize = CoreUtils.readTwoByteWordAsInt(is);
                     is.skip(markerSegmentSize - CoreUtils.WORD_BYTE_SIZE);
                 }
+
+                appMarkerAsHex = null;
             }
 
             return boxSegmentMap;
@@ -76,7 +81,7 @@ public class JpegCodestreamParser implements ParserInterface {
         }
     }
 
-    private void skipStartOfScanMarker(InputStream is) throws IOException, MipamsException {
+    private String skipStartOfScanMarker(InputStream is) throws IOException, MipamsException {
 
         int currentByte, previousByte = 0;
 
@@ -85,11 +90,13 @@ public class JpegCodestreamParser implements ParserInterface {
             currentByte = CoreUtils.readSingleByteAsIntFromInputStream(is);
 
             if (previousByte == 0xFF && currentByte != 0xFF && !(currentByte >= 0xD0 && currentByte <= 0xD7)) {
-                break;
+                return "ff" + Integer.toHexString(currentByte);
             }
 
             previousByte = currentByte;
+
         }
+        return null;
     }
 
     private void parseJumbfSegmentInApp11Marker(InputStream is, Map<String, List<BoxSegment>> boxSegmentMap)
