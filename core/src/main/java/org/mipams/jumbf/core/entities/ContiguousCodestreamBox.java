@@ -1,12 +1,5 @@
 package org.mipams.jumbf.core.entities;
 
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-@NoArgsConstructor
-@ToString
-@EqualsAndHashCode(callSuper = false)
 public class ContiguousCodestreamBox extends FileBox {
 
     @Override
@@ -17,5 +10,10 @@ public class ContiguousCodestreamBox extends FileBox {
     @Override
     public String getType() {
         return "jp2c";
+    }
+
+    @Override
+    public String toString() {
+        return "ContiguousCodestreamBox(" + super.toString() + ")";
     }
 }

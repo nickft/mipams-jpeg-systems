@@ -6,17 +6,10 @@ import java.io.OutputStream;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-@NoArgsConstructor
-@ToString
 public class RoiParamHandler implements ParamHandlerInterface {
 
-    private @Getter @Setter int offsetX;
-    private @Getter @Setter int offsetY;
+    private int offsetX;
+    private int offsetY;
 
     @Override
     public void writeParamToBytes(OutputStream outputStream) throws MipamsException {
@@ -39,4 +32,28 @@ public class RoiParamHandler implements ParamHandlerInterface {
         return 2 * CoreUtils.INT_BYTE_SIZE;
     }
 
+    public int getOffsetX() {
+        return this.offsetX;
+    }
+
+    public void setOffsetX(int offsetX) {
+        this.offsetX = offsetX;
+    }
+
+    public int getOffsetY() {
+        return this.offsetY;
+    }
+
+    public void setOffsetY(int offsetY) {
+        this.offsetY = offsetY;
+    }
+
+    @Override
+    public String toString() {
+
+        final int offsetX = getOffsetX();
+        final int offsetY = getOffsetY();
+
+        return "RoiParamHandler(offsetX=" + offsetX + ", label=" + offsetY + ")";
+    }
 }

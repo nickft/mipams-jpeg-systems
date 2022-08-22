@@ -2,20 +2,11 @@ package org.mipams.jumbf.core.entities;
 
 import org.mipams.jumbf.core.util.MipamsException;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-@NoArgsConstructor
-@ToString
-@EqualsAndHashCode(callSuper = true)
 public class PaddingBox extends BmffBox {
 
     public static int PADDING_VALUE = 0x00;
 
-    private @Getter @Setter long paddingSize;
+    private long paddingSize;
 
     @Override
     public int getTypeId() {
@@ -30,6 +21,19 @@ public class PaddingBox extends BmffBox {
     @Override
     protected long calculatePayloadSize() throws MipamsException {
         return getPaddingSize();
+    }
+
+    public long getPaddingSize() {
+        return this.paddingSize;
+    }
+
+    public void setPaddingSize(long paddingSize) {
+        this.paddingSize = paddingSize;
+    }
+
+    @Override
+    public String toString() {
+        return "PaddingBox(" + super.toString() + ", paddingSize=" + getPaddingSize() + ")";
     }
 
 }

@@ -4,24 +4,15 @@ import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-@NoArgsConstructor
-@ToString
-@EqualsAndHashCode(callSuper = true)
 public class ProtectionDescriptionBox extends BmffBox {
 
-    private @Getter @Setter int methodToggle;
+    private int methodToggle;
 
-    private @Getter @Setter String encLabel;
+    private String encLabel;
 
-    private @Getter @Setter String arLabel;
+    private String arLabel;
 
-    private @Getter @Setter byte[] iv;
+    private byte[] iv;
 
     @Override
     public int getTypeId() {
@@ -104,14 +95,63 @@ public class ProtectionDescriptionBox extends BmffBox {
         return CoreUtils.addEscapeCharacterToText(getArLabel()).length();
     }
 
+    @Override
+    public String toString() {
+
+        final int methodToggle = getMethodToggle();
+        final String encLabel = this.encLabel != null ? getEncLabel().toString() : "null";
+        final String arLabel = this.arLabel != null ? getArLabel().toString() : "null";
+        final String ivAsString = this.iv != null ? getIv().toString() : "null";
+
+        StringBuilder builder = new StringBuilder("RoiParamHandler=(");
+
+        builder.append("methodToggle=").append(methodToggle).append(", ").append("encLabel=").append(encLabel)
+                .append(", ").append("arLabel=").append(arLabel).append(", ").append("iv=").append(ivAsString)
+                .append(")");
+
+        return builder.toString();
+    }
+
+    public int getMethodToggle() {
+        return this.methodToggle;
+    }
+
+    public void setMethodToggle(int methodToggle) {
+        this.methodToggle = methodToggle;
+    }
+
+    public String getEncLabel() {
+        return this.encLabel;
+    }
+
+    public void setEncLabel(String encLabel) {
+        this.encLabel = encLabel;
+    }
+
+    public String getArLabel() {
+        return this.arLabel;
+    }
+
+    public void setArLabel(String arLabel) {
+        this.arLabel = arLabel;
+    }
+
+    public byte[] getIv() {
+        return this.iv;
+    }
+
+    public void setIv(byte[] iv) {
+        this.iv = iv;
+    }
+
     public enum MethodType {
 
         EXTERNAL("external", 0),
         AES_256_CBC("aes-256-cbc", 1),
         AES_256_CBC_WITH_IV("aes-256-cbc-iv", 2);
 
-        private @Getter @Setter String methodType;
-        private @Getter @Setter int methodId;
+        private String methodType;
+        private int methodId;
 
         MethodType(String methodType, int methodId) {
             setMethodType(methodType);
@@ -132,5 +172,22 @@ public class ProtectionDescriptionBox extends BmffBox {
                     EXTERNAL.getMethodType(),
                     AES_256_CBC.getMethodType(), AES_256_CBC_WITH_IV.getMethodType());
         }
+
+        public String getMethodType() {
+            return this.methodType;
+        }
+
+        public void setMethodType(String methodType) {
+            this.methodType = methodType;
+        }
+
+        public int getMethodId() {
+            return this.methodId;
+        }
+
+        public void setMethodId(int methodId) {
+            this.methodId = methodId;
+        }
     }
+
 }

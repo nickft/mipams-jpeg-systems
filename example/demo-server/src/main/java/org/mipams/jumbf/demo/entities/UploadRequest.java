@@ -2,12 +2,19 @@ package org.mipams.jumbf.demo.entities;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.ToString;
-
-@ToString
 public class UploadRequest {
-    private @Getter @Setter @NonNull MultipartFile file;
+    private MultipartFile file;
+
+    public MultipartFile getFile() {
+        return this.file;
+    }
+
+    public void setFile(MultipartFile file) {
+        this.file = file;
+    }
+
+    @Override
+    public String toString() {
+        return "UploadRequest(file=" + file.getName() + ")";
+    }
 }

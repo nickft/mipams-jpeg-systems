@@ -7,17 +7,10 @@ import java.math.BigInteger;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-@NoArgsConstructor
-@ToString
 public class BoxParamHandler implements ParamHandlerInterface {
 
-    private @Getter @Setter long offset;
-    private @Getter @Setter String label;
+    private long offset;
+    private String label;
 
     @Override
     public void writeParamToBytes(OutputStream outputStream) throws MipamsException {
@@ -77,5 +70,30 @@ public class BoxParamHandler implements ParamHandlerInterface {
 
     public String getLabelWithEscapeCharacter() {
         return CoreUtils.addEscapeCharacterToText(getLabel());
+    }
+
+    public Long getOffset() {
+        return this.offset;
+    }
+
+    public void setOffset(Long offset) {
+        this.offset = offset;
+    }
+
+    public String getLabel() {
+        return this.label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    @Override
+    public String toString() {
+
+        final String offset = getOffset().toString();
+        final String label = (this.label != null ? getLabel().toString() : "null");
+
+        return "BoxParamHandler(offset=" + offset + ", label=" + label + ")";
     }
 }

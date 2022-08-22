@@ -12,6 +12,7 @@ import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.UUID;
 
+import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.entities.PaddingBox;
 import org.springframework.http.MediaType;

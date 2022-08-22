@@ -30,6 +30,5 @@ public class ContentTypeParserManager {
         }
 
         throw new MipamsException("Box with uuid " + contentTypeUuid + " is not a Content Box");
-
     }
 }

@@ -5,11 +5,6 @@ import java.io.OutputStream;
 
 import org.mipams.jumbf.core.util.MipamsException;
 
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-@NoArgsConstructor
-@ToString
 public class EmptyParamHandler implements ParamHandlerInterface {
 
     @Override
@@ -23,5 +18,10 @@ public class EmptyParamHandler implements ParamHandlerInterface {
     @Override
     public long getParamSize() throws MipamsException {
         return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "EmptyParamHandler()";
     }
 }

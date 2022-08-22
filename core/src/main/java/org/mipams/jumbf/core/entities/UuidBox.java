@@ -3,21 +3,11 @@ package org.mipams.jumbf.core.entities;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-@NoArgsConstructor
-@ToString
-@EqualsAndHashCode(callSuper = false)
 public class UuidBox extends BmffBox {
 
-    private @Getter @Setter String uuid;
+    private String uuid;
 
-    @EqualsAndHashCode.Exclude
-    private @Getter @Setter String fileUrl;
+    private String fileUrl;
 
     @Override
     public int getTypeId() {
@@ -36,6 +26,31 @@ public class UuidBox extends BmffBox {
         sum += CoreUtils.getFileSizeFromPath(getFileUrl());
 
         return sum;
+    }
+
+    public String getUuid() {
+        return this.uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getFileUrl() {
+        return this.fileUrl;
+    }
+
+    public void setFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
+    }
+
+    @Override
+    public String toString() {
+
+        final String uuid = this.uuid != null ? getUuid() : "null";
+        final String fileUrl = this.fileUrl != null ? getFileUrl() : "null";
+
+        return "UuidBox(" + super.toString() + ", uuid=" + uuid + ", fileUrl=" + fileUrl + ")";
     }
 
 }

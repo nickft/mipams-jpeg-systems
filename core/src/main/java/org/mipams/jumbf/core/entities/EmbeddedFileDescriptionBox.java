@@ -5,23 +5,13 @@ import org.mipams.jumbf.core.util.MipamsException;
 
 import org.springframework.http.MediaType;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-@NoArgsConstructor
-@ToString
-@EqualsAndHashCode(callSuper = true)
 public class EmbeddedFileDescriptionBox extends BmffBox {
 
-    private @Getter @Setter int toggle;
+    private int toggle;
 
-    private @Getter @Setter MediaType mediaType;
+    private MediaType mediaType;
 
-    @EqualsAndHashCode.Exclude
-    private @Getter @Setter String fileName;
+    private String fileName;
 
     @Override
     public int getTypeId() {
@@ -109,4 +99,40 @@ public class EmbeddedFileDescriptionBox extends BmffBox {
     public String getRandomFileName() {
         return CoreUtils.randomStringGenerator() + "." + getMediaType().getSubtype();
     }
+
+    public int getToggle() {
+        return this.toggle;
+    }
+
+    public void setToggle(int toggle) {
+        this.toggle = toggle;
+    }
+
+    public MediaType getMediaType() {
+        return this.mediaType;
+    }
+
+    public void setMediaType(MediaType mediaType) {
+        this.mediaType = mediaType;
+    }
+
+    public String getFileName() {
+        return this.fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    @Override
+    public String toString() {
+
+        final String mediaType = this.mediaType != null ? getMediaType().toString() : "null";
+
+        final String fileName = this.fileName != null ? getFileName() : "null";
+
+        return "EmbeddedFileDescriptionBox(" + super.toString() + ", toggle=" + getToggle() + ", mediaType=" + mediaType
+                + ", fileName=" + fileName + ")";
+    }
+
 }

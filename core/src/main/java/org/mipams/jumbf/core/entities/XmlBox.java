@@ -1,12 +1,5 @@
 package org.mipams.jumbf.core.entities;
 
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-@NoArgsConstructor
-@ToString
-@EqualsAndHashCode(callSuper = false)
 public class XmlBox extends MemoryBox {
 
     @Override
@@ -17,5 +10,10 @@ public class XmlBox extends MemoryBox {
     @Override
     public String getType() {
         return "xml";
+    }
+
+    @Override
+    public String toString() {
+        return "XmlBox(" + super.toString() + ")";
     }
 }

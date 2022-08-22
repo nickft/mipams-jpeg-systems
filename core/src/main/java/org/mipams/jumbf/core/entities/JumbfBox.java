@@ -4,20 +4,11 @@ import java.util.List;
 
 import org.mipams.jumbf.core.util.MipamsException;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-@NoArgsConstructor
-@ToString
-@EqualsAndHashCode(callSuper = false)
 public class JumbfBox extends BmffBox {
 
-    protected @Getter @Setter DescriptionBox descriptionBox;
-    protected @Getter @Setter List<BmffBox> contentBoxList;
-    protected @Getter @Setter @ToString.Exclude PaddingBox paddingBox;
+    protected DescriptionBox descriptionBox;
+    protected List<BmffBox> contentBoxList;
+    protected PaddingBox paddingBox;
 
     @Override
     public int getTypeId() {
@@ -50,4 +41,39 @@ public class JumbfBox extends BmffBox {
 
         return sum;
     }
+
+    public DescriptionBox getDescriptionBox() {
+        return this.descriptionBox;
+    }
+
+    public void setDescriptionBox(DescriptionBox descriptionBox) {
+        this.descriptionBox = descriptionBox;
+    }
+
+    public List<BmffBox> getContentBoxList() {
+        return this.contentBoxList;
+    }
+
+    public void setContentBoxList(List<BmffBox> contentBoxList) {
+        this.contentBoxList = contentBoxList;
+    }
+
+    public PaddingBox getPaddingBox() {
+        return this.paddingBox;
+    }
+
+    public void setPaddingBox(PaddingBox paddingBox) {
+        this.paddingBox = paddingBox;
+    }
+
+    @Override
+    public String toString() {
+        final String descriptionBoxString = this.descriptionBox != null ? getDescriptionBox().toString() : "null";
+        final String contentString = this.contentBoxList != null ? getContentBoxList().toString() : "null";
+        final String paddingString = this.paddingBox != null ? getPaddingBox().toString() : "null";
+
+        return "JumbfBox(" + super.toString() + ", descriptionBox=" + descriptionBoxString + ", content="
+                + contentString + ", paddingBox=" + paddingString + ")";
+    }
+
 }
