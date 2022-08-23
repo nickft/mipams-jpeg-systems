@@ -19,6 +19,7 @@ import org.mipams.jumbf.core.services.CoreParserService;
 import org.mipams.jumbf.core.services.JpegCodestreamParser;
 import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.services.CoreGeneratorService;
+import org.mipams.jumbf.core.util.JpegCodestreamException;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.demo.entities.UploadRequest;
 import org.mipams.jumbf.demo.services.DemoRequestParser;
@@ -69,6 +70,9 @@ public class DemoController {
             }
 
             return ResponseEntity.ok().body(prepareResponse(boxList));
+        } catch (JpegCodestreamException e) {
+            return ResponseEntity.badRequest()
+                    .body("JPEG XT Codestream parsing error.");
         } catch (MipamsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

@@ -12,7 +12,6 @@ import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.UUID;
 
-import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.entities.PaddingBox;
 import org.springframework.http.MediaType;
@@ -44,6 +43,10 @@ public class CoreUtils {
 
     public static void writeIntToOutputStream(int val, OutputStream outputStream) throws MipamsException {
         writeByteArrayToOutputStream(convertIntToByteArray(val), outputStream);
+    }
+
+    public static void writeIntAsTwoByteToOutputStream(int val, OutputStream outputStream) throws MipamsException {
+        writeByteArrayToOutputStream(convertIntToTwoByteArray(val), outputStream);
     }
 
     public static void writeIntAsSingleByteToOutputStream(int val, OutputStream outputStream) throws MipamsException {
