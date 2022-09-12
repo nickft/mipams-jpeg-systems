@@ -18,6 +18,7 @@ const Parse = () => {
     const closeModalContent = () => { setModalContent(null) };
 
     const [uploadedFileName, setUploadedFileName] = useState();
+    const [parsedFileName, setParsedFileName] = useState();
 
     const handleToggle = (event, nodeIds) => {
         setExpanded(nodeIds);
@@ -40,12 +41,14 @@ const Parse = () => {
             // Request made to the backend api Send formData object
 
             api.post("/demo/uploadJumbfFile", formData).then(response => {
-                setJumbfStructure(response.data);
+                setJumbfStructure(response.data.jumbfBoxList);
+                setParsedFileName(response.data.fileName);
                 setErrorMessage(null);
                 setLoading(false);
             }).catch(error => {
                 setJumbfStructure(null);
                 setLoading(false);
+                setParsedFileName(null);
                 if (typeof (error.response.data) === 'string') {
                     setErrorMessage(error.response.data);
                 } else {
@@ -66,6 +69,7 @@ const Parse = () => {
     return (
         <ParseLayout
             jumbfStructure={jumbfStructure}
+            parsedFileName={parsedFileName}
             errorMessage={errorMessage}
             setErrorMessage={setErrorMessage}
             expandedList={expanded}

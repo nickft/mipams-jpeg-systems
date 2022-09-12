@@ -19,6 +19,7 @@ const ParseLayout = React.forwardRef((props, ref) => {
 
     const {
         jumbfStructure,
+        parsedFileName,
         errorMessage,
         setErrorMessage,
         expandedList,
@@ -28,7 +29,7 @@ const ParseLayout = React.forwardRef((props, ref) => {
         onFileUploadClick,
         modalContent,
         addModalContent,
-        closeModalContent
+        closeModalContent,
     } = props;
 
     let output = null;
@@ -56,6 +57,25 @@ const ParseLayout = React.forwardRef((props, ref) => {
             </Paper>
     }
 
+    let extractButton = (parsedFileName)
+        ? <a
+            href={"http://localhost:8081/demo/extractJumbf?fileName=" + parsedFileName}
+            download={"jumbf-standalone.jumbf"}
+            style={{ textDecoration: 'none' }}
+        >
+            <Button
+                variant="outlined"
+                disabled={loading}
+                sx={{
+                    '& .a': { textDecoration: 'none', color: 'white' },
+                    height: '100%'
+                }}
+            >
+                Extract JUMBF File
+            </Button>
+        </a>
+        : null;
+
     return (
         <StyledBox
             sx={{
@@ -70,18 +90,35 @@ const ParseLayout = React.forwardRef((props, ref) => {
             {output}
             <StyledBox
                 sx={{
-                    display: 'flex',
                     justifyContent: 'center',
-                    height: '5vh'
+                    display: 'flex',
                 }}
-
             >
-                <label htmlFor="contained-button-file">
-                    <Input accept="*" id="contained-button-file" multiple type="file" onChange={handleFileUploadChange} />
-                    <Button disabled={loading} variant="contained" component="span" onClick={onFileUploadClick}>
-                        Upload JUMBF File
-                    </Button>
-                </label>
+                <StyledBox
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        height: '5vh'
+                    }}
+
+                >
+                    <label htmlFor="contained-button-file">
+                        <Input accept="*" id="contained-button-file" multiple type="file" onChange={handleFileUploadChange} />
+                        <Button disabled={loading} variant="contained" component="span" onClick={onFileUploadClick}>
+                            Upload JUMBF File
+                        </Button>
+                    </label>
+                </StyledBox>
+                <StyledBox
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        height: '5vh'
+                    }}
+
+                >
+                    {extractButton}
+                </StyledBox>
             </StyledBox>
             <Modal
                 open={modalContent !== null}

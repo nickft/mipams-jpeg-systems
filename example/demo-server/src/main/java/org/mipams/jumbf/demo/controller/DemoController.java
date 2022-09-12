@@ -21,6 +21,7 @@ import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.services.CoreGeneratorService;
 import org.mipams.jumbf.core.util.JpegCodestreamException;
 import org.mipams.jumbf.core.util.MipamsException;
+import org.mipams.jumbf.demo.dto.JumbfResponse;
 import org.mipams.jumbf.demo.entities.UploadRequest;
 import org.mipams.jumbf.demo.services.DemoRequestParser;
 import org.mipams.jumbf.demo.services.FileUploader;
@@ -69,7 +70,7 @@ public class DemoController {
                 boxList = jpegCodestreamParser.parseMetadataFromFile(fileUrl);
             }
 
-            return ResponseEntity.ok().body(prepareResponse(boxList));
+            return ResponseEntity.ok().body(prepareResponse(fileName, boxList));
         } catch (JpegCodestreamException e) {
             return ResponseEntity.badRequest()
                     .body("JPEG XT Codestream parsing error.");
@@ -90,18 +91,52 @@ public class DemoController {
         String fileUrl = fileUploader.getFileUrl(fileName);
         try {
             List<JumbfBox> boxList = parserService.parseMetadataFromFile(fileUrl);
-            return ResponseEntity.ok().body(prepareResponse(boxList));
+            return ResponseEntity.ok().body(prepareResponse(fileName, boxList));
         } catch (MipamsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    private String prepareResponse(List<JumbfBox> boxList) throws MipamsException {
+    @GetMapping("/extractJumbf")
+    public ResponseEntity<?> extractJumbFile(@RequestParam String fileName) {
+
+        final String inputFileUrl = fileUploader.getFileUrl(fileName);
+
+        final String outputFileName = "standalone-file.jumbf";
+        final String outputFileUrl = fileUploader.getFileUrl(outputFileName);
+
+        try {
+
+            List<JumbfBox> boxList;
+
+            if (inputFileUrl.endsWith(".jumbf")) {
+                boxList = parserService.parseMetadataFromFile(inputFileUrl);
+            } else {
+                boxList = jpegCodestreamParser.parseMetadataFromFile(inputFileUrl);
+            }
+
+            generatorService.generateJumbfMetadataToFile(boxList, outputFileUrl);
+
+            return prepareDownloadFile(outputFileName);
+        } catch (JpegCodestreamException e) {
+            return ResponseEntity.badRequest()
+                    .body("JPEG XT Codestream parsing error.");
+        } catch (MipamsException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    private String prepareResponse(String fileName, List<JumbfBox> boxList) throws MipamsException {
 
         ObjectMapper mapper = new ObjectMapper();
         String result;
+
+        JumbfResponse response = new JumbfResponse();
+        response.setFileName(fileName);
+        response.setJumbfBoxList(boxList);
+
         try {
-            result = mapper.writeValueAsString(boxList);
+            result = mapper.writeValueAsString(response);
         } catch (JsonProcessingException e) {
             throw new MipamsException(e.getMessage());
         }
@@ -112,7 +147,10 @@ public class DemoController {
     @GetMapping(path = "/download")
     public ResponseEntity<?> downloadFile(@RequestParam(required = false) String targetFile) {
         String outputFileName = targetFile == null ? "test.jumbf" : targetFile;
+        return prepareDownloadFile(outputFileName);
+    }
 
+    private ResponseEntity<?> prepareDownloadFile(String outputFileName) {
         try {
             return fileUploader.createOctetResponse(outputFileName);
         } catch (MipamsException e) {
