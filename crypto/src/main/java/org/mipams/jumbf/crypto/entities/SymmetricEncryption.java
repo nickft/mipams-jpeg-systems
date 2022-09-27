@@ -19,17 +19,23 @@ import javax.crypto.spec.IvParameterSpec;
 
 import javax.xml.bind.DatatypeConverter;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor
 public class SymmetricEncryption implements EncryptionScheme {
 
     private static final Logger logger = LoggerFactory.getLogger(SymmetricEncryption.class);
 
-    private @Getter @Setter SecretKey symmetricKey;
+    private SecretKey symmetricKey;
+
+    public SecretKey getSymmetricKey() {
+        return this.symmetricKey;
+    }
+
+    public void setSymmetricKey(SecretKey symmetricKey) {
+        this.symmetricKey = symmetricKey;
+    }
+
+    public SymmetricEncryption(SecretKey symmetricKey) {
+        setSymmetricKey(symmetricKey);
+    }
 
     @Override
     public String encrypt(CryptoRequest request) throws CryptoException {
@@ -102,7 +108,7 @@ public class SymmetricEncryption implements EncryptionScheme {
         }
     }
 
-    private void performCipherAndWriteToFileUsing(Cipher cipher, @NonNull String inputFile,
+    private void performCipherAndWriteToFileUsing(Cipher cipher, String inputFile,
             String outputFilePath) throws CryptoException {
 
         try (FileOutputStream fos = new FileOutputStream(outputFilePath);

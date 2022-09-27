@@ -18,13 +18,6 @@
 	<name>Jumbf Core Module</name>
 	<description>Module that contains the implementation of the core JUMBF structure</description>
 	
-	<dependencies>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-		</dependency>
-	</dependencies>
-
 	<build>
         <plugins>
             <plugin>

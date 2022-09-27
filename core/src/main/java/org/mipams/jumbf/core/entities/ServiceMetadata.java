@@ -1,19 +1,35 @@
 package org.mipams.jumbf.core.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.ToString;
-
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
 public class ServiceMetadata {
 
-    private @Getter @Setter int boxTypeId;
+    private int boxTypeId;
 
-    private @Getter @Setter @NonNull String boxType;
+    private String boxType;
+
+    public ServiceMetadata(int boxTypeId, String boxType) {
+        setBoxTypeId(boxTypeId);
+        setBoxType(boxType);
+    }
+
+    public int getBoxTypeId() {
+        return this.boxTypeId;
+    }
+
+    public void setBoxTypeId(int boxTypeId) {
+        this.boxTypeId = boxTypeId;
+    }
+
+    public String getBoxType() {
+        return this.boxType;
+    }
+
+    public void setBoxType(String boxType) {
+        this.boxType = boxType;
+    }
+
+    @Override
+    public String toString() {
+        return "ServiceMetadata(boxTypeId=" + getBoxTypeId() + ", boxType=" + getBoxType() + ")";
+    }
 
 }

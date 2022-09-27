@@ -14,6 +14,7 @@ import javax.xml.bind.DatatypeConverter;
 import org.mipams.jumbf.core.entities.BoxSegment;
 import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.util.CoreUtils;
+import org.mipams.jumbf.core.util.JpegCodestreamException;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.core.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class JpegCodestreamGenerator {
     Properties properties;
 
     public void generateJumbfMetadataToFile(List<JumbfBox> jumbfBoxList, String assetUrl, String outputUrl)
-            throws MipamsException {
+            throws JpegCodestreamException {
 
         Map<String, List<BoxSegment>> boxSegmentMap = jpegCodestreamParser.parseBoxSegmentMapFromFile(assetUrl);
 
@@ -44,63 +45,37 @@ public class JpegCodestreamGenerator {
         try (InputStream is = new FileInputStream(assetUrl);
                 OutputStream os = new FileOutputStream(outputUrl);) {
 
-            appMarkerAsHex = CoreUtils.readTwoByteWordAsHex(is);
-
-            if (!CoreUtils.isStartOfImageAppMarker(appMarkerAsHex)) {
-                throw new MipamsException("Start of image (SOI) marker is missing.");
-            }
-
-            CoreUtils.writeByteArrayToOutputStream(DatatypeConverter.parseHexBinary(appMarkerAsHex), os);
+            jpegCodestreamParser.handleStartOfImage(is, os);
 
             if (!alreadyEmbeddedJumbfBoxes) {
                 appendNewBoxSegmentsToAsset(os, boxSegmentMap);
             }
 
+            appMarkerAsHex = null;
+
             while (is.available() > 0) {
 
-                appMarkerAsHex = CoreUtils.readTwoByteWordAsHex(is);
-                CoreUtils.writeByteArrayToOutputStream(DatatypeConverter.parseHexBinary(appMarkerAsHex), os);
+                if (appMarkerAsHex == null) {
+                    appMarkerAsHex = CoreUtils.readTwoByteWordAsHex(is);
+                    CoreUtils.writeByteArrayToOutputStream(DatatypeConverter.parseHexBinary(appMarkerAsHex), os);
+                }
 
                 if (CoreUtils.isEndOfImageAppMarker(appMarkerAsHex)) {
                     break;
                 } else if (CoreUtils.isStartOfScanMarker(appMarkerAsHex)) {
-                    copyStartOfScanMarker(is, os);
+                    appMarkerAsHex = jpegCodestreamParser.handleStartOfScanMarker(is, os);
+                    continue;
                 } else if (CoreUtils.isApp11Marker(appMarkerAsHex)) {
                     generateJumbfSegmentInApp11Marker(is, os, boxSegmentMap, jumbfBoxList.size());
                 } else {
-                    copyNextMarkerToOutputStream(is, os);
+                    jpegCodestreamParser.handleNextMarkerToOutputStream(is, os);
                 }
+
+                appMarkerAsHex = null;
             }
-        } catch (IOException e) {
-            throw new MipamsException(e);
+        } catch (IOException | MipamsException e) {
+            throw new JpegCodestreamException(e);
         }
-    }
-
-    private void copyStartOfScanMarker(InputStream is, OutputStream os) throws MipamsException, IOException {
-
-        int currentByte, previousByte = 0;
-
-        while (is.available() > 0) {
-
-            currentByte = CoreUtils.readSingleByteAsIntFromInputStream(is);
-            CoreUtils.writeIntAsSingleByteToOutputStream(currentByte, os);
-
-            if (checkTerminationOfScanMarker(previousByte, currentByte)) {
-                break;
-            }
-
-            previousByte = currentByte;
-        }
-    }
-
-    private boolean checkTerminationOfScanMarker(int previousByte, int currentByte) {
-
-        boolean previousByteTerminationCondition = previousByte == 0xFF;
-
-        boolean currentByteTerminationCondition = (currentByte != 0xFF) && (currentByte > 0x00)
-                && !(currentByte >= 0xD0 && currentByte <= 0xD7);
-
-        return previousByteTerminationCondition && currentByteTerminationCondition;
     }
 
     private void generateJumbfSegmentInApp11Marker(InputStream is, OutputStream os,
@@ -116,7 +91,7 @@ public class JpegCodestreamGenerator {
         String commonIdentifier = Integer.toHexString(CoreUtils.readTwoByteWordAsInt(commonIdentifierAsByteArray));
 
         if (!commonIdentifier.equalsIgnoreCase("4A50")) {
-            writeNextBytesToOutputStream(is, os, markerSegmentSize);
+            CoreUtils.writeBytesFromInputStreamToOutputstream(is, markerSegmentSize, os);
             return;
         }
 
@@ -143,31 +118,12 @@ public class JpegCodestreamGenerator {
             CoreUtils.writeLongToOutputStream(boxExtendedLength, os);
         }
 
-        writeNextBytesToOutputStream(is, os, markerSegmentSize);
+        CoreUtils.writeBytesFromInputStreamToOutputstream(is, markerSegmentSize, os);
 
-        deleteBoxSegment(boxSegmentMap, boxType, boxInstanceNumber, packetSequenceNumber);
+        jpegCodestreamParser.deleteBoxSegment(boxSegmentMap, boxType, boxInstanceNumber, packetSequenceNumber);
 
         if (boxSegmentMap.size() == numberOfNewJumbfBoxes) {
             appendNewBoxSegmentsToAsset(os, boxSegmentMap);
-        }
-    }
-
-    private void deleteBoxSegment(Map<String, List<BoxSegment>> boxSegmentMap, int boxType, int boxInstanceNumber,
-            int packetSequenceNumber) {
-
-        String boxSegmentId = String.format("%d-%d", boxType, boxInstanceNumber);
-
-        List<BoxSegment> boxSegmentList = boxSegmentMap.get(boxSegmentId);
-
-        for (BoxSegment bs : new ArrayList<>(boxSegmentList)) {
-            if (bs.getPacketSequenceNumber() == packetSequenceNumber) {
-                boxSegmentList.remove(bs);
-                CoreUtils.deleteFile(bs.getPayloadUrl());
-            }
-        }
-
-        if (boxSegmentList.isEmpty()) {
-            boxSegmentMap.remove(boxSegmentId);
         }
     }
 
@@ -211,27 +167,11 @@ public class JpegCodestreamGenerator {
         }
 
         CoreUtils.writeFileContentToOutput(boxSegment.getPayloadUrl(), os);
-
         CoreUtils.deleteFile(boxSegment.getPayloadUrl());
     }
 
-    private void copyNextMarkerToOutputStream(InputStream is, OutputStream os) throws MipamsException {
-        byte[] appMarkerAsByteArray = CoreUtils.readBytesFromInputStream(is, CoreUtils.WORD_BYTE_SIZE);
-
-        int markerSegmentSize = CoreUtils.readTwoByteWordAsInt(appMarkerAsByteArray);
-        CoreUtils.writeByteArrayToOutputStream(appMarkerAsByteArray, os);
-
-        writeNextBytesToOutputStream(is, os, markerSegmentSize - CoreUtils.WORD_BYTE_SIZE);
-    }
-
-    private void writeNextBytesToOutputStream(InputStream is, OutputStream os, long numberOfBytes)
-            throws MipamsException {
-
-        CoreUtils.writeBytesFromInputStreamToOutputstream(is, numberOfBytes, os);
-    }
-
     private void addBoxSegmentsFromJumbfBoxList(Map<String, List<BoxSegment>> boxSegmentMap,
-            List<JumbfBox> jumbfBoxList) throws MipamsException {
+            List<JumbfBox> jumbfBoxList) throws JpegCodestreamException {
         for (JumbfBox jumbfBox : jumbfBoxList) {
 
             int boxInstanceNumber = discoverBoxInstanceNumber(boxSegmentMap, jumbfBox);
@@ -244,7 +184,7 @@ public class JpegCodestreamGenerator {
     }
 
     private int discoverBoxInstanceNumber(Map<String, List<BoxSegment>> boxSegmentMap, JumbfBox jumbfBox)
-            throws MipamsException {
+            throws JpegCodestreamException {
 
         int boxInstanceNumber = 1;
 
@@ -264,11 +204,11 @@ public class JpegCodestreamGenerator {
             return boxInstanceNumber;
         }
 
-        throw new MipamsException("Could not issue a new box segment id");
+        throw new JpegCodestreamException("Could not issue a new box segment id");
     }
 
     private List<BoxSegment> getBoxSegmentsForJumbfBox(int boxInstanceNumber, JumbfBox jumbfBox)
-            throws MipamsException {
+            throws JpegCodestreamException {
 
         List<BoxSegment> boxSegmentList = new ArrayList<>();
 
@@ -278,12 +218,15 @@ public class JpegCodestreamGenerator {
         String boxSegmentId = String.format("%d-%d", jumbfBox.getTBox(), boxInstanceNumber);
         String jumbfFileUrl = CoreUtils.getFullPath(properties.getFileDirectory(), boxSegmentId);
 
-        coreGeneratorService.generateJumbfMetadataToFile(List.of(jumbfBox), jumbfFileUrl);
+        try {
+            coreGeneratorService.generateJumbfMetadataToFile(List.of(jumbfBox), jumbfFileUrl);
+        } catch (MipamsException e) {
+            throw new JpegCodestreamException(e);
+        }
 
         int packetSequence = 1;
 
         int maximumSegmentPayloadSize = CoreUtils.getMaximumSizeForBmffBoxInAPPSegment();
-
         int remainingBytesInSegment = maximumSegmentPayloadSize;
 
         try (InputStream is = new FileInputStream(jumbfFileUrl)) {
@@ -320,8 +263,8 @@ public class JpegCodestreamGenerator {
                 remainingBytesInSegment -= segmentPayloadBytes;
             }
 
-        } catch (IOException e) {
-            throw new MipamsException(e);
+        } catch (MipamsException | IOException e) {
+            throw new JpegCodestreamException(e);
         } finally {
             CoreUtils.deleteFile(jumbfFileUrl);
         }
@@ -330,23 +273,17 @@ public class JpegCodestreamGenerator {
     }
 
     public void stripJumbfMetadataWithUuidEqualTo(String assetUrl, String outputUrl, String targetUuid)
-            throws MipamsException {
+            throws JpegCodestreamException {
 
         Map<String, List<BoxSegment>> boxSegmentMap = jpegCodestreamParser.parseBoxSegmentMapFromFile(assetUrl);
-
-        List<String> targetboxSegmentIdList = getBoxSegmentIdFromUuid(boxSegmentMap, targetUuid);
 
         String appMarkerAsHex;
         try (InputStream is = new FileInputStream(assetUrl);
                 OutputStream os = new FileOutputStream(outputUrl);) {
 
-            appMarkerAsHex = CoreUtils.readTwoByteWordAsHex(is);
+            List<String> targetboxSegmentIdList = getBoxSegmentIdFromUuid(boxSegmentMap, targetUuid);
 
-            if (!CoreUtils.isStartOfImageAppMarker(appMarkerAsHex)) {
-                throw new MipamsException("Start of image (SOI) marker is missing.");
-            }
-
-            CoreUtils.writeByteArrayToOutputStream(DatatypeConverter.parseHexBinary(appMarkerAsHex), os);
+            jpegCodestreamParser.handleStartOfImage(is, os);
 
             while (is.available() > 0) {
 
@@ -360,20 +297,20 @@ public class JpegCodestreamGenerator {
                     if (CoreUtils.isEndOfImageAppMarker(appMarkerAsHex)) {
                         break;
                     } else if (CoreUtils.isStartOfScanMarker(appMarkerAsHex)) {
-                        copyStartOfScanMarker(is, os);
+                        jpegCodestreamParser.handleStartOfScanMarker(is, os);
                     } else {
-                        copyNextMarkerToOutputStream(is, os);
+                        jpegCodestreamParser.handleNextMarkerToOutputStream(is, os);
                     }
                 }
             }
 
-        } catch (IOException e) {
-            throw new MipamsException(e);
+        } catch (MipamsException | IOException e) {
+            throw new JpegCodestreamException(e);
         }
     }
 
     private List<String> getBoxSegmentIdFromUuid(Map<String, List<BoxSegment>> boxSegmentMap, String targetUuid)
-            throws MipamsException {
+            throws JpegCodestreamException {
 
         List<String> result = new ArrayList<>();
 
@@ -409,7 +346,7 @@ public class JpegCodestreamGenerator {
         if (!commonIdentifier.equalsIgnoreCase("4A50")) {
             CoreUtils.writeByteArrayToOutputStream(markerSegmentSizeAsByteArray, os);
             CoreUtils.writeByteArrayToOutputStream(commonIdentifierAsByteArray, os);
-            writeNextBytesToOutputStream(is, os, markerSegmentSize);
+            CoreUtils.writeBytesFromInputStreamToOutputstream(is, markerSegmentSize, os);
             return;
         }
 
@@ -447,6 +384,6 @@ public class JpegCodestreamGenerator {
             CoreUtils.writeLongToOutputStream(boxExtendedLength, os);
         }
 
-        writeNextBytesToOutputStream(is, os, markerSegmentSize);
+        CoreUtils.writeBytesFromInputStreamToOutputstream(is, markerSegmentSize, os);
     }
 }

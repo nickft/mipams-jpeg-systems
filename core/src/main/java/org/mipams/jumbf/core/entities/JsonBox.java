@@ -1,12 +1,5 @@
 package org.mipams.jumbf.core.entities;
 
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-@NoArgsConstructor
-@ToString
-@EqualsAndHashCode(callSuper = false)
 public class JsonBox extends MemoryBox {
 
     @Override
@@ -17,5 +10,10 @@ public class JsonBox extends MemoryBox {
     @Override
     public String getType() {
         return "json";
+    }
+
+    @Override
+    public String toString() {
+        return "JsonBox(" + super.toString() + ")";
     }
 }

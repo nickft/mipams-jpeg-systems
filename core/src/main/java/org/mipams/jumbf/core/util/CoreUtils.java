@@ -45,6 +45,10 @@ public class CoreUtils {
         writeByteArrayToOutputStream(convertIntToByteArray(val), outputStream);
     }
 
+    public static void writeIntAsTwoByteToOutputStream(int val, OutputStream outputStream) throws MipamsException {
+        writeByteArrayToOutputStream(convertIntToTwoByteArray(val), outputStream);
+    }
+
     public static void writeIntAsSingleByteToOutputStream(int val, OutputStream outputStream) throws MipamsException {
         writeByteArrayToOutputStream(convertIntToSingleElementByteArray(val), outputStream);
     }

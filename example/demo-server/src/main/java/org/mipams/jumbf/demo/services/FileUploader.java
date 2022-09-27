@@ -24,7 +24,7 @@ public class FileUploader {
 
     public String saveFileToDiskAndGetFileName(UploadRequest request, boolean randomTargetName) throws MipamsException {
 
-        String targetFileName = randomTargetName ? String.format("%s.jumbf", CoreUtils.randomStringGenerator())
+        String targetFileName = randomTargetName ? CoreUtils.randomStringGenerator()
                 : request.getFile().getOriginalFilename();
 
         String targetFilePath = CoreUtils.getFullPath(ASSET_DIRECTORY, targetFileName);

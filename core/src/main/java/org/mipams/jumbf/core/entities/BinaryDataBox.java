@@ -3,18 +3,9 @@ package org.mipams.jumbf.core.entities;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-@NoArgsConstructor
-@ToString
-@EqualsAndHashCode(callSuper = true)
 public class BinaryDataBox extends FileBox {
 
-    private @Getter @Setter boolean referencedExternally = false;
+    private boolean referencedExternally = false;
 
     @Override
     public int getTypeId() {
@@ -46,5 +37,18 @@ public class BinaryDataBox extends FileBox {
 
     private long getUrlSize() {
         return CoreUtils.addEscapeCharacterToText(getFileUrl()).length();
+    }
+
+    public boolean isReferencedExternally() {
+        return this.referencedExternally;
+    }
+
+    public void setReferencedExternally(boolean referencedExternally) {
+        this.referencedExternally = referencedExternally;
+    }
+
+    @Override
+    public String toString() {
+        return "BinaryDataBox(" + super.toString() + ", referencedExternally=" + referencedExternally + ")";
     }
 }

@@ -6,16 +6,9 @@ import java.io.OutputStream;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-@NoArgsConstructor
-@ToString
 public class AppParamHandler implements ParamHandlerInterface {
 
-    private @Getter @Setter Long offset;
+    private Long offset;
 
     @Override
     public void writeParamToBytes(OutputStream outputStream) throws MipamsException {
@@ -36,6 +29,19 @@ public class AppParamHandler implements ParamHandlerInterface {
 
     private long getOffsetSize() {
         return CoreUtils.LONG_BYTE_SIZE;
+    }
+
+    public Long getOffset() {
+        return this.offset;
+    }
+
+    public void setOffset(Long offset) {
+        this.offset = offset;
+    }
+
+    @Override
+    public String toString() {
+        return "AppParamHandler(offset=" + this.offset != null ? getOffset().toString() : "null" + ")";
     }
 
 }

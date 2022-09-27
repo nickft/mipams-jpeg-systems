@@ -5,22 +5,11 @@ import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.privacy_security.entities.replacement.ParamHandlerInterface;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-@NoArgsConstructor
-@ToString
-@EqualsAndHashCode(callSuper = true)
 public class ReplacementDescriptionBox extends BmffBox {
 
-    protected @Getter @Setter int replacementTypeId;
-    protected @Getter @Setter int toggle;
-
-    @EqualsAndHashCode.Exclude
-    protected @Getter @Setter ParamHandlerInterface paramHandler;
+    protected int replacementTypeId;
+    protected int toggle;
+    protected ParamHandlerInterface paramHandler;
 
     @Override
     public int getTypeId() {
@@ -51,5 +40,38 @@ public class ReplacementDescriptionBox extends BmffBox {
         int updatedToggle = CoreUtils.setBitValueAtGivenPosition(getToggle(), 0, val);
 
         setToggle(updatedToggle);
+    }
+
+    public int getReplacementTypeId() {
+        return this.replacementTypeId;
+    }
+
+    public void setReplacementTypeId(int replacementTypeId) {
+        this.replacementTypeId = replacementTypeId;
+    }
+
+    public int getToggle() {
+        return this.toggle;
+    }
+
+    public void setToggle(int toggle) {
+        this.toggle = toggle;
+    }
+
+    public ParamHandlerInterface getParamHandler() {
+        return this.paramHandler;
+    }
+
+    public void setParamHandler(ParamHandlerInterface paramHandler) {
+        this.paramHandler = paramHandler;
+    }
+
+    @Override
+    public String toString() {
+
+        final String paramHandlerInterface = this.paramHandler != null ? getParamHandler().toString() : "null";
+
+        return "ReplacementDescriptionBox(replacementTypeId=" + getReplacementTypeId() + ", toggle=" + getToggle()
+                + ", paramHandler=" + paramHandlerInterface + ")";
     }
 }

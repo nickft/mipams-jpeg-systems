@@ -2,11 +2,6 @@ package org.mipams.jumbf.privacy_security.entities.replacement;
 
 import org.mipams.jumbf.core.util.MipamsException;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-
-@AllArgsConstructor
 public enum ReplacementType {
 
     BOX("box", 0),
@@ -14,8 +9,13 @@ public enum ReplacementType {
     ROI("roi", 2),
     FILE("file", 3);
 
-    private @Getter @Setter String type;
-    private @Getter @Setter int id;
+    private String type;
+    private int id;
+
+    private ReplacementType(String type, int id) {
+        setType(type);
+        setId(id);
+    }
 
     public static ReplacementType getTypeFromString(String type) throws MipamsException {
         for (ReplacementType val : values()) {
@@ -38,5 +38,21 @@ public enum ReplacementType {
     static String getErrorMessage() {
         return String.format("Method is not supported. Supported methods are: %s, %s, %s, %s",
                 BOX.getType(), APP.getType(), ROI.getType(), FILE.getType());
+    }
+
+    public String getType() {
+        return this.type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

@@ -3,28 +3,19 @@ package org.mipams.jumbf.core.entities;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-@NoArgsConstructor
-@ToString
-@EqualsAndHashCode(callSuper = true)
 public class DescriptionBox extends BmffBox {
 
-    protected @Getter @Setter String uuid;
+    protected String uuid;
 
-    protected @Getter @Setter int toggle;
+    protected int toggle;
 
-    protected @Getter @Setter String label;
+    protected String label;
 
-    protected @Getter @Setter Integer id;
+    protected Integer id;
 
-    protected @Getter @Setter byte[] sha256Hash;
+    protected byte[] sha256Hash;
 
-    protected @Getter @Setter byte[] privateField;
+    protected byte[] privateField;
 
     @Override
     public int getTypeId() {
@@ -130,5 +121,71 @@ public class DescriptionBox extends BmffBox {
         }
 
         setToggle(toggle);
+    }
+
+    public String getUuid() {
+        return this.uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public int getToggle() {
+        return this.toggle;
+    }
+
+    public void setToggle(int toggle) {
+        this.toggle = toggle;
+    }
+
+    public String getLabel() {
+        return this.label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public Integer getId() {
+        return this.id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public byte[] getSha256Hash() {
+        return this.sha256Hash;
+    }
+
+    public void setSha256Hash(byte[] sha256Hash) {
+        this.sha256Hash = sha256Hash;
+    }
+
+    public byte[] getPrivateField() {
+        return this.privateField;
+    }
+
+    public void setPrivateField(byte[] privateField) {
+        this.privateField = privateField;
+    }
+
+    @Override
+    public String toString() {
+        final String uuid = this.uuid != null ? getUuid() : "null";
+        final String label = this.label != null ? getLabel() : "null";
+        final String id = this.id != null ? getId().toString() : "null";
+        final String sha256Hash = this.sha256Hash != null ? getSha256Hash().toString() : "null";
+        final String privateField = this.privateField != null ? getPrivateField().toString() : "null";
+
+        StringBuilder builder = new StringBuilder("DescriptionBox(");
+
+        builder.append(super.toString()).append(", ").append("uuid=").append(uuid).append(", ").append("toggle=")
+                .append(toggle).append(", ").append("label=").append(label).append(", ").append("id=").append(id)
+                .append(", ").append("sha256Hash=").append(sha256Hash).append(", ").append("privateField=")
+                .append(privateField).append(")");
+
+        return builder.toString();
     }
 }

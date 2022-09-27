@@ -16,19 +16,25 @@ import org.mipams.jumbf.crypto.entities.request.CryptoRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.AllArgsConstructor;
-
 // https://stackoverflow.com/questions/11410770/load-rsa-public-key-from-file
 
-@AllArgsConstructor
 public class ShaSignature implements DigitalSignatureScheme {
 
     private static final Logger logger = LoggerFactory.getLogger(ShaSignature.class);
 
-    private @Getter @Setter KeyPair credentials;
+    private KeyPair credentials;
+
+    public KeyPair getCredentials() {
+        return this.credentials;
+    }
+
+    public void setCredentials(KeyPair keyPair) {
+        this.credentials = keyPair;
+    }
+
+    public ShaSignature(KeyPair keyPair) {
+        setCredentials(keyPair);
+    }
 
     @Override
     public byte[] sign(CryptoRequest request) throws CryptoException {
@@ -51,7 +57,7 @@ public class ShaSignature implements DigitalSignatureScheme {
         }
     }
 
-    private byte[] signDigest(Signature signature, @NonNull String inputFile) throws CryptoException {
+    private byte[] signDigest(Signature signature, String inputFile) throws CryptoException {
         try (InputStream inputStream = new FileInputStream(inputFile)) {
             byte[] buffer = new byte[64];
 
@@ -91,7 +97,7 @@ public class ShaSignature implements DigitalSignatureScheme {
         }
     }
 
-    private boolean isSignatureValid(Signature signatureAlgorithm, @NonNull String inputFile, byte[] signature)
+    private boolean isSignatureValid(Signature signatureAlgorithm, String inputFile, byte[] signature)
             throws CryptoException {
         try (InputStream inputStream = new FileInputStream(inputFile)) {
             byte[] buffer = new byte[64];

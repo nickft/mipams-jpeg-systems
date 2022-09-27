@@ -25,3 +25,4 @@ services:
       - CHOKIDAR_USEPOLLING=true
     depends_on:
       - demo-server
+    stdin_open: true
