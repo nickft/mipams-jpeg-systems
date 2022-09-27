@@ -50,7 +50,6 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
 
         JsonBox jsonBox = new JsonBox();
         jsonBox.setContent(TEST_CONTENT.getBytes());
-        jsonBox.updateBmffHeadersBasedOnBox();
 
         JumbfBoxBuilder builder = new JumbfBoxBuilder(jsonContentType);
         builder.setLabel("Test label");
@@ -71,7 +70,6 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
 
         JsonBox jsonBox = new JsonBox();
         jsonBox.setContent(TEST_CONTENT.getBytes());
-        jsonBox.updateBmffHeadersBasedOnBox();
 
         JumbfBoxBuilder builder = new JumbfBoxBuilder(jsonContentType);
         builder.setId(12345);
@@ -94,7 +92,6 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
 
         JsonBox jsonBox = new JsonBox();
         jsonBox.setContent(TEST_CONTENT.getBytes());
-        jsonBox.updateBmffHeadersBasedOnBox();
 
         DescriptionBox dBox = new DescriptionBox();
 
@@ -124,7 +121,6 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
 
         JsonBox jsonBox = new JsonBox();
         jsonBox.setContent(TEST_CONTENT.getBytes());
-        jsonBox.updateBmffHeadersBasedOnBox();
 
         DescriptionBox dBox = new DescriptionBox();
         dBox.setUuid(jsonContentType.getContentTypeUuid());
@@ -142,5 +138,23 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
                 generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
             });
         }
+    }
+
+    @Test
+    void testJsonBoxWithLboxEqualsTo0() throws Exception {
+
+        JsonContentType jsonContentType = new JsonContentType();
+
+        JsonBox jsonBox = new JsonBox();
+        jsonBox.setContent(TEST_CONTENT.getBytes());
+
+        JumbfBoxBuilder builder = new JumbfBoxBuilder(jsonContentType);
+        builder.appendContentBox(jsonBox);
+
+        JumbfBox givenJumbfBox = builder.getResult();
+        givenJumbfBox.setLBox(0);
+
+        JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
+        assertEquals(givenJumbfBox, parsedJumbfBox);
     }
 }

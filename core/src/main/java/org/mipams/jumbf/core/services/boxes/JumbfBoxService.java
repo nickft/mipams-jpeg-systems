@@ -93,7 +93,7 @@ public final class JumbfBoxService extends BmffBoxService<JumbfBox> {
                 .getContentBoxServiceBasedOnContentUuid(contentTypeUuid);
 
         ParseMetadata contentParseMetadata = new ParseMetadata();
-        contentParseMetadata.setAvailableBytesForBox(nominalPayloadSize - actualSize);
+        contentParseMetadata.setAvailableBytesForBox(nominalPayloadSize != 0 ? nominalPayloadSize - actualSize : 0);
         contentParseMetadata.setParentDirectory(parseMetadata.getParentDirectory());
 
         List<BmffBox> contentBoxList = contentTypeService.parseContentBoxesFromJumbfFile(input, contentParseMetadata);
@@ -104,7 +104,7 @@ public final class JumbfBoxService extends BmffBoxService<JumbfBox> {
         if (!actualBoxSizeEqualsToSizeSpecifiedInBmffHeaders(jumbfBox)) {
 
             ParseMetadata paddingParseMetadata = new ParseMetadata();
-            paddingParseMetadata.setAvailableBytesForBox(nominalPayloadSize - actualSize);
+            paddingParseMetadata.setAvailableBytesForBox(nominalPayloadSize != 0 ? nominalPayloadSize - actualSize : 0);
             paddingParseMetadata.setParentDirectory(parseMetadata.getParentDirectory());
 
             PaddingBox paddingBox = paddingBoxService.parseFromJumbfFile(input, paddingParseMetadata);

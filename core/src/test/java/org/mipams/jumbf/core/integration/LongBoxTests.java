@@ -46,7 +46,6 @@ public class LongBoxTests extends AbstractIntegrationTests {
 
         JsonBox jsonBox = new JsonBox();
         jsonBox.setContent(TEST_CONTENT.getBytes());
-        jsonBox.updateBmffHeadersBasedOnBox();
 
         JumbfBoxBuilder builder = new JumbfBoxBuilder(jsonContentType);
         builder.setId(12345);

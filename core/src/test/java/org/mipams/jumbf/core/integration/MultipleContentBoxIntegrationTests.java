@@ -76,7 +76,6 @@ public class MultipleContentBoxIntegrationTests extends AbstractIntegrationTests
 
         JsonBox jsonBox = new JsonBox();
         jsonBox.setContent(TEST_CONTENT.getBytes());
-        jsonBox.updateBmffHeadersBasedOnBox();
 
         JumbfBoxBuilder builder = new JumbfBoxBuilder(jsonContentType);
         builder.appendContentBox(jsonBox);
@@ -90,7 +89,6 @@ public class MultipleContentBoxIntegrationTests extends AbstractIntegrationTests
 
         XmlBox xmlBox = new XmlBox();
         xmlBox.setContent(TEST_CONTENT.getBytes());
-        xmlBox.updateBmffHeadersBasedOnBox();
 
         JumbfBoxBuilder builder = new JumbfBoxBuilder(xmlContentType);
         builder.appendContentBox(xmlBox);
@@ -103,7 +101,6 @@ public class MultipleContentBoxIntegrationTests extends AbstractIntegrationTests
 
         ContiguousCodestreamBox jp2cBox = new ContiguousCodestreamBox();
         jp2cBox.setFileUrl(TEST_FILE_PATH);
-        jp2cBox.updateBmffHeadersBasedOnBox();
 
         JumbfBoxBuilder builder = new JumbfBoxBuilder(contentType);
         builder.appendContentBox(jp2cBox);
@@ -116,7 +113,6 @@ public class MultipleContentBoxIntegrationTests extends AbstractIntegrationTests
 
         CborBox cborBox = new CborBox();
         cborBox.setContent(TEST_CONTENT.getBytes());
-        cborBox.updateBmffHeadersBasedOnBox();
 
         JumbfBoxBuilder builder = new JumbfBoxBuilder(cborContentType);
         builder.appendContentBox(cborBox);

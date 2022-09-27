@@ -52,14 +52,12 @@ public class EmbeddedFileBoxIntegrationTests extends AbstractIntegrationTests {
         embeddedFileDescriptionBox.setMediaTypeFromString("image/jpeg");
         embeddedFileDescriptionBox.computeAndSetToggleBasedOnFields();
         embeddedFileDescriptionBox.markFileAsExternallyReferenced();
-        embeddedFileDescriptionBox.updateBmffHeadersBasedOnBox();
 
         assertEquals(TEST_FILE_NAME, embeddedFileDescriptionBox.discoverFileName());
 
         BinaryDataBox binaryDataBox = new BinaryDataBox();
         binaryDataBox.setReferencedExternally(true);
         binaryDataBox.setFileUrl("http://example.org/test.jpeg");
-        binaryDataBox.updateBmffHeadersBasedOnBox();
 
         List<BmffBox> contentBoxes = List.of(embeddedFileDescriptionBox, binaryDataBox);
 

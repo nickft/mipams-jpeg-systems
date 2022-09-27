@@ -263,7 +263,8 @@ public class CoreUtils {
         try {
             int actualBytes = 0, n;
 
-            while ((actualBytes < nominalTotalSizeInBytes) && ((n = input.read()) != -1)) {
+            while ((nominalTotalSizeInBytes == 0 || actualBytes < nominalTotalSizeInBytes)
+                    && ((n = input.read()) != -1)) {
                 outputStream.write(n);
                 actualBytes++;
             }

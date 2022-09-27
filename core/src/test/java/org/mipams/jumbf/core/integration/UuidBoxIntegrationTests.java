@@ -48,7 +48,6 @@ public class UuidBoxIntegrationTests extends AbstractIntegrationTests {
         UuidBox uuidBox = new UuidBox();
         uuidBox.setUuid(CoreUtils.randomStringGenerator().toUpperCase());
         uuidBox.setFileUrl(TEST_FILE_PATH);
-        uuidBox.updateBmffHeadersBasedOnBox();
 
         JumbfBoxBuilder builder = new JumbfBoxBuilder(uuidContentType);
         builder.setPaddingSize(10);

@@ -89,8 +89,14 @@ public abstract class BmffBoxService<T extends BmffBox> implements BoxServiceInt
     }
 
     public boolean actualBoxSizeEqualsToSizeSpecifiedInBmffHeaders(T box) throws MipamsException {
-        long actualBoxSize = box.calculateSizeFromBox();
+
         long boxSizeAsInBmffHeaders = box.getBoxSizeFromBmffHeaders();
+
+        if (boxSizeAsInBmffHeaders == 0) {
+            return true;
+        }
+
+        long actualBoxSize = box.calculateSizeFromBox();
 
         return (actualBoxSize == boxSizeAsInBmffHeaders);
     }

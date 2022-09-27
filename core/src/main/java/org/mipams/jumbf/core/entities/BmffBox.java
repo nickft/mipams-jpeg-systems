@@ -18,6 +18,10 @@ public abstract class BmffBox implements BoxInterface {
 
     public final long getPayloadSizeFromBmffHeaders() {
 
+        if (shouldReadUntilEOF()) {
+            return 0;
+        }
+
         long payloadSize = getBoxSizeFromBmffHeaders();
 
         payloadSize -= getLBoxSize() + getTBoxSize();
@@ -27,6 +31,10 @@ public abstract class BmffBox implements BoxInterface {
         }
 
         return payloadSize;
+    }
+
+    private boolean shouldReadUntilEOF() {
+        return getLBox() == 0;
     }
 
     public final long getBoxSizeFromBmffHeaders() {
