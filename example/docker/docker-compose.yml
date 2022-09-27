@@ -8,6 +8,11 @@ services:
       - 8081:8080
     environment:
       org_mipams_core_image_folder: "/app/assets"
+      org_mipams_core_max_file_size_in_bytes: 52428800
+      org_mipams_core: "INFO"
+      spring_servlet_multipart_max-file-size: 128MB
+      spring_servlet_multipart_max-request-size: 128MB
+      spring_servlet_multipart_enabled: "true"
   demo-client:
     image: demo-client:latest
     build:
