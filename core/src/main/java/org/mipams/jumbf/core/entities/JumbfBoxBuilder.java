@@ -50,8 +50,8 @@ public class JumbfBoxBuilder {
         this.jumbfBox.getDescriptionBox().setSha256Hash(digest);
     }
 
-    public void setPrivateField(byte[] privateFieldContent) {
-        this.jumbfBox.getDescriptionBox().setPrivateField(privateFieldContent);
+    public void setPrivateField(BmffBox privateField) {
+        this.jumbfBox.getDescriptionBox().setPrivateField(privateField);
     }
 
     public void setPaddingSize(long numberOfBytes) throws MipamsException {

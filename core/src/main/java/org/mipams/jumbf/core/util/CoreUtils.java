@@ -14,6 +14,7 @@ import java.util.UUID;
 
 import org.mipams.jumbf.core.entities.JumbfBox;
 import org.mipams.jumbf.core.entities.PaddingBox;
+import org.mipams.jumbf.core.entities.PrivateBox;
 import org.springframework.http.MediaType;
 
 public class CoreUtils {
@@ -453,6 +454,32 @@ public class CoreUtils {
 
         try {
             result = (tBox == paddingBox.getTypeId());
+
+            if (!input.markSupported()) {
+                throw new MipamsException("Input Stream does not support marking.");
+            }
+
+            input.reset();
+        } catch (IOException e) {
+            throw new MipamsException(e);
+        }
+
+        return result;
+    }
+
+    public static boolean isPrivateBoxNext(InputStream input) throws MipamsException {
+
+        input.mark(16);
+
+        readIntFromInputStream(input);
+        int tBox = readIntFromInputStream(input);
+
+        boolean result = false;
+
+        PrivateBox privateBox = new PrivateBox();
+
+        try {
+            result = (tBox == privateBox.getTypeId());
 
             if (!input.markSupported()) {
                 throw new MipamsException("Input Stream does not support marking.");

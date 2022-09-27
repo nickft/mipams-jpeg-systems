@@ -15,7 +15,7 @@ public class DescriptionBox extends BmffBox {
 
     protected byte[] sha256Hash;
 
-    protected byte[] privateField;
+    protected BmffBox privateField;
 
     @Override
     public int getTypeId() {
@@ -72,8 +72,8 @@ public class DescriptionBox extends BmffBox {
         return 32;
     }
 
-    long getPrivateFieldSize() {
-        return getPrivateField().length;
+    long getPrivateFieldSize() throws MipamsException {
+        return getPrivateField().calculateSizeFromBox();
     }
 
     public void setAsRequestable() {
@@ -163,11 +163,11 @@ public class DescriptionBox extends BmffBox {
         this.sha256Hash = sha256Hash;
     }
 
-    public byte[] getPrivateField() {
+    public BmffBox getPrivateField() {
         return this.privateField;
     }
 
-    public void setPrivateField(byte[] privateField) {
+    public void setPrivateField(BmffBox privateField) {
         this.privateField = privateField;
     }
 
@@ -184,7 +184,7 @@ public class DescriptionBox extends BmffBox {
         builder.append(super.toString()).append(", ").append("uuid=").append(uuid).append(", ").append("toggle=")
                 .append(toggle).append(", ").append("label=").append(label).append(", ").append("id=").append(id)
                 .append(", ").append("sha256Hash=").append(sha256Hash).append(", ").append("privateField=")
-                .append(privateField).append(")");
+                .append(privateField.toString()).append(")");
 
         return builder.toString();
     }

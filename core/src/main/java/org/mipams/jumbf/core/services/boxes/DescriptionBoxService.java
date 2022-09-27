@@ -1,5 +1,6 @@
 package org.mipams.jumbf.core.services.boxes;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -7,9 +8,11 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.mipams.jumbf.core.ContentTypeDiscoveryManager;
+import org.mipams.jumbf.core.BmffBoxServiceDiscoveryManager;
+import org.mipams.jumbf.core.entities.BmffBox;
 import org.mipams.jumbf.core.entities.DescriptionBox;
 import org.mipams.jumbf.core.entities.ParseMetadata;
+import org.mipams.jumbf.core.entities.PrivateBox;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
@@ -22,7 +25,10 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
     private static final Logger logger = LoggerFactory.getLogger(DescriptionBoxService.class);
 
     @Autowired
-    ContentTypeDiscoveryManager contentBoxDiscoveryManager;
+    BmffBoxServiceDiscoveryManager bmffBoxServiceDiscoveryManager;
+
+    @Autowired
+    PrivateBoxService privateBoxService;
 
     ServiceMetadata serviceMetadata;
 
@@ -63,7 +69,13 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
         }
 
         if (descriptionBox.privateFieldExists()) {
-            CoreUtils.writeByteArrayToOutputStream(descriptionBox.getPrivateField(), outputStream);
+            if (descriptionBox.getPrivateField().getClass().equals(PrivateBox.class)) {
+                privateBoxService.writeToJumbfFile((PrivateBox) descriptionBox.getPrivateField(), outputStream);
+            } else {
+                BmffBoxService service = bmffBoxServiceDiscoveryManager
+                        .getBmffBoxServiceBasedOnTbox(descriptionBox.getPrivateField().getTBox());
+                service.writeToJumbfFile(descriptionBox.getPrivateField(), outputStream);
+            }
         }
     }
 
@@ -99,16 +111,40 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
             availableBytesForBox -= 32;
         }
 
+        ParseMetadata metadata = new ParseMetadata();
+        metadata.setAvailableBytesForBox(availableBytesForBox);
+        metadata.setParentDirectory(parseMetadata.getParentDirectory());
+
+        BmffBox privateBox;
         if (descriptionBox.privateFieldExists()) {
-
-            if (availableBytesForBox <= 8) {
-                throw new MipamsException("The size of Private Field shall be more than 8 bytes");
+            if (CoreUtils.isPrivateBoxNext(input)) {
+                privateBox = privateBoxService.parseFromJumbfFile(input, metadata);
+            } else {
+                BmffBoxService service = getBmffBoxService(input);
+                privateBox = service.parseFromJumbfFile(input, parseMetadata);
             }
-
-            descriptionBox.setPrivateField(CoreUtils.readBytesFromInputStream(input, availableBytesForBox));
+            descriptionBox.setPrivateField(privateBox);
         }
 
         logger.debug("Discovered box: " + descriptionBox.toString());
     }
 
+    @SuppressWarnings("rawtypes")
+    private BmffBoxService getBmffBoxService(InputStream input) throws MipamsException {
+        input.mark(16);
+
+        CoreUtils.readIntFromInputStream(input);
+        int tBox = CoreUtils.readIntFromInputStream(input);
+
+        try {
+            if (!input.markSupported()) {
+                throw new MipamsException("Input Stream does not support marking.");
+            }
+
+            input.reset();
+            return bmffBoxServiceDiscoveryManager.getBmffBoxServiceBasedOnTbox(tBox);
+        } catch (IOException e) {
+            throw new MipamsException(e);
+        }
+    }
 }

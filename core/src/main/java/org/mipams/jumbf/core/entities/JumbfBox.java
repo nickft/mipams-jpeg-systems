@@ -1,5 +1,6 @@
 package org.mipams.jumbf.core.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.mipams.jumbf.core.util.MipamsException;
@@ -7,7 +8,7 @@ import org.mipams.jumbf.core.util.MipamsException;
 public class JumbfBox extends BmffBox {
 
     protected DescriptionBox descriptionBox;
-    protected List<BmffBox> contentBoxList;
+    protected List<BmffBox> contentBoxList = new ArrayList<>();
     protected PaddingBox paddingBox;
 
     @Override
