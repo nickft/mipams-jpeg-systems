@@ -1,5 +1,6 @@
 package org.mipams.jumbf.core.services.boxes;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.mipams.jumbf.core.entities.ParseMetadata;
 import org.mipams.jumbf.core.entities.ServiceMetadata;
 import org.mipams.jumbf.core.services.content_types.ContentTypeService;
 import org.mipams.jumbf.core.ContentTypeDiscoveryManager;
+import org.mipams.jumbf.core.util.CoreUtils;
 import org.mipams.jumbf.core.util.MipamsException;
 
 import org.slf4j.Logger;
@@ -101,14 +103,19 @@ public final class JumbfBoxService extends BmffBoxService<JumbfBox> {
 
         actualSize += jumbfBox.calculateContentBoxListSize(contentBoxList);
 
-        if (!actualBoxSizeEqualsToSizeSpecifiedInBmffHeaders(jumbfBox)) {
+        try {
+            if (input.available() > 0 && CoreUtils.isPaddingBoxNext(input)) {
 
-            ParseMetadata paddingParseMetadata = new ParseMetadata();
-            paddingParseMetadata.setAvailableBytesForBox(nominalPayloadSize != 0 ? nominalPayloadSize - actualSize : 0);
-            paddingParseMetadata.setParentDirectory(parseMetadata.getParentDirectory());
+                ParseMetadata paddingParseMetadata = new ParseMetadata();
+                paddingParseMetadata
+                        .setAvailableBytesForBox(nominalPayloadSize != 0 ? nominalPayloadSize - actualSize : 0);
+                paddingParseMetadata.setParentDirectory(parseMetadata.getParentDirectory());
 
-            PaddingBox paddingBox = paddingBoxService.parseFromJumbfFile(input, paddingParseMetadata);
-            jumbfBox.setPaddingBox(paddingBox);
+                PaddingBox paddingBox = paddingBoxService.parseFromJumbfFile(input, paddingParseMetadata);
+                jumbfBox.setPaddingBox(paddingBox);
+            }
+        } catch (IOException e) {
+            throw new MipamsException(e);
         }
 
         logger.debug("Discovered box: " + jumbfBox.toString());

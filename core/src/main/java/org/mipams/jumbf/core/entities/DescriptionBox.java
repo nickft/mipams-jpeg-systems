@@ -100,12 +100,14 @@ public class DescriptionBox extends BmffBox {
         return CoreUtils.isBitAtGivenPositionSet(toggle, 4);
     }
 
-    public void computeAndSetToggleBasedOnFields() {
+    public void computeAndSetToggleBasedOnFields() throws MipamsException {
 
-        int toggle = 0;
+        if (isRequestable() && getLabel() == null) {
+            throw new MipamsException("A requestable Description Box must have a non-empty Label");
+        }
 
         if (getLabel() != null) {
-            toggle = 3;
+            toggle = toggle | 2;
         }
 
         if (getId() != null) {

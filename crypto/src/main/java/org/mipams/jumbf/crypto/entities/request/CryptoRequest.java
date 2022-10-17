@@ -19,7 +19,7 @@ public class CryptoRequest {
     }
 
     public String getContentFileUrl() {
-        return this.cryptoMethod;
+        return this.contentFileUrl;
     }
 
     public void setContentFileUrl(String contentFileUrl) {

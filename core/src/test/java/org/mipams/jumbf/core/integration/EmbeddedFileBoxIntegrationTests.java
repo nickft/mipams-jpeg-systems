@@ -50,7 +50,6 @@ public class EmbeddedFileBoxIntegrationTests extends AbstractIntegrationTests {
         EmbeddedFileDescriptionBox embeddedFileDescriptionBox = new EmbeddedFileDescriptionBox();
         embeddedFileDescriptionBox.setFileName(TEST_FILE_NAME);
         embeddedFileDescriptionBox.setMediaTypeFromString("image/jpeg");
-        embeddedFileDescriptionBox.computeAndSetToggleBasedOnFields();
         embeddedFileDescriptionBox.markFileAsExternallyReferenced();
 
         assertEquals(TEST_FILE_NAME, embeddedFileDescriptionBox.discoverFileName());
@@ -79,7 +78,6 @@ public class EmbeddedFileBoxIntegrationTests extends AbstractIntegrationTests {
         EmbeddedFileDescriptionBox embeddedFileDescriptionBox = new EmbeddedFileDescriptionBox();
         embeddedFileDescriptionBox.setMediaTypeFromString("image/jpeg");
         embeddedFileDescriptionBox.markFileAsInternallyReferenced();
-        embeddedFileDescriptionBox.computeAndSetToggleBasedOnFields();
         embeddedFileDescriptionBox.updateBmffHeadersBasedOnBox();
 
         assertTrue(!TEST_FILE_NAME.equals(embeddedFileDescriptionBox.discoverFileName()));

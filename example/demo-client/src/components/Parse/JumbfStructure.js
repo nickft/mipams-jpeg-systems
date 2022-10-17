@@ -13,6 +13,8 @@ import { Box } from '@mui/system';
 import { IconButton } from '@mui/material';
 import OpenInNewOutlinedIcon from '@mui/icons-material/OpenInNewOutlined';
 
+import { getRandomInt } from '../../utils/helpers';
+
 
 
 function isJumbf(bmffBox) {
@@ -29,7 +31,7 @@ const JumbfStructure = (props) => {
 
     function getLeafBmffNode(id, bmffNode) {
 
-        const arr = ['boxSize', 'requestable', 'lbox', 'tbox', 'xboxEnabled', 'xlBox', 'payloadSizeFromBmffHeaders', 'boxSizeFromBmffHeaders', 'labelWithEscapeCharacter', 'typeId', 'type'];
+        const arr = ['boxSize', 'requestable', 'lbox', 'tbox', 'xboxEnabled', 'xlBox', 'payloadSizeFromBmffHeaders', 'boxSizeFromBmffHeaders', 'labelWithEscapeCharacter', 'typeId', 'type', 'randomFileName', 'mediaTypeSize', 'fileNameSize', 'toggleSize'];
 
         id += 1
         const parentId = id;
@@ -53,6 +55,19 @@ const JumbfStructure = (props) => {
                         <OpenInNewOutlinedIcon />
                     </IconButton>
                 </Box>
+            } else if (key === 'privateField') {
+                const objectNode = bmffNode['' + key + ''];
+
+                if (!objectNode) {
+                    label = key + ": null";
+                }
+                else if (objectNode.type === 'priv') {
+                    label = key + ": Superbox with type 'priv' and " + objectNode.contentBoxList.length + " contents";
+                } else {
+                    label = key + ": BMFF Box with type '" + objectNode.type + "'";
+                }
+            } else if (key === 'mediaType') {
+                label = key + ": " + bmffNode['' + key + ''].type + "/" + bmffNode['' + key + ''].subtype;
             } else {
                 label = key + ": " + bmffNode['' + key + ''];
             }
@@ -96,6 +111,22 @@ const JumbfStructure = (props) => {
                 const contentListInfo = getTreeItemsForBmffList(descriptionInfo.id, box['contentBoxList']);
                 lastUsedId = contentListInfo[contentListInfo.length - 1].id;
 
+                let paddingBoxNode = null;
+
+                if (box['paddingBox']) {
+
+                    const sId = getRandomInt(1000);
+
+                    paddingBoxNode = <TreeItem
+                        expanded={expandedList}
+                        key={sId}
+                        nodeId={sId.toString()}
+                        label={<BmffBoxLabel bmffNode={box['paddingBox']} />}
+                    />;
+                }
+
+
+
                 output = <TreeItem
                     key={id}
                     nodeId={id.toString()}
@@ -112,6 +143,7 @@ const JumbfStructure = (props) => {
                 >
                     {descriptionInfo.output}
                     {contentListInfo.map(object => (object.output))}
+                    {paddingBoxNode}
                 </TreeItem>
 
             } else {

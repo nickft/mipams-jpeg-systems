@@ -18,6 +18,13 @@
 	<name>Jumbf Core Module</name>
 	<description>Module that contains the implementation of the core JUMBF structure</description>
 	
+	<dependencies>
+		<dependency>
+    		<groupId>com.fasterxml.jackson.dataformat</groupId>
+    		<artifactId>jackson-dataformat-cbor</artifactId>
+    		<version>2.13.2</version>
+		</dependency>
+	</dependencies>
 	<build>
         <plugins>
             <plugin>

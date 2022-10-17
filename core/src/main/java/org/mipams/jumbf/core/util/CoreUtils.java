@@ -169,7 +169,7 @@ public class CoreUtils {
 
         writeBytesFromInputStreamToOutputstream(input, numberOfBytes, outputStream);
 
-        if (numberOfBytes != outputStream.toByteArray().length) {
+        if (numberOfBytes != 0 && numberOfBytes != outputStream.toByteArray().length) {
             throw new MipamsException("Failed to read requested bytes from input stream");
         }
 

@@ -30,6 +30,7 @@ export const bmffBoxTypeToText = {
     'cbor': 'CBOR box',
     'uuid': 'UUID box',
     'pspd': 'Protection Description box',
-    'psrd': 'Replacement Description box'
+    'psrd': 'Replacement Description box',
+    'free': 'Padding box',
 
 }

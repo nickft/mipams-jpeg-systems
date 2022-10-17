@@ -69,10 +69,7 @@ public class EmbeddedFileDescriptionBoxService extends BmffBoxService<EmbeddedFi
         embeddedFileDescriptionBox.setMediaTypeFromString(mediaTypeAsString);
 
         String fileName = embeddedFileDescriptionBox.fileNameExists() ? CoreUtils.readStringFromInputStream(input)
-                : embeddedFileDescriptionBox.getRandomFileName();
-
-        CoreUtils.addEscapeCharacterToText(fileName).length();
-
+                : null;
         embeddedFileDescriptionBox.setFileName(fileName);
 
         logger.debug("Discovered box: " + embeddedFileDescriptionBox.toString());

@@ -46,8 +46,6 @@ public class EmbeddedFileDescriptionBoxParser extends BmffBoxParser<EmbeddedFile
         } else {
             embeddedFileDescriptionBox.markFileAsExternallyReferenced();
         }
-
-        embeddedFileDescriptionBox.computeAndSetToggleBasedOnFields();
     }
 
 }
