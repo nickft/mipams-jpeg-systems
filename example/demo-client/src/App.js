@@ -17,7 +17,7 @@ theme = responsiveFontSizes(theme);
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <BrowserRouter>
+      <BrowserRouter basename='/jumbf'>
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />

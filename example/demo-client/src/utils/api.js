@@ -1,8 +1,9 @@
 import axios from 'axios';
 
+export function getBaseURL(path = "") {
+    return `/api/${path}`;
+}
+
 export const api = axios.create({
-    baseURL: 'http://localhost:8081',
-    headers: {
-        'Access-Control-Allow-Origin': 'http://localhost:3001'
-    },
+    baseURL: getBaseURL(),
 })

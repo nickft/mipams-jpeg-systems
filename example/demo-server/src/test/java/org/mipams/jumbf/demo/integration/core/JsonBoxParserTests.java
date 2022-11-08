@@ -48,7 +48,7 @@ public class JsonBoxParserTests extends AbstractParserTests {
 
     @Test
     void testGenerateJsonFileBoxRequestWithPathNotSpecified() throws Exception {
-        mockMvc.perform(post("/demo/generateBox")
+        mockMvc.perform(post("/api/demo/generateBox")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(generateJsonFileBoxRequestWithFileNameNotSpecified()))
                 .andExpect(status().isBadRequest());

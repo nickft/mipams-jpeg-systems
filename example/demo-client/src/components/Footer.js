@@ -22,7 +22,7 @@ const Footer = () => {
         <FooterWrapper>
             <Typography variant="p">
                 {"For more information visit "}
-                <a href="https://github.com/nickft/mipams-jumbf" target="_blank" rel="noreferrer">
+                <a href="https://github.com/DMAG-UPC/mipams-jumbf" target="_blank" rel="noreferrer">
                     here
                 </a>
             </Typography>

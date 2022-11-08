@@ -32,7 +32,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 @RestController
-@RequestMapping("/demo")
+@RequestMapping("/api/demo")
 public class DemoController {
 
     private static final Logger logger = LoggerFactory.getLogger(DemoController.class);

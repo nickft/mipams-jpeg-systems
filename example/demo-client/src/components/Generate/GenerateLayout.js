@@ -3,6 +3,7 @@ import { styled } from '@mui/material/styles';
 import React from 'react'
 import FileList from './FileList';
 import JsonEditor from './JsonEditor';
+import { getBaseURL } from '../../utils/api';
 
 const StyledBox = styled(Box)(({ theme }) => ({
     margin: theme.spacing(1),
@@ -116,7 +117,7 @@ const GenerateLayout = (props) => {
                 {download ?
 
                     <a
-                        href={jumbfFileName ? "http://localhost:8081/demo/download?targetFile=" + jumbfFileName : "http://localhost:8081/demo/download"}
+                        href={jumbfFileName ? getBaseURL(`/demo/download?targetFile=${jumbfFileName}`) : getBaseURL("/demo/download")}
                         download={jumbfFileName ? jumbfFileName : "test.jumbf"}
                         style={{ textDecoration: 'none' }}
                     >

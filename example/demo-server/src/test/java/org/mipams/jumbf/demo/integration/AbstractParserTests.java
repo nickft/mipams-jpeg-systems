@@ -55,11 +55,11 @@ public abstract class AbstractParserTests {
     }
 
     protected void testParseBoxFromFile(String fileName) throws Exception {
-        mockMvc.perform(get("/demo/parseMetadata?fileName=" + fileName)).andExpect(status().isOk());
+        mockMvc.perform(get("/api/demo/parseMetadata?fileName=" + fileName)).andExpect(status().isOk());
     }
 
     protected void testGenerateBoxEndpoint(String requestBody) throws Exception {
-        mockMvc.perform(post("/demo/generateBox")
+        mockMvc.perform(post("/api/demo/generateBox")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isOk());

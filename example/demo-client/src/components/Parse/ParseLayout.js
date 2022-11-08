@@ -4,8 +4,9 @@ import React from 'react'
 import { styled } from '@mui/material/styles';
 import { Button, Alert } from '@mui/material';
 
-import JumbfStructure from './JumbfStructure'
+import JumbfStructure from './JumbfStructure';
 
+import { getBaseURL } from '../../utils/api';
 
 const StyledBox = styled(Box)(({ theme }) => ({
     padding: theme.spacing(1),
@@ -59,7 +60,7 @@ const ParseLayout = React.forwardRef((props, ref) => {
 
     let extractButton = (parsedFileName)
         ? <a
-            href={"http://localhost:8081/demo/extractJumbf?fileName=" + parsedFileName}
+            href={getBaseURL(`/demo/extractJumbf?fileName=${parsedFileName}`)}
             download={"jumbf-standalone.jumbf"}
             style={{ textDecoration: 'none' }}
         >
@@ -105,7 +106,7 @@ const ParseLayout = React.forwardRef((props, ref) => {
                     <label htmlFor="contained-button-file">
                         <Input accept="*" id="contained-button-file" multiple type="file" onChange={handleFileUploadChange} />
                         <Button disabled={loading} variant="contained" component="span" onClick={onFileUploadClick}>
-                            Upload JUMBF File
+                            Upload File
                         </Button>
                     </label>
                 </StyledBox>

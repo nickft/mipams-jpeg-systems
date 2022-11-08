@@ -51,7 +51,7 @@ public class BadRequestParserTests {
 
         String nonExistentFileName = "test32.jumbf";
 
-        mockMvc.perform(post("/demo/generateBox?targetFile=" + nonExistentFileName)
+        mockMvc.perform(post("/api/demo/generateBox?targetFile=" + nonExistentFileName)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(getRequestBody())).andExpect(status().isBadRequest());
     }
@@ -60,7 +60,7 @@ public class BadRequestParserTests {
     void parseBoxFromMetadata() throws Exception {
         String nonExistentFileName = "test32.jumbf";
 
-        mockMvc.perform(get("/demo/parseMetadata?fileName=" + nonExistentFileName))
+        mockMvc.perform(get("/api/demo/parseMetadata?fileName=" + nonExistentFileName))
                 .andExpect(status().isBadRequest());
     }
 }
