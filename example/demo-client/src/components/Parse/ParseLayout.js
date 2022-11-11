@@ -1,126 +1,73 @@
-import { Box, Modal, Paper } from '@mui/material'
+import { Alert, Box, Card, IconButton, Modal, Stack, Typography } from '@mui/material'
 import React from 'react'
-
+import CloseIcon from '@mui/icons-material/Close';
 import { styled } from '@mui/material/styles';
-import { Button, Alert } from '@mui/material';
+import IntroParseLayout from './IntroParseLayout';
+import ResultParseLayout from './ResultParseLayout';
 
-import JumbfStructure from './JumbfStructure';
-
-import { getBaseURL } from '../../utils/api';
-
-const StyledBox = styled(Box)(({ theme }) => ({
-    padding: theme.spacing(1),
+const ModalBox = styled(Box)(({ theme }) => ({
+    border: 'none',
+    width: '70%',
+    height: '70vh',
+    overflow: 'auto',
+    backgroundColor: 'white',
+    padding: theme.spacing(2),
+    display: 'flex',
+    flexDirection: 'column',
 }));
 
-const Input = styled('input')({
-    display: 'none',
-});
+const ModalStack = styled(Stack)(({ theme }) => ({
+    paddingBottom: theme.spacing(2),
+    flexGrow: 0,
+    width: '100%',
+    justifyContent: 'space-between',
+}));
+
 
 const ParseLayout = React.forwardRef((props, ref) => {
 
     const {
         jumbfStructure,
+        uploadedFileName,
         parsedFileName,
-        errorMessage,
-        setErrorMessage,
-        expandedList,
-        handleToggle,
         loading,
         handleFileUploadChange,
         onFileUploadClick,
         modalContent,
         addModalContent,
         closeModalContent,
+        expandedList,
+        handleToggle,
+        errorMessage,
+        setErrorMessage,
     } = props;
 
-    let output = null;
+    let errorMessageComponent = (errorMessage) ? <Alert severity="error" onClose={() => setErrorMessage(null)} sx={{ flex: '0' }}>
+        Error parsing the file: {errorMessage}
+    </Alert > : null;
 
-    if (errorMessage) {
-        output = <Alert severity="error" onClose={() => setErrorMessage(null)} sx={{ flex: '0' }}>
-            Error parsing the file: {errorMessage}
-        </Alert >
-    } else if (jumbfStructure) {
-        output =
-            <Paper
-                elevation={3}
-                sx={{
-                    flex: 'auto',
-                    overflowY: 'auto',
-                    overflowX: 'auto',
-                }}
-            >
-                <JumbfStructure
-                    jumbfStructure={jumbfStructure}
-                    expandedList={expandedList}
-                    handleToggle={handleToggle}
-                    addModalContent={addModalContent}
-                />
-            </Paper>
+    let output = <IntroParseLayout
+        handleFileUploadChange={handleFileUploadChange}
+        onFileUploadClick={onFileUploadClick}
+        loading={loading}
+    />;
+
+    if (jumbfStructure) {
+        output = <ResultParseLayout
+            jumbfStructure={jumbfStructure}
+            addModalContent={addModalContent}
+            expandedList={expandedList}
+            handleToggle={handleToggle}
+            uploadedFileName={uploadedFileName}
+            parsedFileName={parsedFileName}
+            loading={loading}
+        />;
     }
 
-    let extractButton = (parsedFileName)
-        ? <a
-            href={getBaseURL(`/demo/extractJumbf?fileName=${parsedFileName}`)}
-            download={"jumbf-standalone.jumbf"}
-            style={{ textDecoration: 'none' }}
-        >
-            <Button
-                variant="outlined"
-                disabled={loading}
-                sx={{
-                    '& .a': { textDecoration: 'none', color: 'white' },
-                    height: '100%'
-                }}
-            >
-                Extract JUMBF File
-            </Button>
-        </a>
-        : null;
-
     return (
-        <StyledBox
-            sx={{
-                flexGrow: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                height: '80vh',
-                alignContent: 'center',
-                justifyContent: 'center'
-            }}
-        >
+        <React.Fragment>
             {output}
-            <StyledBox
-                sx={{
-                    justifyContent: 'center',
-                    display: 'flex',
-                }}
-            >
-                <StyledBox
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        height: '5vh'
-                    }}
-
-                >
-                    <label htmlFor="contained-button-file">
-                        <Input accept="*" id="contained-button-file" multiple type="file" onChange={handleFileUploadChange} />
-                        <Button disabled={loading} variant="contained" component="span" onClick={onFileUploadClick}>
-                            Upload File
-                        </Button>
-                    </label>
-                </StyledBox>
-                <StyledBox
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        height: '5vh'
-                    }}
-
-                >
-                    {extractButton}
-                </StyledBox>
-            </StyledBox>
+            {errorMessageComponent}
             <Modal
                 open={modalContent !== null}
                 onClose={closeModalContent}
@@ -132,11 +79,19 @@ const ParseLayout = React.forwardRef((props, ref) => {
                     justifyContent: 'center'
                 }}
             >
-                <div readonly="true" style={{ border: 'none', width: '70%', height: '70vh', overflow: 'auto', backgroundColor: 'white' }}>
-                    {modalContent}
-                </div>
+                <ModalBox>
+                    <ModalStack direction="row">
+                        <Typography variant="h6">Content (Note: Use a prettifier application -e.g., for JSON/XML format- to better inspect the data)</Typography>
+                        <IconButton aria-label="delete" size="small" onClick={closeModalContent}>
+                            <CloseIcon />
+                        </IconButton>
+                    </ModalStack>
+                    <Card readOnly={true} variant="outlined" sx={{ flexGrow: 1, overflowY: 'auto', overflowX: 'auto', }}>
+                        {modalContent}
+                    </Card>
+                </ModalBox>
             </Modal>
-        </StyledBox >
+        </React.Fragment >
     )
 });
 

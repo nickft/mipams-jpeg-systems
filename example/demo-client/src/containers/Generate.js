@@ -17,6 +17,9 @@ const Generate = () => {
 
     const [download, setDownload] = useState(false);
 
+    const [modalContent, setModalContent] = useState(null);
+    const openModalContent = () => { setModalContent(jumbfFileName) };
+    const closeModalContent = () => { setModalContent(null) };
 
     const [fileList, setFileList] = useState([{ id: getRandomInt(1000), info: null }]);
 
@@ -120,6 +123,9 @@ const Generate = () => {
             setJumbfFileName={setJumbfFileName}
             download={download}
             setDownload={setDownload}
+            modalContent={modalContent}
+            openModalContent={openModalContent}
+            closeModalContent={closeModalContent}
         />
     )
 }

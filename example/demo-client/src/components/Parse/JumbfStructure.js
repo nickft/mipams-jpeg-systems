@@ -10,7 +10,7 @@ import TreeView from '@mui/lab/TreeView';
 
 import BmffBoxLabel from './BmffBoxLabel';
 import { Box } from '@mui/system';
-import { IconButton } from '@mui/material';
+import { IconButton, Typography } from '@mui/material';
 import OpenInNewOutlinedIcon from '@mui/icons-material/OpenInNewOutlined';
 
 import { getRandomInt } from '../../utils/helpers';
@@ -50,14 +50,13 @@ const JumbfStructure = (props) => {
 
                 label = <Box>
                     {key}
-                    ": view here"
+                    : "view here"
                     <IconButton onClick={() => addModalContent(text)}>
                         <OpenInNewOutlinedIcon />
                     </IconButton>
                 </Box>
             } else if (key === 'privateField') {
                 const objectNode = bmffNode['' + key + ''];
-
                 if (!objectNode) {
                     label = key + ": null";
                 }
@@ -76,7 +75,9 @@ const JumbfStructure = (props) => {
                 key={id}
                 nodeId={id.toString()}
                 expanded={expandedList}
-                label={label}
+                label={<Typography variant="h6" sx={{ fontWeight: "400 !important" }}>
+                    {label}
+                </Typography>}
             />);
 
         })

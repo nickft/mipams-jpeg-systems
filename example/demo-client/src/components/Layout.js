@@ -1,48 +1,63 @@
 import React from 'react'
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import styled from '@emotion/styled';
+import { Avatar } from '@mui/material';
+import { Outlet } from 'react-router';
 
-import { styled } from '@mui/material/styles';
+const MipamsAppBar = styled(AppBar)(({
+    backgroundColor: '#295264',
+}));
 
-import Parse from '../containers/Parse';
-import Generate from '../containers/Generate';
+const MipamsToolbar = styled(Toolbar)(({ theme }) => ({
+    justifyContent: 'space-between',
+    [theme.breakpoints.up('lg')]: {
+        maxWidth: `${theme.breakpoints.values['lg']}px`,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        width: '100%',
+    },
+}));
 
-import Title from './Title';
-import Footer from './Footer';
-import { Grid } from '@mui/material';
-
-const LayoutStyle = styled('div')({
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    width: '100vw',
-    height: '100vh'
-
-});
+const MipamsContent = styled('div')(({ theme }) => ({
+    [theme.breakpoints.up('lg')]: {
+        maxWidth: `${theme.breakpoints.values['lg']}px`,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        width: '100%',
+    },
+}));
 
 export default function Layout() {
     return (
-        <LayoutStyle>
-            <Title />
-            <Grid
-                container
-                spacing={4}
-                justifyContent="center"
-                sx={{
-                    marginTop: 0,
-                    height: '85vh',
-                    '& .MuiGrid-item': {
-                        paddingTop: 0
-                    }
-                }}
-            >
-                <Grid item xs={5} sx={{ borderRight: 'solid #E0E0E0 thin' }}>
-                    <Generate />
-                </Grid>
-
-                <Grid item xs={5}>
-                    <Parse />
-                </Grid>
-            </Grid>
-            <Footer />
-        </LayoutStyle>
+        <Box sx={{ flexGrow: 1 }}>
+            <MipamsAppBar position="static">
+                <MipamsToolbar>
+                    <Typography
+                        variant="h3"
+                        href="/jumbf"
+                        component="a"
+                        sx={{
+                            color: 'inherit',
+                            textDecoration: 'none',
+                        }}
+                    >
+                        MIPAMS
+                    </Typography>
+                    <IconButton disabled size="large">
+                        <Avatar alt="UPC Logo" src="/jumbf/upc.png" sx={{
+                            width: '64px',
+                            height: '64px',
+                        }} />
+                    </IconButton>
+                </MipamsToolbar>
+            </MipamsAppBar>
+            <MipamsContent>
+                <Outlet />
+            </MipamsContent>
+        </Box>
     )
 }

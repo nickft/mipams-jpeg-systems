@@ -69,6 +69,7 @@ const Parse = () => {
     return (
         <ParseLayout
             jumbfStructure={jumbfStructure}
+            uploadedFileName={uploadedFileName}
             parsedFileName={parsedFileName}
             errorMessage={errorMessage}
             setErrorMessage={setErrorMessage}

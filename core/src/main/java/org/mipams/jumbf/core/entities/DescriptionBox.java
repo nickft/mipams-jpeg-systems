@@ -34,6 +34,7 @@ public class DescriptionBox extends BmffBox {
         sum += getToggleSize();
 
         if (labelExists()) {
+            computeAndSetToggleBasedOnFields();
             sum += getLabelSize();
         }
 
@@ -104,6 +105,14 @@ public class DescriptionBox extends BmffBox {
 
         if (isRequestable() && getLabel() == null) {
             throw new MipamsException("A requestable Description Box must have a non-empty Label");
+        }
+
+        if (isRequestable()) {
+            toggle = toggle | 1;
+        }
+
+        if (getLabel() != null) {
+            toggle = toggle | 2;
         }
 
         if (getLabel() != null) {

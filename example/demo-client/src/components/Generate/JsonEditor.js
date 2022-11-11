@@ -3,14 +3,16 @@ import React from 'react'
 
 const JsonEditor = (props) => {
 
-    const { jsonValue, setJsonRequest } = props;
+    const { jsonValue, setJsonRequest, readOnly } = props;
     return (
         <TextField
             multiline
+            disabled={readOnly}
             label="JUMBF Structure"
             sx={{
-                width: '100%'
+                width: '100%',
             }}
+
             value={jsonValue}
             onChange={(e) => setJsonRequest(e.target.value)}
         >

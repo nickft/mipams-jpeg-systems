@@ -1,7 +1,7 @@
 version: '3'
 services:
   demo-server:
-    image: demo-server:latest
+    image: mipams/jumbf-server:latest
     build:
       context: ../demo-server/
     ports:
@@ -14,7 +14,7 @@ services:
       spring_servlet_multipart_max-request-size: 128MB
       spring_servlet_multipart_enabled: "true"
   demo-client:
-    image: demo-client:latest
+    image: mipams/jumbf-ui:latest
     build:
       context: ../demo-client/
     volumes:

@@ -1,14 +1,11 @@
-import './App.css';
-
+import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { createTheme, ThemeProvider, responsiveFontSizes } from '@mui/material/styles';
+import Layout from "./components/Layout";
 
 import Home from './components/Home';
 import PageNotFound from './components/PageNotFound';
-
 import Parse from './containers/Parse';
-import Layout from './components/Layout';
-
-import { createTheme, ThemeProvider, responsiveFontSizes } from '@mui/material/styles';
 import Generate from './containers/Generate';
 
 let theme = createTheme();
@@ -28,7 +25,6 @@ function App() {
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
-
   );
 }
 

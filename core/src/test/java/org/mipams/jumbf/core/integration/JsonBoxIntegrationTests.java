@@ -3,7 +3,6 @@ package org.mipams.jumbf.core.integration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
 
 import java.io.ByteArrayInputStream;

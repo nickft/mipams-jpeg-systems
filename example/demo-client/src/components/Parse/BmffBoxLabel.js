@@ -17,13 +17,13 @@ const BmffBoxLabel = (props) => {
 
     return (
         <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-            <Typography style={{ fontWeight: 'bold' }}>
+            <Typography variant="h6" style={{ fontWeight: 'bold' }}>
                 {bmffNode['type'] + " ( " + bmffNode['boxSize'] + " bytes ) "}
             </Typography>
-            <Tooltip sx={{ paddingLeft: '4px' }} title={tooltipInfo} placement="right">
-                <InfoOutlinedIcon />
+            <Tooltip sx={{ paddingLeft: '4px' }} title={<Typography variant="body1" style={{ fontWeight: 'bold' }}>{tooltipInfo}</Typography>} placement="right">
+                <InfoOutlinedIcon fontSize="large" />
             </Tooltip>
-        </Box>
+        </Box >
     )
 }
 
