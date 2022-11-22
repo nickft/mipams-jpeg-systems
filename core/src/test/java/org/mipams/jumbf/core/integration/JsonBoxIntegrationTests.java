@@ -232,6 +232,8 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
         mapper.setSerializationInclusion(Include.NON_NULL);
 
         byte[] cborData = mapper.writeValueAsBytes(content);
-        CoreUtils.writeByteArrayToOutputStream(cborData, new FileOutputStream("/home/nikos/Desktop/content.cbor"));
+        String cborContentUrl = ResourceUtils.getFile("classpath:content.cbor")
+                .getAbsolutePath();
+        CoreUtils.writeByteArrayToOutputStream(cborData, new FileOutputStream(cborContentUrl));
     }
 }
