@@ -73,7 +73,7 @@ const GenerateLayout = (props) => {
     } = props;
 
     let errorMessageComponent = (errorMessage) ? <Alert severity="error" onClose={() => setErrorMessage(null)} sx={{ flex: '0' }}>
-        Error parsing the file: {errorMessage}
+        Error generating JUMBF: {errorMessage}
     </Alert > : null;
 
     let buttonsComponent = <Button size="large" disabled={loading} variant="contained" component="span" onClick={openModalContent}>
@@ -142,12 +142,12 @@ const GenerateLayout = (props) => {
                     overflowY: 'auto',
                     overflowX: 'auto',
                 }}>
-                <Typography variant="body1" gutterBottom>
+                <Typography variant="h6" gutterBottom sx={{ fontWeight: 400 }}>
                     The application supports the generation of JUMBF structures by using an intermediate JSON representation that allows a user to describe
                     the contents of a JUMBF Box. Currently, JUMBF Boxes from JPEG Systems Part 5 (i.e., JSON, XML, Embedded File, Contiguous Codestream,
                     UUID Content types) and Part 4 (i.e., Protection and Replacement Content types) are supported.
                 </Typography>
-                <Typography variant="body1" gutterBottom>
+                <Typography variant="h6" gutterBottom sx={{ fontWeight: 400 }}>
                     Note: It is possible to define an array of JSON elements in order to store multiple JUMBF boxes in a single file. Visit
                     <Link href="https://github.com/DMAG-UPC/mipams-jumbf/blob/main/example/README.md" target="_blank" rel="noreferrer" sx={{ marginLeft: "6px", marginRight: "6px" }}>
                         here
@@ -166,8 +166,8 @@ const GenerateLayout = (props) => {
                     spacing={2}
                 >
                     <Grid item xs={12} md={6}>
-                        <Typography variant="h6" gutterBottom sx={{ textAlign: 'center' }}>
-                            Step 1. Express JUMBF Structure
+                        <Typography variant="h5" gutterBottom sx={{ textAlign: 'center' }}>
+                            Step 1. Describe JUMBF Structure
                         </Typography>
                         <JsonEditor
                             readOnly={download || loading}
@@ -176,7 +176,7 @@ const GenerateLayout = (props) => {
                         />
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <Typography variant="h6" gutterBottom sx={{ textAlign: 'center' }}>
+                        <Typography variant="h5" gutterBottom sx={{ textAlign: 'center' }}>
                             Step 2. Add related content files
                         </Typography>
                         <FileList

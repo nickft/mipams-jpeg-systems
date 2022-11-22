@@ -12,6 +12,7 @@ let theme = createTheme();
 theme = responsiveFontSizes(theme);
 
 function App() {
+
   return (
     <ThemeProvider theme={theme}>
       <BrowserRouter basename='/jumbf'>

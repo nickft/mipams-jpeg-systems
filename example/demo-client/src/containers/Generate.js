@@ -92,17 +92,26 @@ const Generate = () => {
 
         const url = (jumbfFileName) ? "/demo/generateBox?targetFile=" + jumbfFileName : "/demo/generateBox";
 
-        api.post(url, JSON.parse(jsonRequest)).then((response) => {
+
+        try {
+            const requestBody = JSON.parse(jsonRequest);
+
+            api.post(url, requestBody).then((response) => {
+                setLoading(false);
+                setDownload(true)
+            }).catch(error => {
+                if (typeof (error.response.data) === 'string') {
+                    setErrorMessage(error.response.data);
+                } else {
+                    setErrorMessage(error.message);
+                }
+                setLoading(false);
+            });
+        } catch {
+            setErrorMessage("Error in step 1: Syntax error");
             setLoading(false);
-            setDownload(true)
-        }).catch(error => {
-            if (typeof (error.response.data) === 'string') {
-                setErrorMessage(error.response.data);
-            } else {
-                setErrorMessage(error.message);
-            }
-            setLoading(false);
-        });
+        }
+
 
         console.log("Finish Generation Process");
     }

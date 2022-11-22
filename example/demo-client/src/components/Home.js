@@ -23,7 +23,7 @@ const Action = (props) => {
                 }}
             >
                 <Typography
-                    variant="h6"
+                    variant="h5"
                     sx={{
                         color: "white",
                     }}
@@ -82,7 +82,7 @@ export default function Home() {
                     overflowY: 'auto',
                     overflowX: 'auto',
                 }}>
-                <Typography variant="body1" gutterBottom>
+                <Typography variant="h6" gutterBottom sx={{ fontWeight: 400 }}>
                     Welcome to MIPAMS JUMBF, an application that allows a user to interact with data expressed in JPEG Universal Multimedia Box Format (JUMBF).
                     This application has been developed in scope of the JPEG Systems Part 10 activities in order to showcase the applicability of UPC's proposal
                     for JUMBF reference software. The mipams-jumbf library is open-source and is located
@@ -92,7 +92,7 @@ export default function Home() {
                     .
                 </Typography>
 
-                <Typography variant="body1" gutterBottom>
+                <Typography variant="h6" gutterBottom sx={{ fontWeight: 400 }}>
                     Click on one of the two following options to proceed:
                 </Typography>
             </Paper>

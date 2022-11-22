@@ -20,11 +20,11 @@ const IntroParseLayout = (props) => {
     } = props;
 
     let placeholder = <React.Fragment>
-        <Typography variant="body1" gutterBottom>
+        <Typography variant="h6" gutterBottom sx={{ fontWeight: 400 }}>
             The application supports the inspection of JUMBF structures that are either
             stored as a standalone file or embedded in a JPEG encoded image.
         </Typography>
-        <Typography variant="body1" gutterBottom>
+        <Typography variant="h6" gutterBottom sx={{ fontWeight: 400 }}>
             Click the button below and upload a file to begin.
         </Typography>
     </React.Fragment>
@@ -48,7 +48,6 @@ const IntroParseLayout = (props) => {
                 elevation={1}
                 sx={{
                     width: '100%',
-                    height: '50vh',
                     padding: '8px',
                     flex: 'auto',
                     overflowY: 'auto',
