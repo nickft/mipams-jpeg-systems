@@ -1,11 +1,15 @@
+spring:
+  main:
+    allow_circular_references: true
 org:
   mipams:
     core:
       image_folder: /tmp/jumbf-tests
       max_file_size_in_bytes: 52428800
+    #crypto_url: http://mipams-crypto:8080
 logging:
   level:
     org:
       mipams:
         jumbf:
-          core: DEBUG
+          core: INFO
