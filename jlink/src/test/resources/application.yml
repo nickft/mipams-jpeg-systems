@@ -2,7 +2,7 @@ org:
   mipams:
     core:
       image_folder: /tmp/jumbf-tests
-
+      max_file_size_in_bytes: 52428800
 logging:
   level:
     org:
