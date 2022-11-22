@@ -1,0 +1,7 @@
+logging:
+  level:
+    org:
+      mipams:
+        jumbf:
+          core: DEBUG
+          privacy_security: DEBUG

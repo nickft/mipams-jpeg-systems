@@ -3,7 +3,6 @@ package org.mipams.jumbf.core.integration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
 
 import java.io.ByteArrayInputStream;
@@ -31,6 +30,7 @@ import org.mipams.jumbf.core.util.MipamsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.util.ResourceUtils;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @ActiveProfiles("test")
@@ -214,14 +214,17 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
 
     @Test
     void generateBoxes() throws Exception {
-
         PrivateBox pBox = (PrivateBox) getPrivateBox();
-        privateBoxService.writeToJumbfFile(pBox, new FileOutputStream("/home/nikos/Desktop/multiple-private.jumbf"));
+        String privateBoxWithMultipleBoxesUrl = ResourceUtils.getFile("classpath:multiple-private.jumbf")
+                .getAbsolutePath();
+        privateBoxService.writeToJumbfFile(pBox, new FileOutputStream(privateBoxWithMultipleBoxesUrl));
 
         JsonBox jBox = new JsonBox();
         jBox.setContent(TEST_CONTENT.getBytes());
         jBox.updateBmffHeadersBasedOnBox();
-        jsonBoxService.writeToJumbfFile(jBox, new FileOutputStream("/home/nikos/Desktop/single-private.obj"));
+        String privateBoxWithSingleBoxUrl = ResourceUtils.getFile("classpath:single-private.obj")
+                .getAbsolutePath();
+        jsonBoxService.writeToJumbfFile(jBox, new FileOutputStream(privateBoxWithSingleBoxUrl));
 
         final String content = "{ \"widget\": { \"debug\": \"on\", \"window\": { \"title\": \"Sample Konfabulator Widget\", \"name\": \"main_window\", \"width\": 500, \"height\": 500 }, \"image\": { \"src\": \"Images/Sun.png\", \"name\": \"sun1\", \"hOffset\": 250, \"vOffset\": 250, \"alignment\": \"center\" }, \"text\": { \"data\": \"Click Here\", \"size\": 36, \"style\": \"bold\", \"name\": \"text1\", \"hOffset\": 250, \"vOffset\": 100, \"alignment\": \"center\", \"onMouseUp\": \"sun1.opacity = (sun1.opacity / 100) * 90;\" } }}";
 
@@ -230,6 +233,5 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
 
         byte[] cborData = mapper.writeValueAsBytes(content);
         CoreUtils.writeByteArrayToOutputStream(cborData, new FileOutputStream("/home/nikos/Desktop/content.cbor"));
-
     }
 }
