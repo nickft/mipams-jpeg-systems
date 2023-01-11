@@ -25,7 +25,13 @@ In order to develop/deploy the application you simply need to download the follo
 
 Follow the instructions for your operation system. 
 
-In the docker subdirectory you may find the docker-compose.yml file that specifies the two services, namely demo-server and demo-client. 
+In the docker subdirectory you may find the docker-compose.yml file that specifies the two services, namely demo-server and demo-client.
+
+First, we need to package the application for demo-server (i.e., our backend server). Thus, before creating/launching our docker images move to the demo-server subdirectory and execute the following: 
+
+```
+mvn clean package
+```
 
 To launch the application you need to execute the following command in the docker subdirectory:
 

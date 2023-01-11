@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -262,7 +263,8 @@ public class CoreUtils {
             OutputStream outputStream) throws MipamsException {
 
         try {
-            int actualBytes = 0, n;
+            long actualBytes = 0;
+            int n;
 
             while ((nominalTotalSizeInBytes == 0 || actualBytes < nominalTotalSizeInBytes)
                     && ((n = input.read()) != -1)) {
@@ -281,14 +283,22 @@ public class CoreUtils {
     }
 
     public static void writePaddingToOutputStream(long numberOfBytes, int paddingValue,
-            OutputStream outputStream)
-            throws MipamsException {
+            OutputStream outputStream) throws MipamsException {
 
+        final int arraySize = 1024;
+
+        byte[] bytes = new byte[arraySize];
+        Arrays.fill(bytes, (byte) paddingValue);
         try {
-            int i = 0;
-            while (i < numberOfBytes) {
-                outputStream.write(paddingValue);
-                i++;
+            while (numberOfBytes > 0) {
+                if (numberOfBytes / arraySize > 0) {
+                    outputStream.write(bytes);
+                    numberOfBytes -= arraySize;
+                } else {
+                    int remaining = (int) numberOfBytes % arraySize;
+                    outputStream.write(bytes, 0, remaining);
+                    numberOfBytes -= remaining;
+                }
             }
         } catch (IOException e) {
             throw new MipamsException("Could not write to file", e);
@@ -300,13 +310,23 @@ public class CoreUtils {
             throws MipamsException {
         try {
 
-            int actualBytes = 0, n;
+            long actualBytes = 0;
 
-            while ((actualBytes < availableBytesForBox) && ((n = input.read()) != -1)) {
-                if (n != paddingValue) {
-                    throw new MipamsException("Padding is corrupted. It should be contain only values of 0x00");
+            final int arraySize = 1024;
+            int numberOfBytesRead;
+
+            int filteredArraySize = availableBytesForBox > arraySize ? arraySize : (int) availableBytesForBox;
+            byte[] bytes = new byte[filteredArraySize];
+
+            while ((actualBytes < availableBytesForBox)
+                    && ((numberOfBytesRead = input.read(bytes, 0, filteredArraySize)) != -1)) {
+                for (byte b : bytes) {
+                    if (b != paddingValue) {
+                        throw new MipamsException("Padding is corrupted. It should be contain only values of 0x00");
+                    }
                 }
-                actualBytes++;
+
+                actualBytes += numberOfBytesRead;
             }
 
             return actualBytes;
