@@ -480,7 +480,7 @@ public class CoreUtilsTests {
                 CoreUtils.parsePaddingFromInputStream(is, 10, 10);
             });
 
-            assertEquals("Padding is corrupted. It should be contain only values of 0x00", exception.getMessage());
+            assertEquals("Padding is corrupted. It should contain only values of 0x00", exception.getMessage());
         }
     }
 
@@ -498,7 +498,7 @@ public class CoreUtilsTests {
                 CoreUtils.parsePaddingFromInputStream(is, 10, 5);
             });
 
-            assertEquals("Padding is corrupted. It should be contain only values of 0x00", exception.getMessage());
+            assertEquals("Padding is corrupted. It should contain only values of 0x00", exception.getMessage());
         }
     }
 

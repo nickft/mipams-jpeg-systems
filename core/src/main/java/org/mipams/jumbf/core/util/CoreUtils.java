@@ -29,17 +29,19 @@ public class CoreUtils {
 
     public static final int MAX_APP_SEGMENT_SIZE = 0xFFFF;
 
-    // public static final String
+    public static final int BUFFER_SIZE = 1024;
 
     public static void writeFileContentToOutput(String path, OutputStream outputStream) throws MipamsException {
-
+        int numberOfBytesRead;
         try (FileInputStream inputStream = new FileInputStream(path)) {
-            int n;
-            while ((n = inputStream.read()) != -1) {
-                outputStream.write(n);
+            byte[] bytes = new byte[BUFFER_SIZE];
+
+            while ((numberOfBytesRead = inputStream.read(bytes, 0, BUFFER_SIZE)) != -1) {
+                outputStream.write(bytes, 0, numberOfBytesRead);
             }
+
         } catch (IOException e) {
-            throw new MipamsException(e);
+            throw new MipamsException("Could not read content", e);
         }
     }
 
@@ -262,16 +264,28 @@ public class CoreUtils {
     public static void writeBytesFromInputStreamToOutputstream(InputStream input, long nominalTotalSizeInBytes,
             OutputStream outputStream) throws MipamsException {
 
+        final int currentBufferSize = (BUFFER_SIZE > nominalTotalSizeInBytes && nominalTotalSizeInBytes > 0)
+                ? (int) nominalTotalSizeInBytes
+                : BUFFER_SIZE;
+        byte[] bytes = new byte[currentBufferSize];
+
+        int maximumBytesToRead = currentBufferSize,
+                numberOfBytesRead;
+        long remainingBytes = nominalTotalSizeInBytes;
+
         try {
-            long actualBytes = 0;
-            int n;
+            while ((nominalTotalSizeInBytes != 0 && remainingBytes > 0)
+                    && ((numberOfBytesRead = input.read(bytes, 0, maximumBytesToRead)) != -1)) {
+                outputStream.write(bytes, 0, numberOfBytesRead);
 
-            while ((nominalTotalSizeInBytes == 0 || actualBytes < nominalTotalSizeInBytes)
-                    && ((n = input.read()) != -1)) {
-                outputStream.write(n);
-                actualBytes++;
+                if (nominalTotalSizeInBytes == 0) {
+                    continue;
+                }
+
+                remainingBytes -= numberOfBytesRead;
+                maximumBytesToRead = (remainingBytes / currentBufferSize > 0) ? currentBufferSize
+                        : (int) remainingBytes;
             }
-
         } catch (IOException e) {
             throw new MipamsException("Could not read content", e);
         }
@@ -285,20 +299,19 @@ public class CoreUtils {
     public static void writePaddingToOutputStream(long numberOfBytes, int paddingValue,
             OutputStream outputStream) throws MipamsException {
 
-        final int arraySize = 1024;
-
-        byte[] bytes = new byte[arraySize];
+        final int currentBufferSize = (BUFFER_SIZE > numberOfBytes) ? (int) numberOfBytes : BUFFER_SIZE;
+        byte[] bytes = new byte[currentBufferSize];
         Arrays.fill(bytes, (byte) paddingValue);
+
+        long remainingBytes = numberOfBytes;
+        int numberOfBytesToWrite = currentBufferSize;
         try {
-            while (numberOfBytes > 0) {
-                if (numberOfBytes / arraySize > 0) {
-                    outputStream.write(bytes);
-                    numberOfBytes -= arraySize;
-                } else {
-                    int remaining = (int) numberOfBytes % arraySize;
-                    outputStream.write(bytes, 0, remaining);
-                    numberOfBytes -= remaining;
-                }
+            while (remainingBytes > 0) {
+                outputStream.write(bytes, 0, numberOfBytesToWrite);
+
+                remainingBytes -= numberOfBytesToWrite;
+                numberOfBytesToWrite = (remainingBytes / currentBufferSize > 0) ? currentBufferSize
+                        : (int) remainingBytes;
             }
         } catch (IOException e) {
             throw new MipamsException("Could not write to file", e);
@@ -310,26 +323,30 @@ public class CoreUtils {
             throws MipamsException {
         try {
 
-            long actualBytes = 0;
+            final int currentBufferSize = (BUFFER_SIZE > availableBytesForBox && availableBytesForBox > 0)
+                    ? (int) availableBytesForBox
+                    : BUFFER_SIZE;
+            byte[] bytes = new byte[currentBufferSize];
 
-            final int arraySize = 1024;
-            int numberOfBytesRead;
+            long remainingBytes = availableBytesForBox;
 
-            int filteredArraySize = availableBytesForBox > arraySize ? arraySize : (int) availableBytesForBox;
-            byte[] bytes = new byte[filteredArraySize];
+            int maximumBytesToRead = currentBufferSize,
+                    numberOfBytesRead;
 
-            while ((actualBytes < availableBytesForBox)
-                    && ((numberOfBytesRead = input.read(bytes, 0, filteredArraySize)) != -1)) {
+            while ((availableBytesForBox != 0 && remainingBytes > 0)
+                    && ((numberOfBytesRead = input.read(bytes, 0, maximumBytesToRead)) != -1)) {
                 for (byte b : bytes) {
                     if (b != paddingValue) {
-                        throw new MipamsException("Padding is corrupted. It should be contain only values of 0x00");
+                        throw new MipamsException("Padding is corrupted. It should contain only values of 0x00");
                     }
                 }
 
-                actualBytes += numberOfBytesRead;
+                remainingBytes -= numberOfBytesRead;
+                maximumBytesToRead = (remainingBytes / currentBufferSize > 0) ? currentBufferSize
+                        : (int) remainingBytes;
             }
 
-            return actualBytes;
+            return availableBytesForBox - remainingBytes;
         } catch (IOException e) {
             throw new MipamsException("Could not read content", e);
         }
