@@ -70,8 +70,8 @@ public class ReplacementDescriptionBoxService extends BmffBoxService<Replacement
 
         ReplacementType replacementType = ReplacementType.getTypeFromId(box.getReplacementTypeId());
 
-        ParamHandlerInterface paramHandler = paramHandlerFactory.getParamHandler(replacementType, remainingBytes);
-        paramHandler.populateParamFromBytes(input);
+        ParamHandlerInterface paramHandler = paramHandlerFactory.getParamHandler(replacementType);
+        paramHandler.populateParamFromBytes(input, remainingBytes);
 
         box.setParamHandler(paramHandler);
     }

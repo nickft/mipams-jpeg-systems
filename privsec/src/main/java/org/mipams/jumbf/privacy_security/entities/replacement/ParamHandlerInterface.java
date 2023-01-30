@@ -9,7 +9,7 @@ public interface ParamHandlerInterface {
 
     public void writeParamToBytes(OutputStream outputStream) throws MipamsException;
 
-    public void populateParamFromBytes(InputStream inputStream) throws MipamsException;
+    public void populateParamFromBytes(InputStream inputStream, long remainingBytes) throws MipamsException;
 
     public long getParamSize() throws MipamsException;
 }

@@ -21,7 +21,7 @@ import org.mipams.jumbf.core.util.MipamsException;
 import org.mipams.jumbf.privacy_security.entities.ReplacementDescriptionBox;
 import org.mipams.jumbf.privacy_security.entities.replacement.AppParamHandler;
 import org.mipams.jumbf.privacy_security.entities.replacement.BoxParamHandler;
-import org.mipams.jumbf.privacy_security.entities.replacement.EmptyParamHandler;
+import org.mipams.jumbf.privacy_security.entities.replacement.FileParamHandler;
 import org.mipams.jumbf.privacy_security.entities.replacement.ParamHandlerInterface;
 import org.mipams.jumbf.privacy_security.entities.replacement.ReplacementType;
 import org.mipams.jumbf.privacy_security.entities.replacement.RoiParamHandler;
@@ -97,7 +97,7 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
         @Test
         void testBoxReplacementBoxWithNoAdditionalParam() throws Exception {
                 ParamHandlerFactory paramHandlerFactory = new ParamHandlerFactory();
-                ParamHandlerInterface paramHandler = paramHandlerFactory.getParamHandler(ReplacementType.BOX, 0);
+                ParamHandlerInterface paramHandler = paramHandlerFactory.getParamHandler(ReplacementType.BOX);
 
                 JsonBox jsonBox = new JsonBox();
                 jsonBox.setContent(TEST_CONTENT.getBytes());
@@ -162,7 +162,7 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
 
         @Test
         void testFileReplacementBox() throws Exception {
-                EmptyParamHandler emptyParamHandler = new EmptyParamHandler();
+                FileParamHandler fileParamHandler = new FileParamHandler();
 
                 ContiguousCodestreamBox jp2cBox = new ContiguousCodestreamBox();
                 jp2cBox.setFileUrl(TEST_FILE_PATH);
@@ -171,7 +171,7 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
                 List<BmffBox> replacementDataBoxList = List.of(jp2cBox);
 
                 JumbfBox givenJumbfBox = getReplacementJumbfBoxBasedOnReplacementDescriptionBox(
-                                ReplacementType.FILE.getId(), emptyParamHandler, replacementDataBoxList);
+                                ReplacementType.FILE.getId(), fileParamHandler, replacementDataBoxList);
                 JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
 
                 assertEquals(givenJumbfBox, parsedJumbfBox);
