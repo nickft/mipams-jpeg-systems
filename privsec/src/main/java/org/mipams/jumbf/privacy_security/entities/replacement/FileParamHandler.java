@@ -5,14 +5,14 @@ import java.io.OutputStream;
 
 import org.mipams.jumbf.core.util.MipamsException;
 
-public class EmptyParamHandler implements ParamHandlerInterface {
+public class FileParamHandler implements ParamHandlerInterface {
 
     @Override
     public void writeParamToBytes(OutputStream outputStream) throws MipamsException {
     }
 
     @Override
-    public void populateParamFromBytes(InputStream inputStream) throws MipamsException {
+    public void populateParamFromBytes(InputStream inputStream, long remainingBytes) throws MipamsException {
     }
 
     @Override

@@ -8,23 +8,32 @@ import org.mipams.jumbf.core.util.MipamsException;
 
 public class AppParamHandler implements ParamHandlerInterface {
 
-    private Long offset;
+    private Long offset = 0L;
 
     @Override
     public void writeParamToBytes(OutputStream outputStream) throws MipamsException {
-
-        CoreUtils.writeLongToOutputStream(getOffset(), outputStream);
+        if (offsetExists()) {
+            CoreUtils.writeLongToOutputStream(getOffset(), outputStream);
+        }
     }
 
     @Override
-    public void populateParamFromBytes(InputStream inputStream) throws MipamsException {
+    public void populateParamFromBytes(InputStream inputStream, long remainingBytes) throws MipamsException {
+        if (remainingBytes == 0) {
+            return;
+        }
+
         long offset = CoreUtils.readLongFromInputStream(inputStream);
         setOffset(offset);
     }
 
     @Override
     public long getParamSize() throws MipamsException {
-        return getOffsetSize();
+        return getOffset() != null ? getOffsetSize() : 0;
+    }
+
+    public boolean offsetExists() {
+        return getOffset() != null;
     }
 
     private long getOffsetSize() {
@@ -41,7 +50,7 @@ public class AppParamHandler implements ParamHandlerInterface {
 
     @Override
     public String toString() {
-        return "AppParamHandler(offset=" + this.offset != null ? getOffset().toString() : "null" + ")";
+        return "AppParamHandler(offset=" + getOffset() != null ? getOffset().toString() : "null" + ")";
     }
 
 }

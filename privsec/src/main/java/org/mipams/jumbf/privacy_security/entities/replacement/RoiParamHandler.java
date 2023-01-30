@@ -18,7 +18,7 @@ public class RoiParamHandler implements ParamHandlerInterface {
     }
 
     @Override
-    public void populateParamFromBytes(InputStream inputStream) throws MipamsException {
+    public void populateParamFromBytes(InputStream inputStream, long remainingBytes) throws MipamsException {
 
         int offsetX = CoreUtils.readIntFromInputStream(inputStream);
         int offsetY = CoreUtils.readIntFromInputStream(inputStream);

@@ -14,7 +14,9 @@ public class BoxParamHandler implements ParamHandlerInterface {
 
     @Override
     public void writeParamToBytes(OutputStream outputStream) throws MipamsException {
-        CoreUtils.writeLongToOutputStream(getOffset(), outputStream);
+        if (offsetExists()) {
+            CoreUtils.writeLongToOutputStream(getOffset(), outputStream);
+        }
 
         if (labelExists()) {
             CoreUtils.writeTextToOutputStream(getLabelWithEscapeCharacter(), outputStream);
@@ -22,7 +24,10 @@ public class BoxParamHandler implements ParamHandlerInterface {
     }
 
     @Override
-    public void populateParamFromBytes(InputStream inputStream) throws MipamsException {
+    public void populateParamFromBytes(InputStream inputStream, long remainingBytes) throws MipamsException {
+        if (remainingBytes == 0) {
+            return;
+        }
 
         long offset = CoreUtils.readLongFromInputStream(inputStream);
         setOffset(offset);
@@ -37,13 +42,19 @@ public class BoxParamHandler implements ParamHandlerInterface {
     public long getParamSize() throws MipamsException {
         long sum = 0;
 
-        sum += getOffsetSize();
+        if (offsetExists()) {
+            sum += getOffsetSize();
+        }
 
         if (labelExists()) {
             sum += getLabelSize();
         }
 
         return sum;
+    }
+
+    public boolean offsetExists() {
+        return getOffset() != null;
     }
 
     private long getOffsetSize() {
