@@ -3,6 +3,6 @@ spring:
     allow_circular_references: true
 org:
   mipams:
-    jumbf:
+    core:
       image_folder: /tmp/jumbf-tests
       max_file_size_in_bytes: 52428800

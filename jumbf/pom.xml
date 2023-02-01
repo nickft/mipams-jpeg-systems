@@ -11,18 +11,18 @@
 	</parent>
 
 	<groupId>org.mipams</groupId>
-	<artifactId>privsec</artifactId>
-	<version>1.0</version>
+	<artifactId>jumbf</artifactId>
+	<version>2.0</version>
 	<packaging>jar</packaging>
 
-	<name>Privacy and Security</name>
-	<description>Module that contains the implementation of JUMBF boxes according to Privacy and Security standard (ISO/IEC 19566-4)</description>
+	<name>JUMBF</name>
+	<description>Module that contains the implementation of the JUMBF structure (ISO/IEC 19566-5)</description>
 	
 	<dependencies>
 		<dependency>
-			<groupId>org.mipams</groupId>  
-			<artifactId>jumbf</artifactId>
-			<version>2.0</version>  
+    		<groupId>com.fasterxml.jackson.dataformat</groupId>
+    		<artifactId>jackson-dataformat-cbor</artifactId>
+    		<version>2.13.2</version>
 		</dependency>
 	</dependencies>
 </project>

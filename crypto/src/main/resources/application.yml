@@ -1,5 +1,0 @@
-org:
-  mipams:
-    jumbf:
-      crypto:
-        authorization_url: http://authorization-service:8080/polS/api/v1/authorize_rule
