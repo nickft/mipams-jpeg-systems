@@ -9,13 +9,10 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mipams.jumbf.util.MipamsException;
-import org.mipams.jumbf.util.Properties;
 
 public class CoreGeneratorServiceTests {
 
     protected static String TEST_DIRECTORY = "/tmp/jumbf-tests/";
-
-    Properties properties;
 
     @BeforeAll
     static void generateFile() throws IOException {

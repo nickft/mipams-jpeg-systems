@@ -8,15 +8,11 @@ import org.mipams.jumbf.entities.BinaryDataBox;
 import org.mipams.jumbf.entities.ServiceMetadata;
 import org.mipams.jumbf.util.CoreUtils;
 import org.mipams.jumbf.util.MipamsException;
-import org.mipams.jumbf.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class BinaryDataBoxService extends FileBoxService<BinaryDataBox> {
-
-    @Autowired
-    Properties properties;
 
     ServiceMetadata serviceMetadata;
 
@@ -55,8 +51,6 @@ public class BinaryDataBoxService extends FileBoxService<BinaryDataBox> {
 
     private void writeFileToJumbfBox(BinaryDataBox binaryDataBox, OutputStream outputStream)
             throws MipamsException {
-
-        properties.checkIfFileSizeExceedApplicationLimits(binaryDataBox.getFileUrl());
         CoreUtils.writeFileContentToOutput(binaryDataBox.getFileUrl(), outputStream);
     }
 }

@@ -7,13 +7,8 @@ import org.mipams.jumbf.entities.ParseMetadata;
 import org.mipams.jumbf.entities.FileBox;
 import org.mipams.jumbf.util.CoreUtils;
 import org.mipams.jumbf.util.MipamsException;
-import org.mipams.jumbf.util.Properties;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class FileBoxService<T extends FileBox> extends BmffBoxService<T> {
-
-    @Autowired
-    Properties properties;
 
     @Override
     protected void writeBmffPayloadToJumbfFile(T fileBox, OutputStream outputStream)
@@ -27,7 +22,7 @@ public abstract class FileBoxService<T extends FileBox> extends BmffBoxService<T
 
         String fileName = getFileName();
 
-        String fullPath = CoreUtils.getFullPath(properties.getFileDirectory(), fileName);
+        String fullPath = CoreUtils.getFullPath(parseMetadata.getParentDirectory(), fileName);
 
         fileBox.setFileUrl(fullPath);
 

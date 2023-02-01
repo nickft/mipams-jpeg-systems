@@ -23,18 +23,14 @@ import org.mipams.jumbf.services.content_types.ContiguousCodestreamContentType;
 import org.mipams.jumbf.services.content_types.JsonContentType;
 import org.mipams.jumbf.services.content_types.XmlContentType;
 import org.mipams.jumbf.util.MipamsException;
-import org.mipams.jumbf.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.ResourceUtils;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = JumbfConfig.class)
-@TestPropertySource(properties = "org.mipams.max_file_size_in_bytes=52428800")
-@TestPropertySource(properties = "org.mipams.image_folder=/tmp/jumbf-tests")
 @ActiveProfiles("test")
 public class JpgCodestreamTests extends AbstractIntegrationTests {
 
@@ -43,9 +39,6 @@ public class JpgCodestreamTests extends AbstractIntegrationTests {
 
     @Autowired
     JpegCodestreamParser jpegCodestreamParser;
-
-    @Autowired
-    Properties properties;
 
     @BeforeAll
     static void initRequest() throws IOException {

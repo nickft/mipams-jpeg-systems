@@ -1,5 +1,6 @@
 package org.mipams.jumbf.services;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -14,7 +15,6 @@ import org.mipams.jumbf.entities.JumbfBox;
 import org.mipams.jumbf.util.CoreUtils;
 import org.mipams.jumbf.util.JpegCodestreamException;
 import org.mipams.jumbf.util.MipamsException;
-import org.mipams.jumbf.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +26,6 @@ public class JpegCodestreamGenerator {
 
     @Autowired
     CoreGeneratorService coreGeneratorService;
-
-    @Autowired
-    Properties properties;
 
     public void generateJumbfMetadataToFile(List<JumbfBox> jumbfBoxList, String assetUrl, String outputUrl)
             throws JpegCodestreamException {
@@ -176,7 +173,6 @@ public class JpegCodestreamGenerator {
             String boxSegmentId = String.format("%d-%d", jumbfBox.getTBox(), boxInstanceNumber);
 
             List<BoxSegment> boxSegmentList = getBoxSegmentsForJumbfBox(boxInstanceNumber, jumbfBox);
-
             boxSegmentMap.put(boxSegmentId, boxSegmentList);
         }
     }
@@ -214,9 +210,10 @@ public class JpegCodestreamGenerator {
                 jumbfBox.getXlBox()).length;
 
         String boxSegmentId = String.format("%d-%d", jumbfBox.getTBox(), boxInstanceNumber);
-        String jumbfFileUrl = CoreUtils.getFullPath(properties.getFileDirectory(), boxSegmentId);
+        String jumbfFileUrl;
 
         try {
+            jumbfFileUrl = CoreUtils.createTempFile(boxSegmentId, CoreUtils.JUMBF_FILENAME_SUFFIX);
             coreGeneratorService.generateJumbfMetadataToFile(List.of(jumbfBox), jumbfFileUrl);
         } catch (MipamsException e) {
             throw new JpegCodestreamException(e);
@@ -229,15 +226,13 @@ public class JpegCodestreamGenerator {
 
         try (InputStream is = new FileInputStream(jumbfFileUrl)) {
 
-            String boxSegmentPayloadUrl = CoreUtils.getFullPath(properties.getFileDirectory(),
-                    boxSegmentId + "-" + packetSequence);
+            String boxSegmentPayloadFileUrl = CoreUtils.createTempFile(boxSegmentId + "-" + packetSequence, null);
 
             while (is.available() > 0) {
 
                 if (remainingBytesInSegment == 0) {
                     packetSequence++;
-                    boxSegmentPayloadUrl = CoreUtils.getFullPath(properties.getFileDirectory(),
-                            boxSegmentId + "-" + packetSequence);
+                    boxSegmentPayloadFileUrl = CoreUtils.createTempFile(boxSegmentId + "-" + packetSequence, null);
                     remainingBytesInSegment = (packetSequence == 1) ? maximumSegmentPayloadSize
                             : maximumSegmentPayloadSize - bmffHeaderSize;
                 }
@@ -251,10 +246,10 @@ public class JpegCodestreamGenerator {
                     segmentBytes += bmffHeaderSize;
                 }
 
-                CoreUtils.writeBytesFromInputStreamToFile(is, segmentPayloadBytes, boxSegmentPayloadUrl);
+                CoreUtils.writeBytesFromInputStreamToFile(is, segmentPayloadBytes, boxSegmentPayloadFileUrl);
 
                 BoxSegment boxSegment = new BoxSegment(segmentBytes, boxInstanceNumber, packetSequence,
-                        jumbfBox.getLBox(), jumbfBox.getTBox(), jumbfBox.getXlBox(), boxSegmentPayloadUrl);
+                        jumbfBox.getLBox(), jumbfBox.getTBox(), jumbfBox.getXlBox(), boxSegmentPayloadFileUrl);
 
                 boxSegmentList.add(boxSegment);
 

@@ -27,8 +27,6 @@ import org.mipams.jumbf.services.content_types.JsonContentType;
 import org.mipams.jumbf.services.content_types.UuidContentType;
 import org.mipams.jumbf.services.content_types.XmlContentType;
 
-import org.mipams.jumbf.util.Properties;
-
 @Configuration
 public class JumbfConfig {
 
@@ -40,11 +38,6 @@ public class JumbfConfig {
     @Bean
     public CoreGeneratorService coreGeneratorService() {
         return new CoreGeneratorService();
-    }
-
-    @Bean
-    public Properties properties() {
-        return new Properties();
     }
 
     @Bean

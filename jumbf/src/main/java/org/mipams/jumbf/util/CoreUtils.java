@@ -34,6 +34,10 @@ public class CoreUtils {
 
     private static final byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.US_ASCII);
 
+    public static final String TEMP_DIRECTORY = ".mipams-tmp";
+
+    public static final String JUMBF_FILENAME_SUFFIX = ".jumbf";
+
     public static void writeFileContentToOutput(String path, OutputStream outputStream) throws MipamsException {
         int numberOfBytesRead;
         try (FileInputStream inputStream = new FileInputStream(path)) {
@@ -446,6 +450,11 @@ public class CoreUtils {
     }
 
     public static boolean deleteFile(String fileUrl) {
+
+        if (fileUrl == null) {
+            return true;
+        }
+
         File f = new File(fileUrl);
         if (!f.exists()) {
             return true;
@@ -559,5 +568,24 @@ public class CoreUtils {
         }
 
         return result;
+    }
+
+    public static String getParentDirectory(String assetUrl) throws MipamsException {
+
+        File dir = new File(assetUrl);
+
+        if (!dir.exists()) {
+            throw new MipamsException(String.format("Path %s does not exist", assetUrl));
+        }
+        return dir.getParent();
+    }
+
+    public static String createTempFile(String tempFileName, String suffix) throws MipamsException {
+        try {
+            File f = File.createTempFile(tempFileName, suffix);
+            return f.getAbsolutePath();
+        } catch (IOException e) {
+            throw new MipamsException(e);
+        }
     }
 }

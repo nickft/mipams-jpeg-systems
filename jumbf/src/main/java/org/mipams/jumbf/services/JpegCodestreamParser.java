@@ -1,5 +1,6 @@
 package org.mipams.jumbf.services;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,7 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger; 
+import java.util.logging.Logger;
 import java.util.logging.Level;
 
 import org.mipams.jumbf.entities.BoxSegment;
@@ -18,7 +19,6 @@ import org.mipams.jumbf.entities.JumbfBox;
 import org.mipams.jumbf.util.JpegCodestreamException;
 import org.mipams.jumbf.util.CoreUtils;
 import org.mipams.jumbf.util.MipamsException;
-import org.mipams.jumbf.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,9 +27,6 @@ import org.springframework.stereotype.Service;
 public class JpegCodestreamParser implements ParserInterface {
 
     private static final Logger logger = Logger.getLogger(JpegCodestreamParser.class.getName());
-
-    @Autowired
-    Properties properties;
 
     @Autowired
     CoreParserService coreParserService;
@@ -59,7 +56,7 @@ public class JpegCodestreamParser implements ParserInterface {
                     appMarkerAsHex = CoreUtils.readTwoByteWordAsHex(is);
                 }
 
-                logger.log(Level.FINE,appMarkerAsHex);
+                logger.log(Level.FINE, appMarkerAsHex);
 
                 if (CoreUtils.isEndOfImageAppMarker(appMarkerAsHex)) {
                     break;
@@ -164,8 +161,7 @@ public class JpegCodestreamParser implements ParserInterface {
 
         String boxSegmentId = CoreUtils.getBoxSegmentId(boxType, boxInstanceNumber);
 
-        String randomFileName = CoreUtils.randomStringGenerator();
-        String payloadFileUrl = CoreUtils.getFullPath(properties.getFileDirectory(), randomFileName);
+        String payloadFileUrl = CoreUtils.createTempFile(CoreUtils.randomStringGenerator(), null);
 
         CoreUtils.writeBytesFromInputStreamToFile(is, markerSegmentRemainingSize, payloadFileUrl);
 
@@ -196,36 +192,42 @@ public class JpegCodestreamParser implements ParserInterface {
 
         Map<String, List<BoxSegment>> tempBoxSegmentMap = new HashMap<>(boxSegmentMap);
 
-        for (String boxSegmentId : tempBoxSegmentMap.keySet()) {
+        String jumbfFileUrl = null;
 
-            String jumbfFileUrl = CoreUtils.getFullPath(properties.getFileDirectory(), boxSegmentId + ".jumbf");
+        try {
+            for (String boxSegmentId : tempBoxSegmentMap.keySet()) {
 
-            List<BoxSegment> boxSegmentList = boxSegmentMap.get(boxSegmentId);
+                jumbfFileUrl = CoreUtils.createTempFile(boxSegmentId + CoreUtils.JUMBF_FILENAME_SUFFIX, null);
 
-            Collections.sort(boxSegmentList);
+                List<BoxSegment> boxSegmentList = boxSegmentMap.get(boxSegmentId);
 
-            try (OutputStream os = new FileOutputStream(jumbfFileUrl)) {
+                Collections.sort(boxSegmentList);
 
-                BoxSegment bs = boxSegmentList.get(0);
+                try (OutputStream os = new FileOutputStream(jumbfFileUrl)) {
 
-                byte[] bmffHeader = CoreUtils.getBmffHeaderBuffer(bs.getLBox(), bs.getTBox(), bs.getXlBox());
+                    BoxSegment bs = boxSegmentList.get(0);
 
-                CoreUtils.writeByteArrayToOutputStream(bmffHeader, os);
+                    byte[] bmffHeader = CoreUtils.getBmffHeaderBuffer(bs.getLBox(), bs.getTBox(), bs.getXlBox());
 
-                for (BoxSegment boxSegment : new ArrayList<>(boxSegmentList)) {
-                    CoreUtils.writeFileContentToOutput(boxSegment.getPayloadUrl(), os);
-                    deleteBoxSegment(boxSegmentMap, boxSegment.getTBox(), boxSegment.getBoxInstanceNumber(),
-                            boxSegment.getPacketSequenceNumber());
+                    CoreUtils.writeByteArrayToOutputStream(bmffHeader, os);
+
+                    for (BoxSegment boxSegment : new ArrayList<>(boxSegmentList)) {
+                        CoreUtils.writeFileContentToOutput(boxSegment.getPayloadUrl(), os);
+                        deleteBoxSegment(boxSegmentMap, boxSegment.getTBox(), boxSegment.getBoxInstanceNumber(),
+                                boxSegment.getPacketSequenceNumber());
+                    }
                 }
 
                 List<JumbfBox> boxList = coreParserService.parseMetadataFromFile(jumbfFileUrl);
                 result.put(boxSegmentId, boxList.get(0));
-            } catch (MipamsException | IOException e) {
-                throw new JpegCodestreamException(e);
             }
+        } catch (MipamsException | IOException e) {
+            throw new JpegCodestreamException(e);
+        } finally {
+            CoreUtils.deleteFile(jumbfFileUrl);
         }
-
         return result;
+
     }
 
     public void deleteBoxSegment(Map<String, List<BoxSegment>> boxSegmentMap, int boxType, int boxInstanceNumber,

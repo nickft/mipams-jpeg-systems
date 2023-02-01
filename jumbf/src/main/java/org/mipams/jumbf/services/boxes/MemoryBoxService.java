@@ -8,13 +8,8 @@ import org.mipams.jumbf.entities.ParseMetadata;
 import org.mipams.jumbf.entities.MemoryBox;
 import org.mipams.jumbf.util.CoreUtils;
 import org.mipams.jumbf.util.MipamsException;
-import org.mipams.jumbf.util.Properties;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class MemoryBoxService<T extends MemoryBox> extends BmffBoxService<T> {
-
-    @Autowired
-    Properties properties;
 
     @Override
     protected void writeBmffPayloadToJumbfFile(T memoryBox, OutputStream outputStream)

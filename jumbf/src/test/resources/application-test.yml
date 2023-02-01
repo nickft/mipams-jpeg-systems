@@ -1,7 +1,0 @@
-org:
-  mipams:
-    jumbf:
-      image_folder: /tmp/jumbf-tests
-      max_file_size_in_bytes: 52428800
-
-
