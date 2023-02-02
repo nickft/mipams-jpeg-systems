@@ -33,8 +33,6 @@ import java.util.List;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = JumbfConfig.class)
-@TestPropertySource(properties = "org.mipams.max_file_size_in_bytes=52428800")
-@TestPropertySource(properties = "org.mipams.image_folder=/tmp/jumbf-tests")
 @ActiveProfiles("test")
 public class MultipleContentBoxIntegrationTests extends AbstractIntegrationTests {
 

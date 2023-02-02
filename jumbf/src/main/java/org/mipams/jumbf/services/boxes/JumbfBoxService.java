@@ -77,7 +77,7 @@ public final class JumbfBoxService extends BmffBoxService<JumbfBox> {
     protected void populatePayloadFromJumbfFile(JumbfBox jumbfBox, ParseMetadata parseMetadata, InputStream input)
             throws MipamsException {
 
-        logger.log(Level.FINE,"Jumbf box");
+        logger.log(Level.FINE, "Jumbf box");
 
         final long nominalPayloadSize = jumbfBox.getPayloadSizeFromBmffHeaders();
 
@@ -103,12 +103,17 @@ public final class JumbfBoxService extends BmffBoxService<JumbfBox> {
 
         actualSize += jumbfBox.calculateContentBoxListSize(contentBoxList);
 
+        if (nominalPayloadSize > 0 && nominalPayloadSize - actualSize == 0) {
+            return;
+        }
+
+        Long remainingBytes = nominalPayloadSize != 0 ? nominalPayloadSize - actualSize : 0;
+
         try {
             if (input.available() > 0 && CoreUtils.isPaddingBoxNext(input)) {
 
                 ParseMetadata paddingParseMetadata = new ParseMetadata();
-                paddingParseMetadata
-                        .setAvailableBytesForBox(nominalPayloadSize != 0 ? nominalPayloadSize - actualSize : 0);
+                paddingParseMetadata.setAvailableBytesForBox(remainingBytes);
                 paddingParseMetadata.setParentDirectory(parseMetadata.getParentDirectory());
 
                 PaddingBox paddingBox = paddingBoxService.parseFromJumbfFile(input, paddingParseMetadata);
@@ -118,7 +123,7 @@ public final class JumbfBoxService extends BmffBoxService<JumbfBox> {
             throw new MipamsException(e);
         }
 
-        logger.log(Level.FINE,"Discovered box: " + jumbfBox.toString());
+        logger.log(Level.FINE, "Discovered box: " + jumbfBox.toString());
     }
 
     public JumbfBox parseSuperBox(InputStream input, ParseMetadata parseMetadata) throws MipamsException {

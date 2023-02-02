@@ -25,17 +25,12 @@ import org.mipams.privsec.services.content_types.ProtectionContentType;
 import org.mipams.jumbf.config.JumbfConfig;
 import org.mipams.privsec.config.PrivsecConfig;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.ActiveProfiles;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {PrivsecConfig.class, JumbfConfig.class})
-@TestPropertySource(properties = "org.mipams.max_file_size_in_bytes=52428800")
-@TestPropertySource(properties = "org.mipams.image_folder=/tmp/jumbf-tests")
+@ContextConfiguration(classes = { PrivsecConfig.class, JumbfConfig.class })
 @ActiveProfiles("test")
 public class ProtectionBoxTests extends AbstractIntegrationTests {
 

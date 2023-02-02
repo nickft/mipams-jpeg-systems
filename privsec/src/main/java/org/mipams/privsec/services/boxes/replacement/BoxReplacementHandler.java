@@ -1,6 +1,7 @@
 package org.mipams.privsec.services.boxes.replacement;
 
 import java.io.OutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,24 +37,28 @@ public class BoxReplacementHandler implements DataBoxHandler {
             throws MipamsException {
         List<BmffBox> contentBoxList = new ArrayList<>();
 
-        long availableBytesForBox = parseMetadata.getAvailableBytesForBox();
+        long nominalBytesRemaining = parseMetadata.getAvailableBytesForBox();
+        long availableBytesForBox = nominalBytesRemaining;
 
         ParseMetadata jumbfParseMetadata;
 
-        while (availableBytesForBox > 0) {
+        try {
+            while ((nominalBytesRemaining == 0 || availableBytesForBox > 0) && inputStream.available() > 1) {
+                if (CoreUtils.isPaddingBoxNext(inputStream)) {
+                    break;
+                }
 
-            if (CoreUtils.isPaddingBoxNext(inputStream)) {
-                break;
+                jumbfParseMetadata = new ParseMetadata();
+                jumbfParseMetadata.setAvailableBytesForBox(availableBytesForBox);
+                jumbfParseMetadata.setParentDirectory(parseMetadata.getParentDirectory());
+
+                JumbfBox jumbfBox = jumbfBoxService.parseFromJumbfFile(inputStream, jumbfParseMetadata);
+                availableBytesForBox -= jumbfBox.getBoxSize();
+
+                contentBoxList.add(jumbfBox);
             }
-
-            jumbfParseMetadata = new ParseMetadata();
-            jumbfParseMetadata.setAvailableBytesForBox(availableBytesForBox);
-            jumbfParseMetadata.setParentDirectory(parseMetadata.getParentDirectory());
-
-            JumbfBox jumbfBox = jumbfBoxService.parseFromJumbfFile(inputStream, jumbfParseMetadata);
-            availableBytesForBox -= jumbfBox.getBoxSize();
-
-            contentBoxList.add(jumbfBox);
+        } catch (IOException e) {
+            throw new MipamsException(e);
         }
 
         return contentBoxList;

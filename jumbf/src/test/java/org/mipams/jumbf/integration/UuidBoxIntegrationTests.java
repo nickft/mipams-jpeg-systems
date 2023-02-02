@@ -18,7 +18,6 @@ import org.mipams.jumbf.util.CoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
@@ -26,8 +25,6 @@ import java.util.List;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = JumbfConfig.class)
-@TestPropertySource(properties = "org.mipams.max_file_size_in_bytes=52428800")
-@TestPropertySource(properties = "org.mipams.image_folder=/tmp/jumbf-tests")
 @ActiveProfiles("test")
 public class UuidBoxIntegrationTests extends AbstractIntegrationTests {
 

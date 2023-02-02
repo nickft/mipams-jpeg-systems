@@ -40,9 +40,12 @@ public class ReplacementContentType implements ContentTypeService {
         ReplacementDescriptionBox replacementDescriptionBox = replacementDescriptionBoxService.parseFromJumbfFile(
                 inputStream, parseMetadata);
 
+        Long remainingBytes = parseMetadata.getAvailableBytesForBox() > 0
+                ? parseMetadata.getAvailableBytesForBox() - replacementDescriptionBox.getBoxSize()
+                : parseMetadata.getAvailableBytesForBox();
+
         ParseMetadata replacementDataParseMetadata = new ParseMetadata();
-        replacementDataParseMetadata.setAvailableBytesForBox(
-                parseMetadata.getAvailableBytesForBox() - replacementDescriptionBox.getBoxSize());
+        replacementDataParseMetadata.setAvailableBytesForBox(remainingBytes);
         replacementDataParseMetadata.setParentDirectory(parseMetadata.getParentDirectory());
 
         ReplacementType replacementType = getReplacementType(replacementDescriptionBox);

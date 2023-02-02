@@ -5,6 +5,7 @@ import org.mipams.privsec.services.boxes.ReplacementDescriptionBoxService;
 import org.mipams.privsec.services.boxes.replacement.AppReplacementHandler;
 import org.mipams.privsec.services.boxes.replacement.BoxReplacementHandler;
 import org.mipams.privsec.services.boxes.replacement.DataBoxHandlerFactory;
+import org.mipams.privsec.services.boxes.replacement.FileReplacementHandler;
 import org.mipams.privsec.services.boxes.replacement.ParamHandlerFactory;
 import org.mipams.privsec.services.boxes.replacement.RoiReplacementHandler;
 import org.mipams.privsec.services.content_types.ProtectionContentType;
@@ -60,5 +61,9 @@ public class PrivsecConfig {
     public RoiReplacementHandler roiReplacementHandler() {
         return new RoiReplacementHandler();
     }
-}
 
+    @Bean
+    public FileReplacementHandler fileReplacementHandler() {
+        return new FileReplacementHandler();
+    }
+}

@@ -309,7 +309,7 @@ public class CoreUtils {
         long remainingBytes = nominalTotalSizeInBytes;
 
         try {
-            while ((nominalTotalSizeInBytes != 0 && remainingBytes > 0)
+            while ((nominalTotalSizeInBytes == 0 || remainingBytes > 0)
                     && ((numberOfBytesRead = input.read(bytes, 0, maximumBytesToRead)) != -1)) {
                 outputStream.write(bytes, 0, numberOfBytesRead);
 
@@ -368,12 +368,16 @@ public class CoreUtils {
             int maximumBytesToRead = currentBufferSize,
                     numberOfBytesRead;
 
-            while ((availableBytesForBox != 0 && remainingBytes > 0)
+            while ((availableBytesForBox == 0 || remainingBytes > 0)
                     && ((numberOfBytesRead = input.read(bytes, 0, maximumBytesToRead)) != -1)) {
                 for (byte b : bytes) {
                     if (b != paddingValue) {
                         throw new MipamsException("Padding is corrupted. It should contain only values of 0x00");
                     }
+                }
+
+                if (availableBytesForBox == 0) {
+                    continue;
                 }
 
                 remainingBytes -= numberOfBytesRead;

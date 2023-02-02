@@ -31,7 +31,7 @@ public class CoreParserService implements ParserInterface {
     public List<JumbfBox> parseMetadataFromFile(String assetUrl) throws MipamsException {
 
         String parentDirectory = CoreUtils.getParentDirectory(assetUrl);
-        String tmpDirectory = CoreUtils.createSubdirectory(parentDirectory, CoreUtils.TEMP_DIRECTORY);
+        String tmpDirectory = CoreUtils.createSubdirectory(parentDirectory, CoreUtils.randomStringGenerator());
 
         ParseMetadata parseMetadata = new ParseMetadata();
         parseMetadata.setParentDirectory(tmpDirectory);
@@ -54,6 +54,5 @@ public class CoreParserService implements ParserInterface {
         } finally {
             CoreUtils.deleteDir(tmpDirectory);
         }
-
     }
 }
