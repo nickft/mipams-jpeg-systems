@@ -1,7 +1,7 @@
 
 [![Tests](https://github.com/nickft/mipams-jumbf/actions/workflows/maven.yml/badge.svg)](https://github.com/nickft/mipams-jumbf/actions/workflows/maven.yml?branch=main)
 
-# JUMBF Reference software
+# JPEG Systems Reference software
 
 ## Table of Contents
 
@@ -14,18 +14,10 @@
 
 ## Introduction <a name="intro"></a>
 
-This demo application proposes a design on how to parse metadata that are stored/structured following the JPEG Universal Metadata Box Format (JUMBF) defined in Part 5 JPEG Standard. Ideally, the goal of this design is to support the maintenance effort of the JUMBF functionalities as well as to provide an interface for additional modules(i.e. JLINK, Privacy and Security, Provenance) to extend these functionalities according to their application needs.
+The MIPAMS JPEG Systems library is a multimodule project written in Java which provides the interfaces to model, parse and generate JUMBF data according to the ISO/IEC 19566 standards. Currently the following standards are implemented:
 
-Specifically, the application provides two Rest endpoints that demonstrate the following operations:
-
-1. Parse a file that stores JUMBF metadata wrapped with the binary structure (XTBox) proposed by JPEG-1 / JPEG XT. The GET response is a string containing information about the JUMBF structure.
-
-2. Generate JUMBF file based on information provided in the POST request body. The POST response is a string showing the location where the JUMBF file is stored.
-
-The goal of this demo is to create a proof of concept application which shows that this design could support the effort of creating a modular ecosystem as well as show how additional JUMBF definitions - i.e. Privacy & Security module - can extend the functionality implemented in the core JUMBF module. Currently the following standards are implemented:
-
-1. JPEG systems — Part 5: JPEG Universal Metadata Box Format (Status: On going)
-2. JPEG systems — Part 4: Privacy and security (Status: Completed)
+1. JPEG systems — Part 5: JPEG Universal Metadata Box Format
+2. JPEG systems — Part 4: Privacy and security
 
 ## Installation <a name="requirements"></a>
 
@@ -54,7 +46,7 @@ In the "example" directory you can find a demo application which shows how to us
 
 ## Application structure and terminology <a name="spring"></a>
 
-The whole JUMBF application (not only the one that appears on the demo) could be logically separated in independent layers each of whom is responsible for a specific application over JUMBF metadata. All these layers are strongly dependent on **core layer** which implements the basic JUMBF box definitions. Each layer can be defined in a separate package inside the jumbf package. In the jumbf package we could contain not only the core layer but also all the layers related to any application that needs to parse application-specific JUMBF boxes.
+The entire MIPAMS JPEG Systems application (not only the one that appears on the demo) could be logically separated in independent layers each of whom is responsible for a specific application over JUMBF metadata. All these layers are strongly dependent on **jumbf layer** which implements the basic JUMBF data model. Each layer can be defined in a separate package inside the org.mipams package. In this package we could contain not only the core layer but also all the layers related to any application that needs to parse application-specific JUMBF boxes.
 
 In this design, the two main abstractions of a layer are the *entities* and the *services*. Each service is mapped to a specific entitity. An **entitity** describes the structure (i.e. fields) of its corresponding Box definition while a **service** defines all the necessary functionalities that need to be performed in this specific box. Any service that implements the BoxService interface shall implement three core methods: getServiceMetadata(), writeToJumbfFile() and parseFromJumbfFile().
 
