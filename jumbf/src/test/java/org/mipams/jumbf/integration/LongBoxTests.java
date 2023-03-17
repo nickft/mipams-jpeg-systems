@@ -2,11 +2,8 @@ package org.mipams.jumbf.integration;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
 import java.util.List;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mipams.jumbf.config.JumbfConfig;
@@ -25,21 +22,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ActiveProfiles("test")
 public class LongBoxTests extends AbstractIntegrationTests {
 
-    @BeforeAll
-    static void initRequest() throws IOException {
-        generateFile();
-    }
-
-    @AfterAll
-    public static void cleanUp() throws IOException {
-        fileCleanUp();
-    }
-
     @Test
     void testLongBox() throws MipamsException {
-        JumbfBox givenJumbfBox = generateMockLongBox();
+        final String jumbfPath = CoreUtils.getFullPath(CoreUtils.getTempDir(), "test.jumbf");
 
-        String test = testGenerateJumbfFileFromBox(List.of(givenJumbfBox), JUMBF_FILE_PATH);
+        JumbfBox givenJumbfBox = generateMockLongBox();
+        String test = testGenerateJumbfFileFromBox(List.of(givenJumbfBox), jumbfPath);
 
         assertTrue(test != null);
     }

@@ -103,7 +103,7 @@ public class ProtectionDescriptionBox extends BmffBox {
         final String arLabel = this.arLabel != null ? getArLabel().toString() : "null";
         final String ivAsString = this.iv != null ? getIv().toString() : "null";
 
-        StringBuilder builder = new StringBuilder("RoiParamHandler=(");
+        StringBuilder builder = new StringBuilder("ProtectionDescriptionBox=(");
 
         builder.append("methodToggle=").append(methodToggle).append(", ").append("encLabel=").append(encLabel)
                 .append(", ").append("arLabel=").append(arLabel).append(", ").append("iv=").append(ivAsString)

@@ -2,12 +2,9 @@ package org.mipams.privsec.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -35,21 +32,12 @@ import org.mipams.privsec.config.PrivsecConfig;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.util.ResourceUtils;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { PrivsecConfig.class, JumbfConfig.class })
 @ActiveProfiles("test")
 public class ReplacementBoxTests extends AbstractIntegrationTests {
-
-        @BeforeAll
-        static void initRequest() throws IOException {
-                generateFile();
-        }
-
-        @AfterAll
-        public static void cleanUp() throws IOException {
-                fileCleanUp();
-        }
 
         @Test
         void testBoxReplacementBoxWithOffset() throws Exception {
@@ -148,11 +136,13 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
 
         @Test
         void testAppReplacementBox() throws Exception {
+                String assetFileUrl = ResourceUtils.getFile("classpath:sample.jpeg").getAbsolutePath();
+
                 AppParamHandler appParamHandler = new AppParamHandler();
                 appParamHandler.setOffset(Long.parseLong("123123123123"));
 
                 BinaryDataBox binaryDataBox = new BinaryDataBox();
-                binaryDataBox.setFileUrl(TEST_FILE_PATH);
+                binaryDataBox.setFileUrl(assetFileUrl);
                 binaryDataBox.updateBmffHeadersBasedOnBox();
 
                 List<BmffBox> replacementDataBoxList = List.of(binaryDataBox);
@@ -167,10 +157,12 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
 
         @Test
         void testFileReplacementBox() throws Exception {
+                String assetFileUrl = ResourceUtils.getFile("classpath:sample.jpeg").getAbsolutePath();
+
                 FileParamHandler fileParamHandler = new FileParamHandler();
 
                 ContiguousCodestreamBox jp2cBox = new ContiguousCodestreamBox();
-                jp2cBox.setFileUrl(TEST_FILE_PATH);
+                jp2cBox.setFileUrl(assetFileUrl);
                 jp2cBox.updateBmffHeadersBasedOnBox();
 
                 List<BmffBox> replacementDataBoxList = List.of(jp2cBox);
@@ -184,10 +176,12 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
 
         @Test
         void testRoiReplacementBox() throws Exception {
+                String assetFileUrl = ResourceUtils.getFile("classpath:sample.jpeg").getAbsolutePath();
+
                 RoiParamHandler roiParamHandler = new RoiParamHandler();
 
                 ContiguousCodestreamBox jp2cBox = new ContiguousCodestreamBox();
-                jp2cBox.setFileUrl(TEST_FILE_PATH);
+                jp2cBox.setFileUrl(assetFileUrl);
                 jp2cBox.updateBmffHeadersBasedOnBox();
 
                 List<BmffBox> replacementDataBoxList = List.of(jp2cBox);

@@ -2,11 +2,8 @@ package org.mipams.jlink;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.IOException;
 import java.util.List;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mipams.jumbf.config.JumbfConfig;
@@ -33,7 +30,7 @@ import org.springframework.util.ResourceUtils;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { JlinkConfig.class, JumbfConfig.class })
 @ActiveProfiles("test")
-public class JlinkTests extends AbstractParserTests {
+public class JlinkTests {
 
     @Autowired
     CoreGeneratorService coreGeneratorService;
@@ -46,16 +43,6 @@ public class JlinkTests extends AbstractParserTests {
 
     @Autowired
     JpegCodestreamParser jpegCodestreamParser;
-
-    @BeforeAll
-    static void initTest() throws IOException {
-        generateFile();
-    }
-
-    @AfterAll
-    public static void cleanUp() throws IOException {
-        fileCleanUp();
-    }
 
     @Test
     void testParseJlinkInJumbfFile() throws Exception {
@@ -97,7 +84,7 @@ public class JlinkTests extends AbstractParserTests {
         mainJlinkBuilder.appendContentBox(jlinkBuilder.getResult());
         mainJlinkBuilder.appendContentBox(jp2cContentBoxBuilder.getResult());
 
-        String targetUrl = CoreUtils.getFullPath(TEST_DIRECTORY, "jlink_test.jumbf");
+        String targetUrl = CoreUtils.getFullPath(CoreUtils.getTempDir(), "jlink_test.jumbf");
 
         JumbfBox createdJumbfBox = mainJlinkBuilder.getResult();
 
@@ -106,6 +93,7 @@ public class JlinkTests extends AbstractParserTests {
         List<JumbfBox> parsedList = coreParserService.parseMetadataFromFile(targetUrl);
 
         assertEquals(createdJumbfBox, parsedList.get(0));
+        CoreUtils.deleteFile(targetUrl);
     }
 
     @Test
@@ -148,7 +136,7 @@ public class JlinkTests extends AbstractParserTests {
         mainJlinkBuilder.appendContentBox(jlinkBuilder.getResult());
         mainJlinkBuilder.appendContentBox(jp2cContentBoxBuilder.getResult());
 
-        String targetUrl = CoreUtils.getFullPath(TEST_DIRECTORY, "jlink_test.jpeg");
+        String targetUrl = CoreUtils.getFullPath(CoreUtils.getTempDir(), "jlink_test.jpeg");
 
         JumbfBox createdJumbfBox = mainJlinkBuilder.getResult();
 
@@ -157,5 +145,6 @@ public class JlinkTests extends AbstractParserTests {
         List<JumbfBox> parsedList = jpegCodestreamParser.parseMetadataFromFile(targetUrl);
 
         assertEquals(createdJumbfBox, parsedList.get(0));
+        CoreUtils.deleteFile(targetUrl);
     }
 }

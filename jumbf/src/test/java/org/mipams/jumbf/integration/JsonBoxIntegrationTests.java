@@ -7,11 +7,8 @@ import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mipams.jumbf.config.JumbfConfig;
@@ -49,16 +46,6 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
 
     @Autowired
     PrivateBoxService privateBoxService;
-
-    @BeforeAll
-    static void initRequest() throws IOException {
-        generateFile();
-    }
-
-    @AfterAll
-    public static void cleanUp() throws IOException {
-        fileCleanUp();
-    }
 
     @Test
     void testJsonBox() throws Exception {

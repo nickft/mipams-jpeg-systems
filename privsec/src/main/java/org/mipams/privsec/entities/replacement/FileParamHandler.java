@@ -22,6 +22,6 @@ public class FileParamHandler implements ParamHandlerInterface {
 
     @Override
     public String toString() {
-        return "EmptyParamHandler()";
+        return "FileParamHandler()";
     }
 }

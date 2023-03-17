@@ -1,7 +1,5 @@
 package org.mipams.jumbf.integration;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -24,10 +22,9 @@ import org.mipams.jumbf.util.MipamsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.util.ResourceUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,16 +38,6 @@ public class MultipleContentBoxIntegrationTests extends AbstractIntegrationTests
 
     @Autowired
     CoreParserService coreParserService;
-
-    @BeforeAll
-    static void initRequest() throws IOException {
-        generateFile();
-    }
-
-    @AfterAll
-    public static void cleanUp() throws IOException {
-        fileCleanUp();
-    }
 
     @Test
     void testMultipleJumbfBox() throws Exception {
@@ -101,11 +88,13 @@ public class MultipleContentBoxIntegrationTests extends AbstractIntegrationTests
         return builder.getResult();
     }
 
-    private JumbfBox createJp2cJumbfBox() throws MipamsException {
+    private JumbfBox createJp2cJumbfBox() throws Exception {
+        String assetFileUrl = ResourceUtils.getFile("classpath:sample.jpeg").getAbsolutePath();
+
         ContiguousCodestreamContentType contentType = new ContiguousCodestreamContentType();
 
         ContiguousCodestreamBox jp2cBox = new ContiguousCodestreamBox();
-        jp2cBox.setFileUrl(TEST_FILE_PATH);
+        jp2cBox.setFileUrl(assetFileUrl);
 
         JumbfBoxBuilder builder = new JumbfBoxBuilder(contentType);
         builder.appendContentBox(jp2cBox);

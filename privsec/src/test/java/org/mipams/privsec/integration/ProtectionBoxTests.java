@@ -2,11 +2,9 @@ package org.mipams.privsec.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.List;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -28,21 +26,12 @@ import org.mipams.privsec.config.PrivsecConfig;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.util.ResourceUtils;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { PrivsecConfig.class, JumbfConfig.class })
 @ActiveProfiles("test")
 public class ProtectionBoxTests extends AbstractIntegrationTests {
-
-    @BeforeAll
-    static void initRequest() throws IOException {
-        generateFile();
-    }
-
-    @AfterAll
-    public static void cleanUp() throws IOException {
-        fileCleanUp();
-    }
 
     @Test
     void testProtectionBoxAes() throws Exception {
@@ -132,13 +121,14 @@ public class ProtectionBoxTests extends AbstractIntegrationTests {
     }
 
     JumbfBox getProtectionJumbfBoxBasedOnProtectionDescriptionBox(ProtectionDescriptionBox pdBox)
-            throws MipamsException {
+            throws MipamsException, FileNotFoundException {
+        String assetFileUrl = ResourceUtils.getFile("classpath:sample.jpeg").getAbsolutePath();
 
         ProtectionContentType protectionContentType = new ProtectionContentType();
         String contentTypeUuid = protectionContentType.getContentTypeUuid();
 
         BinaryDataBox binaryDataBox = new BinaryDataBox();
-        binaryDataBox.setFileUrl(TEST_FILE_PATH);
+        binaryDataBox.setFileUrl(assetFileUrl);
         binaryDataBox.updateBmffHeadersBasedOnBox();
 
         return MockJumbfBox.generateJumbfBoxWithContent(contentTypeUuid, List.of(pdBox, binaryDataBox));

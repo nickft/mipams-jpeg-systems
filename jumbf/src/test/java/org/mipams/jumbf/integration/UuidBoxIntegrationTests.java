@@ -1,7 +1,5 @@
 package org.mipams.jumbf.integration;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -19,8 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.util.ResourceUtils;
 
-import java.io.IOException;
 import java.util.List;
 
 @ExtendWith(SpringExtension.class)
@@ -34,24 +32,15 @@ public class UuidBoxIntegrationTests extends AbstractIntegrationTests {
     @Autowired
     CoreParserService coreParserService;
 
-    @BeforeAll
-    static void initRequest() throws IOException {
-        generateFile();
-    }
-
-    @AfterAll
-    public static void cleanUp() throws IOException {
-        fileCleanUp();
-    }
-
     @Test
     void testUuidBox() throws Exception {
+        String assetFileUrl = ResourceUtils.getFile("classpath:sample.jpeg").getAbsolutePath();
 
         UuidContentType uuidContentType = new UuidContentType();
 
         UuidBox uuidBox = new UuidBox();
         uuidBox.setUuid(CoreUtils.randomStringGenerator().toUpperCase());
-        uuidBox.setFileUrl(TEST_FILE_PATH);
+        uuidBox.setFileUrl(assetFileUrl);
 
         JumbfBoxBuilder builder = new JumbfBoxBuilder(uuidContentType);
         builder.setPaddingSize(10);

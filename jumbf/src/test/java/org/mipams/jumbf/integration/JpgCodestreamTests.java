@@ -4,11 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.List;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mipams.jumbf.config.JumbfConfig;
@@ -39,16 +36,6 @@ public class JpgCodestreamTests extends AbstractIntegrationTests {
 
     @Autowired
     JpegCodestreamParser jpegCodestreamParser;
-
-    @BeforeAll
-    static void initRequest() throws IOException {
-        generateFile();
-    }
-
-    @AfterAll
-    public static void cleanUp() throws IOException {
-        fileCleanUp();
-    }
 
     @Test
     void verifyJp2cParsing() throws MipamsException, FileNotFoundException {
@@ -121,11 +108,11 @@ public class JpgCodestreamTests extends AbstractIntegrationTests {
     void testCorruptedJpegImage() throws MipamsException, FileNotFoundException {
         List<JumbfBox> jumbfBoxList = List.of(createJsonJumbfFile(0));
 
-        String assetFileUrl = TEST_FILE_PATH;
+        String assetFileUrl = ResourceUtils.getFile("classpath:sample.jpeg").getAbsolutePath();
         String targetUrl = assetFileUrl + "-new";
 
         assertThrows(MipamsException.class, () -> {
-            jpegCodestreamGenerator.generateJumbfMetadataToFile(jumbfBoxList, assetFileUrl, targetUrl);
+            jpegCodestreamGenerator.generateJumbfMetadataToFile(jumbfBoxList, assetFileUrl + "1", targetUrl);
         });
     }
 

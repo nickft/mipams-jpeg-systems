@@ -51,8 +51,6 @@ public class CoreParserService implements ParserInterface {
             return bmffBoxList;
         } catch (IOException e) {
             throw new CorruptedJumbfFileException("Could not open file: " + assetUrl, e);
-        } finally {
-            CoreUtils.deleteDir(tmpDirectory);
         }
     }
 }

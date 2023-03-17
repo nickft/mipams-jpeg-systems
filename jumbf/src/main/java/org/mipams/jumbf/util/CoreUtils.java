@@ -413,6 +413,17 @@ public class CoreUtils {
         return bb.array();
     }
 
+    public static String createTempSubdirectory() throws MipamsException {
+        return createSubdirectory(getTempDir(), randomStringGenerator());
+    }
+
+    public static String getTempDir() throws MipamsException {
+        String randomFile = createTempFile(randomStringGenerator(), null);
+        String tempDir = getParentDirectory(randomFile);
+        deleteFile(randomFile);
+        return tempDir;
+    }
+
     public static String createSubdirectory(String parentDirectory, String subDirectory) throws MipamsException {
 
         String subDirectoryPath = CoreUtils.getFullPath(parentDirectory, subDirectory);

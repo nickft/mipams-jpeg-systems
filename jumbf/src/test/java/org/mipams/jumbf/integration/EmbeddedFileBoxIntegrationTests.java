@@ -1,7 +1,5 @@
 package org.mipams.jumbf.integration;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -21,8 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.util.ResourceUtils;
 
-import java.io.IOException;
 import java.util.List;
 
 @ExtendWith(SpringExtension.class)
@@ -36,27 +34,18 @@ public class EmbeddedFileBoxIntegrationTests extends AbstractIntegrationTests {
     @Autowired
     CoreParserService coreParserService;
 
-    @BeforeAll
-    static void initRequest() throws IOException {
-        generateFile();
-    }
-
-    @AfterAll
-    public static void cleanUp() throws IOException {
-        fileCleanUp();
-    }
-
     @Test
     void testEmbeddedFileBoxWithExternalReference() throws Exception {
+        String assetFileUrl = ResourceUtils.getFile("classpath:sample.jpeg").getAbsolutePath();
 
         EmbeddedFileContentType embeddedFileContentType = new EmbeddedFileContentType();
 
         EmbeddedFileDescriptionBox embeddedFileDescriptionBox = new EmbeddedFileDescriptionBox();
-        embeddedFileDescriptionBox.setFileName(TEST_FILE_NAME);
+        embeddedFileDescriptionBox.setFileName(assetFileUrl);
         embeddedFileDescriptionBox.setMediaTypeFromString("image/jpeg");
         embeddedFileDescriptionBox.markFileAsExternallyReferenced();
 
-        assertEquals(TEST_FILE_NAME, embeddedFileDescriptionBox.discoverFileName());
+        assertEquals(assetFileUrl, embeddedFileDescriptionBox.discoverFileName());
 
         BinaryDataBox binaryDataBox = new BinaryDataBox();
         binaryDataBox.setReferencedExternally(true);
@@ -76,6 +65,7 @@ public class EmbeddedFileBoxIntegrationTests extends AbstractIntegrationTests {
 
     @Test
     void testEmbeddedFileBoxWithInternalReference() throws Exception {
+        String assetFileUrl = ResourceUtils.getFile("classpath:sample.jpeg").getAbsolutePath();
 
         EmbeddedFileContentType embeddedFileContentType = new EmbeddedFileContentType();
 
@@ -84,10 +74,10 @@ public class EmbeddedFileBoxIntegrationTests extends AbstractIntegrationTests {
         embeddedFileDescriptionBox.markFileAsInternallyReferenced();
         embeddedFileDescriptionBox.updateBmffHeadersBasedOnBox();
 
-        assertTrue(!TEST_FILE_NAME.equals(embeddedFileDescriptionBox.discoverFileName()));
+        assertTrue(!assetFileUrl.equals(embeddedFileDescriptionBox.discoverFileName()));
 
         BinaryDataBox binaryDataBox = new BinaryDataBox();
-        binaryDataBox.setFileUrl(TEST_FILE_PATH);
+        binaryDataBox.setFileUrl(assetFileUrl);
         binaryDataBox.updateBmffHeadersBasedOnBox();
 
         List<BmffBox> contentBoxes = List.of(embeddedFileDescriptionBox, binaryDataBox);

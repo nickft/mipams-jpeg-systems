@@ -21,8 +21,7 @@ public abstract class FileBox extends BmffBox {
 
     @Override
     public String toString() {
-
         final String fileUrl = this.fileUrl != null ? getFileUrl() : "null";
-        return "BinaryDataBox(" + super.toString() + ", referencedExternally=" + fileUrl + ")";
+        return "BinaryDataBox(" + super.toString() + ", url=" + fileUrl + ")";
     }
 }
