@@ -16,7 +16,10 @@
 	<packaging>jar</packaging>
 
 	<name>Privacy and Security</name>
-	<description>Module that contains the implementation of JUMBF boxes according to Privacy and Security standard (ISO/IEC 19566-4)</description>
+	<description>
+		Module that contains the implementation of JUMBF boxes according 
+		to Privacy and Security standard (ISO/IEC 19566-4)
+	</description>
 	
 	<dependencies>
 		<dependency>
