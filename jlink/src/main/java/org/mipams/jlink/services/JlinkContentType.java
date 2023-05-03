@@ -28,6 +28,9 @@ public class JlinkContentType implements ContentTypeService {
     @Autowired
     JumbfBoxService jumbfBoxService;
 
+    @Autowired
+    JlinkValidator schemaValidator;
+
     @Override
     public String getContentTypeUuid() {
         return "4C494E4B-0011-0010-8000-00AA00389B71";
@@ -46,6 +49,8 @@ public class JlinkContentType implements ContentTypeService {
         if (!isXmlContentType(xmlContentTypeJumbfBox)) {
             throw new MipamsException("First content box shall be of XML Content Type");
         }
+
+        schemaValidator.validateSchema(xmlContentTypeJumbfBox);
 
         contentBoxes.add(xmlContentTypeJumbfBox);
 
@@ -103,6 +108,10 @@ public class JlinkContentType implements ContentTypeService {
             throws MipamsException {
 
         logger.info("Calculating content: ");
+        JumbfBox xmlContentTypeJumbfBox = (JumbfBox) inputBoxList.get(0);
+        if (isXmlContentType(xmlContentTypeJumbfBox)) {
+            schemaValidator.validateSchema(xmlContentTypeJumbfBox);
+        }
 
         for (BmffBox contentBox : inputBoxList) {
             JumbfBox jumbfBox = (JumbfBox) contentBox;

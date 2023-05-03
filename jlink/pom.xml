@@ -17,12 +17,27 @@
 
 	<name>JLINK</name>
 	<description>Module that contains the implementation of JUMBF boxes according to JLINK standard (ISO/IEC 19566-7)</description>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.mipams</groupId>  
 			<artifactId>jumbf</artifactId>
 			<version>2.0</version>  
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.rdf4j</groupId>
+			<artifactId>rdf4j-client</artifactId>
+			<type>pom</type>
+			<version>4.2.3</version>
+
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.rdf4j</groupId>
+			<artifactId>rdf4j-rio-rdfxml</artifactId>
+			<type>pom</type>
+			<version>4.2.3</version>
 		</dependency>
 	</dependencies>
 </project>
