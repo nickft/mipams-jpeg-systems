@@ -7,14 +7,17 @@ public class BinaryDataBox extends FileBox {
 
     private boolean referencedExternally = false;
 
+    public static int TYPE_ID = 0x62696462;
+    public static String TYPE = "bidb";
+
     @Override
     public int getTypeId() {
-        return 0x62696462;
+        return TYPE_ID;
     }
 
     @Override
     public String getType() {
-        return "bidb";
+        return TYPE;
     }
 
     @Override

@@ -6,8 +6,6 @@ import java.util.logging.Level;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.annotation.PostConstruct;
-
 import org.mipams.jumbf.entities.EmbeddedFileDescriptionBox;
 import org.mipams.jumbf.entities.ParseMetadata;
 import org.mipams.jumbf.entities.ServiceMetadata;
@@ -21,13 +19,8 @@ public class EmbeddedFileDescriptionBoxService extends BmffBoxService<EmbeddedFi
 
     private static final Logger logger = Logger.getLogger(EmbeddedFileDescriptionBoxService.class.getName());
 
-    ServiceMetadata serviceMetadata;
-
-    @PostConstruct
-    void init() {
-        EmbeddedFileDescriptionBox box = initializeBox();
-        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType());
-    }
+    ServiceMetadata serviceMetadata = new ServiceMetadata(EmbeddedFileDescriptionBox.TYPE_ID,
+            EmbeddedFileDescriptionBox.TYPE);
 
     @Override
     protected EmbeddedFileDescriptionBox initializeBox() {
@@ -59,7 +52,7 @@ public class EmbeddedFileDescriptionBoxService extends BmffBoxService<EmbeddedFi
     @Override
     protected void populatePayloadFromJumbfFile(EmbeddedFileDescriptionBox embeddedFileDescriptionBox,
             ParseMetadata parseMetadata, InputStream input) throws MipamsException {
-        logger.log(Level.FINE,"Embedded File Description box");
+        logger.log(Level.FINE, "Embedded File Description box");
 
         int toggleValue = CoreUtils.readSingleByteAsIntFromInputStream(input);
         embeddedFileDescriptionBox.setToggle(toggleValue);
@@ -74,6 +67,6 @@ public class EmbeddedFileDescriptionBoxService extends BmffBoxService<EmbeddedFi
                 : null;
         embeddedFileDescriptionBox.setFileName(fileName);
 
-        logger.log(Level.FINE,"Discovered box: " + embeddedFileDescriptionBox.toString());
+        logger.log(Level.FINE, "Discovered box: " + embeddedFileDescriptionBox.toString());
     }
 }

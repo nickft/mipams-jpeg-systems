@@ -2,14 +2,17 @@ package org.mipams.jumbf.entities;
 
 public class XmlBox extends MemoryBox {
 
+    public static int TYPE_ID = 0x786D6C20;
+    public static String TYPE = "xml";
+
     @Override
     public int getTypeId() {
-        return 0x786D6C20;
+        return TYPE_ID;
     }
 
     @Override
     public String getType() {
-        return "xml";
+        return TYPE;
     }
 
     @Override

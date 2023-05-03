@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.annotation.PostConstruct;
-
 import org.mipams.jumbf.entities.BmffBox;
 import org.mipams.jumbf.entities.JumbfBox;
 import org.mipams.jumbf.entities.PaddingBox;
@@ -35,13 +33,7 @@ public class PrivateBoxService extends BmffBoxService<PrivateBox> {
     @Autowired
     PaddingBoxService paddingBoxService;
 
-    ServiceMetadata serviceMetadata;
-
-    @PostConstruct
-    void init() {
-        PrivateBox box = initializeBox();
-        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType());
-    }
+    ServiceMetadata serviceMetadata = new ServiceMetadata(PrivateBox.TYPE_ID, PrivateBox.TYPE);
 
     @Override
     public ServiceMetadata getServiceMetadata() {
@@ -73,7 +65,7 @@ public class PrivateBoxService extends BmffBoxService<PrivateBox> {
     protected void populatePayloadFromJumbfFile(PrivateBox jumbfBox, ParseMetadata parseMetadata, InputStream input)
             throws MipamsException {
 
-        logger.log(Level.FINE,"Jumbf box");
+        logger.log(Level.FINE, "Jumbf box");
 
         final long nominalPayloadSize = jumbfBox.getPayloadSizeFromBmffHeaders();
 
@@ -109,7 +101,7 @@ public class PrivateBoxService extends BmffBoxService<PrivateBox> {
             throw new MipamsException(e);
         }
 
-        logger.log(Level.FINE,"Discovered box: " + jumbfBox.toString());
+        logger.log(Level.FINE, "Discovered box: " + jumbfBox.toString());
     }
 
 }

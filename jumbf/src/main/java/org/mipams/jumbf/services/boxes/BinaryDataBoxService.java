@@ -2,25 +2,16 @@ package org.mipams.jumbf.services.boxes;
 
 import java.io.OutputStream;
 
-import javax.annotation.PostConstruct;
-
 import org.mipams.jumbf.entities.BinaryDataBox;
 import org.mipams.jumbf.entities.ServiceMetadata;
 import org.mipams.jumbf.util.CoreUtils;
 import org.mipams.jumbf.util.MipamsException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class BinaryDataBoxService extends FileBoxService<BinaryDataBox> {
 
-    ServiceMetadata serviceMetadata;
-
-    @PostConstruct
-    void init() {
-        BinaryDataBox box = initializeBox();
-        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType());
-    }
+    ServiceMetadata serviceMetadata = new ServiceMetadata(BinaryDataBox.TYPE_ID, BinaryDataBox.TYPE);
 
     @Override
     protected BinaryDataBox initializeBox() {

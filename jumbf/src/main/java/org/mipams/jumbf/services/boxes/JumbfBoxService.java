@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.mipams.jumbf.entities.BmffBox;
@@ -36,13 +34,8 @@ public final class JumbfBoxService extends BmffBoxService<JumbfBox> {
     @Autowired
     PaddingBoxService paddingBoxService;
 
-    ServiceMetadata serviceMetadata;
-
-    @PostConstruct
-    void init() {
-        JumbfBox box = initializeBox();
-        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType());
-    }
+    ServiceMetadata serviceMetadata = new ServiceMetadata(JumbfBox.TYPE_ID,
+            JumbfBox.TYPE);
 
     @Override
     protected JumbfBox initializeBox() {

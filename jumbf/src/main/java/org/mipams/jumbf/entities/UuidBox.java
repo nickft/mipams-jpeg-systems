@@ -9,14 +9,17 @@ public class UuidBox extends BmffBox {
 
     private String fileUrl;
 
+    public static int TYPE_ID = 0x75756964;
+    public static String TYPE = "uuid";
+
     @Override
     public int getTypeId() {
-        return 0x75756964;
+        return TYPE_ID;
     }
 
     @Override
     public String getType() {
-        return "uuid";
+        return TYPE;
     }
 
     @Override
@@ -46,7 +49,6 @@ public class UuidBox extends BmffBox {
 
     @Override
     public String toString() {
-
         final String uuid = this.uuid != null ? getUuid() : "null";
         final String fileUrl = this.fileUrl != null ? getFileUrl() : "null";
 

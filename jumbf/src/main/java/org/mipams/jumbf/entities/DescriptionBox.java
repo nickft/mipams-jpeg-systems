@@ -17,14 +17,17 @@ public class DescriptionBox extends BmffBox {
 
     protected BmffBox privateField;
 
+    public static int TYPE_ID = 0x6A756D64;
+    public static String TYPE = "jumd";
+
     @Override
     public int getTypeId() {
-        return 0x6A756D64;
+        return TYPE_ID;
     }
 
     @Override
     public String getType() {
-        return "jumd";
+        return TYPE;
     }
 
     @Override

@@ -14,14 +14,17 @@ public class ProtectionDescriptionBox extends BmffBox {
 
     private byte[] iv;
 
+    public static int TYPE_ID = 0x70737064;
+    public static String TYPE = "pspd";
+
     @Override
     public int getTypeId() {
-        return 0x70737064;
+        return TYPE_ID;
     }
 
     @Override
     public String getType() {
-        return "pspd";
+        return TYPE;
     }
 
     @Override

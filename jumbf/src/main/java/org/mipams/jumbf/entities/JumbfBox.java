@@ -11,14 +11,17 @@ public class JumbfBox extends BmffBox {
     protected List<BmffBox> contentBoxList = new ArrayList<>();
     protected PaddingBox paddingBox;
 
+    public static int TYPE_ID = 0x6A756D62;
+    public static String TYPE = "jumb";
+
     @Override
     public int getTypeId() {
-        return 0x6A756D62;
+        return TYPE_ID;
     }
 
     @Override
     public String getType() {
-        return "jumb";
+        return TYPE;
     }
 
     @Override

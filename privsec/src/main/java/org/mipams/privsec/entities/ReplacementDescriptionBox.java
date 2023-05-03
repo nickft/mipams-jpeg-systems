@@ -11,14 +11,17 @@ public class ReplacementDescriptionBox extends BmffBox {
     protected int toggle;
     protected ParamHandlerInterface paramHandler;
 
+    public static int TYPE_ID = 0x70737264;
+    public static String TYPE = "psrd";
+
     @Override
     public int getTypeId() {
-        return 0x70737264;
+        return TYPE_ID;
     }
 
     @Override
     public String getType() {
-        return "psrd";
+        return TYPE;
     }
 
     @Override

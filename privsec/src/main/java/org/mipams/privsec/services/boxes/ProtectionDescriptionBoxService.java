@@ -3,8 +3,6 @@ package org.mipams.privsec.services.boxes;
 import java.io.OutputStream;
 import java.io.InputStream;
 
-import javax.annotation.PostConstruct;
-
 import org.mipams.jumbf.entities.ParseMetadata;
 import org.mipams.jumbf.entities.ServiceMetadata;
 import org.mipams.jumbf.services.boxes.BmffBoxService;
@@ -22,13 +20,8 @@ public class ProtectionDescriptionBoxService extends BmffBoxService<ProtectionDe
 
     private static final Logger logger = Logger.getLogger(ProtectionDescriptionBoxService.class.getName());
 
-    ServiceMetadata serviceMetadata;
-
-    @PostConstruct
-    void init() {
-        ProtectionDescriptionBox box = initializeBox();
-        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType());
-    }
+    ServiceMetadata serviceMetadata = new ServiceMetadata(ProtectionDescriptionBox.TYPE_ID,
+            ProtectionDescriptionBox.TYPE);
 
     @Override
     protected ProtectionDescriptionBox initializeBox() {

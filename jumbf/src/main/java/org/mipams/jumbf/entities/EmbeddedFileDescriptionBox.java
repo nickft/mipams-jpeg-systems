@@ -13,14 +13,17 @@ public class EmbeddedFileDescriptionBox extends BmffBox {
 
     private String fileName;
 
+    public static int TYPE_ID = 0x62666462;
+    public static String TYPE = "bfdb";
+
     @Override
     public int getTypeId() {
-        return 0x62666462;
+        return TYPE_ID;
     }
 
     @Override
     public String getType() {
-        return "bfdb";
+        return TYPE;
     }
 
     @Override

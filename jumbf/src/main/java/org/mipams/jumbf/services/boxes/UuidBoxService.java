@@ -6,8 +6,6 @@ import java.util.logging.Level;
 import java.io.OutputStream;
 import java.io.InputStream;
 
-import javax.annotation.PostConstruct;
-
 import org.mipams.jumbf.entities.ParseMetadata;
 import org.mipams.jumbf.entities.ServiceMetadata;
 import org.mipams.jumbf.entities.UuidBox;
@@ -21,13 +19,8 @@ public class UuidBoxService extends BmffBoxService<UuidBox> {
 
     private static final Logger logger = Logger.getLogger(UuidBoxService.class.getName());
 
-    ServiceMetadata serviceMetadata;
-
-    @PostConstruct
-    void init() {
-        UuidBox box = initializeBox();
-        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType());
-    }
+    ServiceMetadata serviceMetadata = new ServiceMetadata(UuidBox.TYPE_ID,
+            UuidBox.TYPE);
 
     @Override
     protected UuidBox initializeBox() {
@@ -49,7 +42,7 @@ public class UuidBoxService extends BmffBoxService<UuidBox> {
     @Override
     protected void populatePayloadFromJumbfFile(UuidBox uuidBox, ParseMetadata parseMetadata, InputStream input)
             throws MipamsException {
-        logger.log(Level.FINE,"UUID box");
+        logger.log(Level.FINE, "UUID box");
 
         long nominalTotalSizeInBytes = parseMetadata.getAvailableBytesForBox();
 
@@ -63,7 +56,7 @@ public class UuidBoxService extends BmffBoxService<UuidBox> {
 
         CoreUtils.writeBytesFromInputStreamToFile(input, nominalTotalSizeInBytes, uuidBox.getFileUrl());
 
-        logger.log(Level.FINE,"Discovered box: " + uuidBox.toString());
+        logger.log(Level.FINE, "Discovered box: " + uuidBox.toString());
     }
 
 }

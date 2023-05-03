@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.mipams.jumbf.BmffBoxServiceDiscoveryManager;
@@ -31,13 +29,8 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
     @Autowired
     PrivateBoxService privateBoxService;
 
-    ServiceMetadata serviceMetadata;
-
-    @PostConstruct
-    void init() {
-        DescriptionBox box = initializeBox();
-        serviceMetadata = new ServiceMetadata(box.getTypeId(), box.getType());
-    }
+    ServiceMetadata serviceMetadata = new ServiceMetadata(DescriptionBox.TYPE_ID,
+            DescriptionBox.TYPE);
 
     @Override
     protected DescriptionBox initializeBox() {

@@ -8,14 +8,17 @@ public class PaddingBox extends BmffBox {
 
     private long paddingSize;
 
+    public static int TYPE_ID = 0x66726565;
+    public static String TYPE = "free";
+
     @Override
     public int getTypeId() {
-        return 0x66726565;
+        return TYPE_ID;
     }
 
     @Override
     public String getType() {
-        return "free";
+        return TYPE;
     }
 
     @Override
