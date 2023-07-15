@@ -15,7 +15,7 @@ import org.mipams.jumbf.services.boxes.JumbfBoxService;
 import org.mipams.jumbf.util.CoreUtils;
 import org.mipams.jumbf.util.CorruptedJumbfFileException;
 import org.mipams.jumbf.util.MipamsException;
-
+import org.mipams.jumbf.util.UnsupportedContentTypeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,11 +41,13 @@ public class CoreParserService implements ParserInterface {
             List<JumbfBox> bmffBoxList = new ArrayList<>();
 
             while (input.available() > 0) {
-
-                JumbfBox jumbfBox = superBoxService.parseSuperBox(input, parseMetadata);
-                logger.log(Level.FINE, "New box discovered: " + jumbfBox.toString());
-
-                bmffBoxList.add(jumbfBox);
+                try {
+                    JumbfBox jumbfBox = superBoxService.parseSuperBox(input, parseMetadata);
+                    logger.log(Level.FINE, "New box discovered: " + jumbfBox.toString());
+                    bmffBoxList.add(jumbfBox);
+                } catch (UnsupportedContentTypeException e) {
+                    /* Ignore JUMBF Box and continue */
+                }
             }
 
             return bmffBoxList;

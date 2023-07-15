@@ -69,7 +69,7 @@ public class CoreUtils {
     }
 
     public static void writeTextToOutputStream(String text, OutputStream outputStream) throws MipamsException {
-        writeByteArrayToOutputStream(convertStringToByteArray(text), outputStream);
+        writeByteArrayToOutputStream(convertStringByteArrayUTF8(text), outputStream);
     }
 
     public static void writeUuidToOutputStream(String uuid, OutputStream outputStream) throws MipamsException {
@@ -142,8 +142,8 @@ public class CoreUtils {
         return ByteBuffer.allocate(8).putLong(num).array();
     }
 
-    public static byte[] convertStringToByteArray(String text) {
-        return text.getBytes();
+    public static byte[] convertStringByteArrayUTF8(String text) {
+        return text.getBytes(StandardCharsets.UTF_8);
     }
 
     public static String parseStringFromFile(String fileUrl) throws MipamsException {
@@ -178,7 +178,7 @@ public class CoreUtils {
             throw new MipamsException("Could not read from file", e);
         }
 
-        return str.toString();
+        return new String(str.toString().getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
     }
 
     public static int readSingleByteAsIntFromInputStream(InputStream input) throws MipamsException {
@@ -601,6 +601,29 @@ public class CoreUtils {
             return f.getAbsolutePath();
         } catch (IOException e) {
             throw new MipamsException(e);
+        }
+    }
+
+    public static void skipBytesFromInputStream(InputStream input, long availableBytesForBox) throws IOException {
+        final int currentBufferSize = (BUFFER_SIZE > availableBytesForBox && availableBytesForBox > 0)
+                ? (int) availableBytesForBox
+                : BUFFER_SIZE;
+        byte[] bytes = new byte[currentBufferSize];
+
+        long remainingBytes = availableBytesForBox;
+
+        int maximumBytesToRead = currentBufferSize,
+                numberOfBytesRead;
+
+        while ((availableBytesForBox == 0 || remainingBytes > 0)
+                && ((numberOfBytesRead = input.read(bytes, 0, maximumBytesToRead)) != -1)) {
+            if (availableBytesForBox == 0) {
+                continue;
+            }
+
+            remainingBytes -= numberOfBytesRead;
+            maximumBytesToRead = (remainingBytes / currentBufferSize > 0) ? currentBufferSize
+                    : (int) remainingBytes;
         }
     }
 }

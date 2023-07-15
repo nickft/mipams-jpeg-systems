@@ -125,7 +125,7 @@ public class CoreUtilsTests {
     @Test
     void testConvertStringToByteArray() {
         String text = "Hello world";
-        byte[] outputArray = CoreUtils.convertStringToByteArray(text);
+        byte[] outputArray = CoreUtils.convertStringByteArrayUTF8(text);
         assertTrue(Arrays.equals(text.getBytes(), outputArray));
     }
 

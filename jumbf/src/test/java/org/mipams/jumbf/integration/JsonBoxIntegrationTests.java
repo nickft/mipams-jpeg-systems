@@ -225,4 +225,40 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
                 .getAbsolutePath();
         CoreUtils.writeByteArrayToOutputStream(cborData, new FileOutputStream(cborContentUrl));
     }
+
+    @Test
+    void ignoreUnsupportedBoxesWhenGenerating() throws Exception {
+        JsonContentType jsonContentType = new JsonContentType();
+
+        JsonBox jsonBox = new JsonBox();
+        jsonBox.setContent(TEST_CONTENT.getBytes());
+
+        JumbfBoxBuilder builder = new JumbfBoxBuilder(jsonContentType);
+        builder.setLabel("Test label");
+        builder.setJumbfBoxAsRequestable();
+        builder.setPaddingSize(10);
+        builder.appendContentBox(jsonBox);
+
+        JumbfBox supportedBox = builder.getResult();
+
+        builder = new JumbfBoxBuilder(jsonContentType);
+        builder.setLabel("Test label");
+        builder.setJumbfBoxAsRequestable();
+        builder.setPaddingSize(10);
+        builder.appendContentBox(jsonBox);
+
+        JumbfBox unsupportedBox = builder.getResult();
+        unsupportedBox.getDescriptionBox().setUuid(CoreUtils.randomStringGenerator());
+
+        List<JumbfBox> parsedJumbfBoxes = generateJumbfFileAndParseBox(List.of(supportedBox, unsupportedBox));
+        assertEquals(1, parsedJumbfBoxes.size());
+    }
+
+    @Test
+    void ignoreUnsupportedBoxesWhenParsing() throws Exception {
+        String corruptedUuidOnJumbf = ResourceUtils.getFile("classpath:corrupted_uuid_json_box.jumbf")
+                .getAbsolutePath();
+        List<JumbfBox> parsedJumbfBoxes = testParseMetadataFromJumbfFile(corruptedUuidOnJumbf);
+        assertEquals(0, parsedJumbfBoxes.size());
+    }
 }

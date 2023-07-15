@@ -1,7 +1,7 @@
 package org.mipams.jumbf;
 
 import org.mipams.jumbf.util.MipamsException;
-
+import org.mipams.jumbf.util.UnsupportedContentTypeException;
 import org.mipams.jumbf.services.content_types.ContentTypeService;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public class ContentTypeDiscoveryManager {
 
         for (ContentTypeService service : contentTypeServiceList) {
 
-            logger.log(Level.FINE,service.getClass().getName());
+            logger.log(Level.FINE, service.getClass().getName());
 
             UUID serviceUuid = UUID.fromString(service.getContentTypeUuid());
 
@@ -35,6 +35,6 @@ public class ContentTypeDiscoveryManager {
             }
         }
 
-        throw new MipamsException("Box with uuid " + uuidAsString + " is not a Content Box");
+        throw new UnsupportedContentTypeException("Box with uuid " + uuidAsString + " is not a Content Box");
     }
 }

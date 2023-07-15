@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -40,7 +41,7 @@ public class CoreGeneratorServiceTests {
         CoreGeneratorService coreGeneratorService = new CoreGeneratorService();
 
         assertThrows(MipamsException.class, () -> {
-            coreGeneratorService.generateJumbfMetadataToFile(null, TEST_DIRECTORY);
+            coreGeneratorService.generateJumbfMetadataToFile(List.of(), TEST_DIRECTORY);
         });
     }
 }

@@ -19,6 +19,7 @@ import org.mipams.jumbf.services.content_types.ContentTypeService;
 import org.mipams.jumbf.ContentTypeDiscoveryManager;
 import org.mipams.jumbf.util.CoreUtils;
 import org.mipams.jumbf.util.MipamsException;
+import org.mipams.jumbf.util.UnsupportedContentTypeException;
 
 @Service
 public final class JumbfBoxService extends BmffBoxService<JumbfBox> {
@@ -51,12 +52,12 @@ public final class JumbfBoxService extends BmffBoxService<JumbfBox> {
     protected void writeBmffPayloadToJumbfFile(JumbfBox jumbfBox, OutputStream outputStream)
             throws MipamsException {
 
-        descriptionBoxService.writeToJumbfFile(jumbfBox.getDescriptionBox(), outputStream);
-
         String contentTypeUuid = jumbfBox.getDescriptionBox().getUuid();
 
         ContentTypeService contentTypeService = contentTypeDiscoveryManager
                 .getContentBoxServiceBasedOnContentUuid(contentTypeUuid);
+
+        descriptionBoxService.writeToJumbfFile(jumbfBox.getDescriptionBox(), outputStream);
 
         contentTypeService.writeContentBoxesToJumbfFile(jumbfBox.getContentBoxList(), outputStream);
 
@@ -84,25 +85,35 @@ public final class JumbfBoxService extends BmffBoxService<JumbfBox> {
 
         String contentTypeUuid = jumbfBox.getDescriptionBox().getUuid();
 
-        ContentTypeService contentTypeService = contentTypeDiscoveryManager
-                .getContentBoxServiceBasedOnContentUuid(contentTypeUuid);
+        long actualPayloadSize = nominalPayloadSize != 0 ? nominalPayloadSize - actualSize : 0;
 
-        ParseMetadata contentParseMetadata = new ParseMetadata();
-        contentParseMetadata.setAvailableBytesForBox(nominalPayloadSize != 0 ? nominalPayloadSize - actualSize : 0);
-        contentParseMetadata.setParentDirectory(parseMetadata.getParentDirectory());
-
-        List<BmffBox> contentBoxList = contentTypeService.parseContentBoxesFromJumbfFile(input, contentParseMetadata);
-        jumbfBox.setContentBoxList(contentBoxList);
-
-        actualSize += jumbfBox.calculateContentBoxListSize(contentBoxList);
-
-        if (nominalPayloadSize > 0 && nominalPayloadSize - actualSize == 0) {
-            return;
-        }
-
-        Long remainingBytes = nominalPayloadSize != 0 ? nominalPayloadSize - actualSize : 0;
-
+        ContentTypeService contentTypeService = null;
         try {
+
+            try {
+                contentTypeService = contentTypeDiscoveryManager
+                        .getContentBoxServiceBasedOnContentUuid(contentTypeUuid);
+            } catch (UnsupportedContentTypeException e) {
+                CoreUtils.skipBytesFromInputStream(input, actualPayloadSize);
+                throw new UnsupportedContentTypeException(e);
+            }
+
+            ParseMetadata contentParseMetadata = new ParseMetadata();
+            contentParseMetadata.setAvailableBytesForBox(actualPayloadSize);
+            contentParseMetadata.setParentDirectory(parseMetadata.getParentDirectory());
+
+            List<BmffBox> contentBoxList = contentTypeService.parseContentBoxesFromJumbfFile(input,
+                    contentParseMetadata);
+            jumbfBox.setContentBoxList(contentBoxList);
+
+            actualSize += jumbfBox.calculateContentBoxListSize(contentBoxList);
+
+            if (nominalPayloadSize > 0 && nominalPayloadSize - actualSize == 0) {
+                return;
+            }
+
+            Long remainingBytes = nominalPayloadSize != 0 ? nominalPayloadSize - actualSize : 0;
+
             if (input.available() > 0 && CoreUtils.isPaddingBoxNext(input)) {
 
                 ParseMetadata paddingParseMetadata = new ParseMetadata();
