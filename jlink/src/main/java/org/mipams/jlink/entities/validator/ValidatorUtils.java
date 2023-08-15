@@ -57,6 +57,10 @@ public class ValidatorUtils {
         }
     }
 
+    public static boolean isSchemaStatement(Model model, Resource resource) {
+        return getSchemaStatement(model, resource).isPresent();
+    }
+
     public static Optional<Statement> getSchemaStatement(Model model, Resource resource) {
         return ValidatorUtils.getOptionalValue(model, resource, iri("http://ns.intel.com/umf/2.0schema"));
     }

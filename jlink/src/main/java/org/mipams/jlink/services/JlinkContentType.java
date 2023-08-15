@@ -29,7 +29,7 @@ public class JlinkContentType implements ContentTypeService {
     JumbfBoxService jumbfBoxService;
 
     @Autowired
-    JlinkValidator schemaValidator;
+    JlinkXmlValidator schemaValidator;
 
     @Override
     public String getContentTypeUuid() {
@@ -106,8 +106,6 @@ public class JlinkContentType implements ContentTypeService {
     @Override
     public void writeContentBoxesToJumbfFile(List<BmffBox> inputBoxList, OutputStream outputStream)
             throws MipamsException {
-
-        logger.info("Calculating content: ");
         JumbfBox xmlContentTypeJumbfBox = (JumbfBox) inputBoxList.get(0);
         if (isXmlContentType(xmlContentTypeJumbfBox)) {
             schemaValidator.validateSchema(xmlContentTypeJumbfBox);
@@ -115,8 +113,6 @@ public class JlinkContentType implements ContentTypeService {
 
         for (BmffBox contentBox : inputBoxList) {
             JumbfBox jumbfBox = (JumbfBox) contentBox;
-
-            logger.info("Content Box size: " + jumbfBox.getBoxSizeFromBmffHeaders());
             jumbfBoxService.writeToJumbfFile(jumbfBox, outputStream);
         }
     }

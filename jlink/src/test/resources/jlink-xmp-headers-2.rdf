@@ -1,0 +1,251 @@
+<x:xmpmeta
+	xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 5.5.0">
+<?xpacket begin="" id="efsefdfa2Fsa"?>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+		<rdf:Description rdf:about=""
+			xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+			xmlns:umf="http://ns.intel.com/umf/2.0">
+			<umf:next-id>0</umf:next-id>
+			<umf:schemas>
+				<rdf:Bag>
+					<rdf:li rdf:parseType="Resource">
+						<!-- JLINK Metadata -->
+						<umf:schema>Scene</umf:schema>
+						<umf:descriptors>
+							<rdf:Bag>
+								<rdf:li rdf:parseType="Resource">
+									<umf:name>Version</umf:name>
+									<umf:type>string</umf:type>
+								</rdf:li>
+								<rdf:li rdf:parseType="Resource">
+									<umf:name>Title</umf:name>
+									<umf:type>string</umf:type>
+								</rdf:li>
+								<rdf:li rdf:parseType="Resource">
+									<umf:name>Note</umf:name>
+									<umf:type>string</umf:type>
+								</rdf:li>
+								<rdf:li rdf:parseType="Resource">
+									<umf:schema>Viewport</umf:schema>
+									<umf:descriptors>
+										<rdf:Bag>
+											<rdf:li rdf:parseType="Resource">
+												<umf:name>X</umf:name>
+												<umf:type>real</umf:type>
+											</rdf:li>
+											<rdf:li rdf:parseType="Resource">
+												<umf:name>Y</umf:name>
+												<umf:type>real</umf:type>
+											</rdf:li>
+											<rdf:li rdf:parseType="Resource">
+												<umf:name>XFOV</umf:name>
+												<umf:type>real</umf:type>
+											</rdf:li>
+											<rdf:li rdf:parseType="Resource">
+												<umf:name>YFOV</umf:name>
+												<umf:type>real</umf:type>
+											</rdf:li>
+											<rdf:li rdf:parseType="Resource">
+												<umf:name>ID</umf:name>
+												<umf:type>integer</umf:type>
+											</rdf:li>
+										</rdf:Bag>
+									</umf:descriptors>
+								</rdf:li>
+								<rdf:li rdf:parseType="Resource">
+									<umf:schema>Image</umf:schema>
+									<umf:descriptors>
+										<rdf:Bag>
+											<rdf:li rdf:parseType="Resource">
+												<umf:name>Format</umf:name>
+												<umf:type>string</umf:type>
+											</rdf:li>
+											<rdf:li rdf:parseType="Resource">
+												<umf:name>Href</umf:name>
+												<umf:type>string</umf:type>
+											</rdf:li>
+										</rdf:Bag>
+									</umf:descriptors>
+								</rdf:li>
+							</rdf:Bag>
+						</umf:descriptors>
+					</rdf:li>
+					<rdf:li rdf:parseType="Resource">
+						<umf:schema>Link</umf:schema>
+						<umf:descriptors>
+							<rdf:Bag>
+								<rdf:li rdf:parseType="Resource">
+									<umf:schema>Region</umf:schema>
+									<umf:descriptors>
+										<rdf:Bag>
+											<rdf:li rdf:parseType="Resource">
+												<umf:name>Shape</umf:name>
+												<umf:type>string</umf:type>
+											</rdf:li>
+											<rdf:li rdf:parseType="Resource">
+												<umf:name>X</umf:name>
+												<umf:type>real</umf:type>
+											</rdf:li>
+											<rdf:li rdf:parseType="Resource">
+												<umf:name>Y</umf:name>
+												<umf:type>real</umf:type>
+											</rdf:li>
+											<rdf:li rdf:parseType="Resource">
+												<umf:name>W</umf:name>
+												<umf:type>real</umf:type>
+											</rdf:li>
+											<rdf:li rdf:parseType="Resource">
+												<umf:name>H</umf:name>
+												<umf:type>real</umf:type>
+											</rdf:li>
+											<rdf:li rdf:parseType="Resource">
+												<umf:name>Rotation</umf:name>
+												<umf:type>real</umf:type>
+											</rdf:li>
+										</rdf:Bag>
+									</umf:descriptors>
+								</rdf:li>
+								<rdf:li rdf:parseType="Resource">
+									<umf:name>Duration</umf:name>
+									<umf:type>integer</umf:type>
+								</rdf:li>
+								<rdf:li rdf:parseType="Resource">
+									<umf:name>VPID</umf:name>
+									<umf:type>integer</umf:type>
+								</rdf:li>
+								<rdf:li rdf:parseType="Resource">
+									<umf:name>Sprite</umf:name>
+									<umf:type>string</umf:type>
+								</rdf:li>
+								<rdf:li rdf:parseType="Resource">
+									<umf:name>To</umf:name>
+									<umf:type>string</umf:type>
+								</rdf:li>
+							</rdf:Bag>
+						</umf:descriptors>
+					</rdf:li>
+				</rdf:Bag>
+            </umf:schemas>
+            <umf:metadata>
+	            <rdf:Bag>
+                    <rdf:li rdf:parseType="Resource">
+                        <umf:schema>Scene</umf:schema>
+                        <umf:set>
+                            <rdf:Bag>
+                                <rdf:li rdf:parseType="Resource">
+                                    <rdf:value>1.0.0</rdf:value>
+                                    <umf:name>Version</umf:name>
+                                </rdf:li>
+                                <rdf:li rdf:parseType="Resource">
+                                    <rdf:value>"Test 2"</rdf:value>
+                                    <umf:name>Title</umf:name>
+                                </rdf:li>
+                                <rdf:li rdf:parseType="Resource">
+                                    <rdf:value>""</rdf:value>
+                                    <umf:name>Note</umf:name>
+                                </rdf:li>
+                                <rdf:li rdf:parseType="Resource">
+                                    <umf:schema>Viewport</umf:schema>
+                                    <umf:set>
+                                        <rdf:Bag>
+                                            <rdf:li rdf:parseType="Resource">
+                                                <rdf:value>50</rdf:value>
+                                                <umf:name>X</umf:name>
+                                            </rdf:li>
+                                            <rdf:li rdf:parseType="Resource">
+                                                <rdf:value>50</rdf:value>
+                                                <umf:name>Y</umf:name>
+                                            </rdf:li>
+                                            <rdf:li rdf:parseType="Resource">
+                                                <rdf:value>100</rdf:value>
+                                                <umf:name>XFOV</umf:name>
+                                            </rdf:li>
+                                            <rdf:li rdf:parseType="Resource">
+                                                <rdf:value>100</rdf:value>
+                                                <umf:name>YFOV</umf:name>
+                                            </rdf:li>
+                                            <rdf:li rdf:parseType="Resource">
+                                                <rdf:value>1</rdf:value>
+                                                <umf:name>ID</umf:name>
+                                            </rdf:li>
+                                        </rdf:Bag>
+                                    </umf:set>
+                                </rdf:li>
+                                <rdf:li rdf:parseType="Resource">
+                                    <umf:schema>Image</umf:schema>
+                                    <umf:set>
+                                        <rdf:Bag>
+                                            <rdf:li rdf:parseType="Resource">
+                                                <rdf:value>"image/jpeg"</rdf:value>
+                                                <umf:name>Format</umf:name>
+                                            </rdf:li>
+                                            <rdf:li rdf:parseType="Resource">
+                                                <rdf:value>"self#jumbf=image1"</rdf:value>
+                                                <umf:name>Href</umf:name>
+                                            </rdf:li>
+                                        </rdf:Bag>
+                                    </umf:set>
+                                </rdf:li>
+                            </rdf:Bag>
+                        </umf:set>
+		            </rdf:li>
+                    <rdf:li rdf:parseType="Resource">
+                        <umf:schema>Link</umf:schema>
+                        <umf:set>
+                            <rdf:Bag>
+                                <rdf:li rdf:parseType="Resource">
+                                    <umf:schema>Region</umf:schema>
+                                    <umf:set>
+                                        <rdf:Bag>
+                                            <rdf:li rdf:parseType="Resource">
+                                                <rdf:value>"rectangle"</rdf:value>
+                                                <umf:name>Shape</umf:name>
+                                            </rdf:li>
+                                            <rdf:li rdf:parseType="Resource">
+                                                <rdf:value>50</rdf:value>
+                                                <umf:name>X</umf:name>
+                                            </rdf:li>
+                                            <rdf:li rdf:parseType="Resource">
+                                                <rdf:value>50</rdf:value>
+                                                <umf:name>Y</umf:name>
+                                            </rdf:li>
+                                            <rdf:li rdf:parseType="Resource">
+                                                <rdf:value>10</rdf:value>
+                                                <umf:name>W</umf:name>
+                                            </rdf:li>
+                                            <rdf:li rdf:parseType="Resource">
+                                                <rdf:value>10</rdf:value>
+                                                <umf:name>H</umf:name>
+                                            </rdf:li>
+                                            <rdf:li rdf:parseType="Resource">
+                                                <rdf:value>0</rdf:value>
+                                                <umf:name>Rotation</umf:name>
+                                            </rdf:li>
+                                        </rdf:Bag>
+                                    </umf:set>
+                                </rdf:li>
+                                <rdf:li rdf:parseType="Resource">
+                                    <rdf:value>600</rdf:value>
+                                    <umf:name>Duration</umf:name>
+                                </rdf:li>
+                                <rdf:li rdf:parseType="Resource">
+                                    <rdf:value>1</rdf:value>
+                                    <umf:name>VPID</umf:name>
+                                </rdf:li>
+                                <rdf:li rdf:parseType="Resource">
+                                    <rdf:value>""</rdf:value>
+                                    <umf:name>Sprite</umf:name>
+                                </rdf:li>
+                                <rdf:li rdf:parseType="Resource">
+                                    <rdf:value>"http://example.com/image.jpg?jumbf=scene1"</rdf:value>
+                                    <umf:name>To</umf:name>
+                                </rdf:li>
+                            </rdf:Bag>
+                        </umf:set>
+                    </rdf:li>
+	            </rdf:Bag>
+            </umf:metadata>
+        </rdf:Description>
+    </rdf:RDF>
+<?xpacket end="w"?>
+</x:xmpmeta>

@@ -9,7 +9,7 @@ public class Viewport {
 
     double yfov = 100.0;
 
-    Integer id = 0;
+    Integer id;
 
     public void setX(double x) {
         this.x = x;
