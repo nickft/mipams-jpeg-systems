@@ -1,6 +1,7 @@
 package org.mipams.jpeg360.config;
 
 import org.mipams.jpeg360.services.Jpeg360ContentType;
+import org.mipams.jpeg360.services.Jpeg360XmlGenerator;
 import org.mipams.jpeg360.services.Jpeg360XmlValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,10 +14,10 @@ public class Jpeg360Config {
         return new Jpeg360ContentType();
     }
 
-    // @Bean
-    // public JlinkXmlGenerator schemaGenerator() {
-    // return new JlinkXmlGenerator();
-    // }
+    @Bean
+    public Jpeg360XmlGenerator schemaGenerator() {
+        return new Jpeg360XmlGenerator();
+    }
 
     @Bean
     public Jpeg360XmlValidator schemaValidator() {

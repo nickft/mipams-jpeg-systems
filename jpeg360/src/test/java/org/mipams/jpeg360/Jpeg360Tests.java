@@ -8,7 +8,12 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.mipams.jpeg360.config.Jpeg360Config;
+import org.mipams.jpeg360.entities.Jpeg360AcceleratedRoi;
+import org.mipams.jpeg360.entities.Jpeg360ImageMetadata;
+import org.mipams.jpeg360.entities.Jpeg360Metadata;
+import org.mipams.jpeg360.entities.Jpeg360Viewport;
 import org.mipams.jpeg360.services.Jpeg360ContentType;
+import org.mipams.jpeg360.services.Jpeg360XmlGenerator;
 import org.mipams.jumbf.config.JumbfConfig;
 import org.mipams.jumbf.entities.ContiguousCodestreamBox;
 import org.mipams.jumbf.entities.JumbfBox;
@@ -38,6 +43,57 @@ public class Jpeg360Tests {
     @Autowired
     CoreParserService coreParserService;
 
+    @Autowired
+    Jpeg360XmlGenerator jpeg360XmlGenerator;
+
+    @Test
+    void generateAndParseJpeg360Elements() throws Exception {
+        Jpeg360Metadata element = prepareScenario();
+
+        XmlBox xmlBox = jpeg360XmlGenerator.getXmlBoxFromJpeg360MetadataElement(element);
+        JumbfBox createdJumbfBox = createJpeg360JumbfBoxBasedOnXmlBox(xmlBox);
+
+        String targetUrl = CoreUtils.getFullPath(CoreUtils.getTempDir(), "jpeg360.jumbf");
+        coreGeneratorService.generateJumbfMetadataToFile(List.of(createdJumbfBox), targetUrl);
+
+        List<JumbfBox> parsedList = coreParserService.parseMetadataFromFile(targetUrl);
+
+        assertEquals(createdJumbfBox, parsedList.get(0));
+        CoreUtils.deleteFile(targetUrl);
+    }
+
+    private Jpeg360Metadata prepareScenario() {
+
+        Jpeg360Metadata jpeg360Metadata = new Jpeg360Metadata();
+        jpeg360Metadata.setNextId(0);
+        // Add Image
+        Jpeg360ImageMetadata imageMetadata = new Jpeg360ImageMetadata();
+        imageMetadata.setVersion(2);
+        imageMetadata.setUmfId(0);
+        jpeg360Metadata.setImageMetadata(imageMetadata);
+
+        // Add viewport
+        Jpeg360Viewport viewport = new Jpeg360Viewport();
+        viewport.setUmfId(1);
+        jpeg360Metadata.addViewport(viewport);
+
+        // Add AcceleratedRoi
+        Jpeg360AcceleratedRoi acceleratedRoi = new Jpeg360AcceleratedRoi();
+        acceleratedRoi.setUmfId(2);
+        acceleratedRoi.setRoiNumber(0);
+        acceleratedRoi.setRoiPosX(0);
+        acceleratedRoi.setRoiPosX(1);
+        acceleratedRoi.setBlockWidth(4);
+        acceleratedRoi.setBlockHeight(4);
+        acceleratedRoi.setOffsetX(0);
+        acceleratedRoi.setWidthInBlocks(1);
+        acceleratedRoi.setHeightInBlocks(1);
+        acceleratedRoi.setAssociatedViewport(0);
+        acceleratedRoi.setBoxReference("self#jumbf=label");
+        jpeg360Metadata.addAcceleratedRois(acceleratedRoi);
+        return jpeg360Metadata;
+    }
+
     @Test
     void parseJpeg360Element() throws Exception {
         String xmlFileUrl = ResourceUtils.getFile("classpath:jpeg360v1.rdf").getAbsolutePath();
@@ -57,10 +113,22 @@ public class Jpeg360Tests {
     }
 
     void runTestWithGivenXmlFile(String xmlFileAbsolutePath) throws Exception {
-        String assetFileUrl = ResourceUtils.getFile("classpath:sample.jpeg").getAbsolutePath();
-
         XmlBox xmlBox = new XmlBox();
         xmlBox.setContent(Files.readAllBytes(Path.of(xmlFileAbsolutePath)));
+
+        JumbfBox createdJumbfBox = createJpeg360JumbfBoxBasedOnXmlBox(xmlBox);
+
+        String targetUrl = CoreUtils.getFullPath(CoreUtils.getTempDir(), "jpeg360.jumbf");
+        coreGeneratorService.generateJumbfMetadataToFile(List.of(createdJumbfBox), targetUrl);
+
+        List<JumbfBox> parsedList = coreParserService.parseMetadataFromFile(targetUrl);
+
+        assertEquals(createdJumbfBox, parsedList.get(0));
+        CoreUtils.deleteFile(targetUrl);
+    }
+
+    private JumbfBox createJpeg360JumbfBoxBasedOnXmlBox(XmlBox xmlBox) throws Exception {
+        String assetFileUrl = ResourceUtils.getFile("classpath:sample.jpeg").getAbsolutePath();
 
         JumbfBoxBuilder xmlContentBoxBuilder = new JumbfBoxBuilder(new XmlContentType());
         xmlContentBoxBuilder.setJumbfBoxAsRequestable();
@@ -85,15 +153,7 @@ public class Jpeg360Tests {
         monoscopicJpeg360Builder.appendContentBox(xmlContentBoxBuilder.getResult());
         monoscopicJpeg360Builder.appendContentBox(jp2cContentBoxBuilder.getResult());
 
-        String targetUrl = CoreUtils.getFullPath(CoreUtils.getTempDir(), "jpeg360.jumbf");
-
-        JumbfBox createdJumbfBox = monoscopicJpeg360Builder.getResult();
-        coreGeneratorService.generateJumbfMetadataToFile(List.of(createdJumbfBox), targetUrl);
-
-        List<JumbfBox> parsedList = coreParserService.parseMetadataFromFile(targetUrl);
-
-        assertEquals(createdJumbfBox, parsedList.get(0));
-        CoreUtils.deleteFile(targetUrl);
+        return monoscopicJpeg360Builder.getResult();
     }
 
 }
