@@ -6,9 +6,9 @@ import java.util.Map;
 
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;
-import org.mipams.jlink.entities.Region;
+import org.mipams.jlink.entities.JlinkRegion;
 
-public class RegionValidator extends JlinkAbstractValidator<Region> {
+public class RegionValidator extends JlinkAbstractValidator<JlinkRegion> {
 
     public RegionValidator(Model jlinkModel, Map<String, Resource> subjectNameToResourceMap) {
         super(jlinkModel, subjectNameToResourceMap);
@@ -20,8 +20,8 @@ public class RegionValidator extends JlinkAbstractValidator<Region> {
     }
 
     @Override
-    protected Region initializeJlinkElement() {
-        return new Region();
+    protected JlinkRegion initializeJlinkElement() {
+        return new JlinkRegion();
     }
 
     @Override
@@ -30,7 +30,8 @@ public class RegionValidator extends JlinkAbstractValidator<Region> {
     }
 
     @Override
-    protected void populateObjectFromMap(Region region, Map<String, String> regionMetadataProperties) throws Exception {
+    protected void populateObjectFromMap(JlinkRegion region, Map<String, String> regionMetadataProperties)
+            throws Exception {
         String regionX = regionMetadataProperties.getOrDefault(RegionProperty.X.getKey(), "");
         String regionY = regionMetadataProperties.getOrDefault(RegionProperty.Y.getKey(), "");
         String regionW = regionMetadataProperties.getOrDefault(RegionProperty.W.getKey(), "");
@@ -39,31 +40,32 @@ public class RegionValidator extends JlinkAbstractValidator<Region> {
         String regionRotation = regionMetadataProperties.getOrDefault(RegionProperty.ROTATION.getKey(), "");
 
         if (regionX.isBlank()) {
-            throw new Exception("No X was specified for region");
+            throw new Exception("X not specified for region");
         }
         region.setX(Double.parseDouble(regionX));
 
         if (regionY.isBlank()) {
-            throw new Exception("No Y was specified for region");
+            throw new Exception("Y not specified for region");
         }
         region.setY(Double.parseDouble(regionY));
 
         if (regionW.isBlank()) {
-            throw new Exception("No W was specified for region");
+            throw new Exception("W not specified for region");
         }
         region.setW(Double.parseDouble(regionW));
 
         if (regionH.isBlank()) {
-            throw new Exception("No H was specified for region");
+            throw new Exception("H not specified for region");
         }
         region.setH(Double.parseDouble(regionH));
 
-        if (!regionShape.isBlank()) {
-            region.setShape(regionShape);
+        if (regionShape.isBlank()) {
+            throw new Exception("Shape not specified for region");
         }
+        region.setShape(regionShape);
 
         if (regionRotation.isBlank()) {
-            throw new Exception("No Rotation was specified for region");
+            throw new Exception("Rotation not specified for region");
         }
         region.setRotation(Double.parseDouble(regionRotation));
     }

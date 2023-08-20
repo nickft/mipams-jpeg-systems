@@ -8,9 +8,9 @@ import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.Value;
-import org.mipams.jlink.entities.Scene;
+import org.mipams.jlink.entities.JlinkScene;
 
-public class SceneValidator extends JlinkAbstractValidator<Scene> {
+public class SceneValidator extends JlinkAbstractValidator<JlinkScene> {
 
     ImageValidator imageValidator;
     ViewportValidator viewportValidator;
@@ -27,8 +27,8 @@ public class SceneValidator extends JlinkAbstractValidator<Scene> {
     }
 
     @Override
-    protected Scene initializeJlinkElement() {
-        return new Scene();
+    protected JlinkScene initializeJlinkElement() {
+        return new JlinkScene();
     }
 
     @Override
@@ -42,7 +42,7 @@ public class SceneValidator extends JlinkAbstractValidator<Scene> {
     }
 
     @Override
-    protected void handleSubschema(Scene scene, Statement schemaStatement, List<String> allowedPropertyNames,
+    protected void handleSubschema(JlinkScene scene, Statement schemaStatement, List<String> allowedPropertyNames,
             boolean isMetadataStructure) throws Exception {
         String schemaName = schemaStatement.getObject().stringValue();
 
@@ -73,22 +73,19 @@ public class SceneValidator extends JlinkAbstractValidator<Scene> {
     }
 
     @Override
-    protected void populateObjectFromMap(Scene scene, Map<String, String> sceneMetadataProperties) throws Exception {
+    protected void populateObjectFromMap(JlinkScene scene, Map<String, String> sceneMetadataProperties)
+            throws Exception {
         String sceneTitle = sceneMetadataProperties.getOrDefault(SceneProperty.TITLE.getKey(), "");
         String sceneVersion = sceneMetadataProperties.getOrDefault(SceneProperty.VERSION.getKey(), "");
         String sceneNote = sceneMetadataProperties.getOrDefault(SceneProperty.NOTE.getKey(), "");
 
-        if (!sceneTitle.isBlank()) {
-            scene.setTitle(sceneTitle);
-        }
+        scene.setTitle(sceneTitle);
 
-        if (!sceneVersion.isBlank()) {
-            scene.setVersion(sceneVersion);
+        if (sceneVersion.isBlank()) {
+            throw new Exception("Version not specified for scene.");
         }
-
-        if (!sceneNote.isBlank()) {
-            scene.setNote(sceneNote);
-        }
+        scene.setVersion(sceneVersion);
+        scene.setNote(sceneNote);
     }
 
     enum SceneProperty {

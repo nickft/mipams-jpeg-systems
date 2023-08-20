@@ -20,11 +20,11 @@ import org.mipams.jumbf.services.content_types.ContiguousCodestreamContentType;
 import org.mipams.jumbf.services.content_types.XmlContentType;
 import org.mipams.jumbf.util.CoreUtils;
 import org.mipams.jlink.config.JlinkConfig;
-import org.mipams.jlink.entities.Image;
+import org.mipams.jlink.entities.JlinkImage;
 import org.mipams.jlink.entities.JlinkElement;
-import org.mipams.jlink.entities.Link;
-import org.mipams.jlink.entities.Region;
-import org.mipams.jlink.entities.Scene;
+import org.mipams.jlink.entities.JlinkLink;
+import org.mipams.jlink.entities.JlinkRegion;
+import org.mipams.jlink.entities.JlinkScene;
 import org.mipams.jlink.services.JlinkContentType;
 import org.mipams.jlink.services.JlinkXmlGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +52,12 @@ public class JlinkTests {
 
     @Autowired
     JlinkXmlGenerator jlinkXmlGenerator;
+
+    @Test
+    void parseJlinkElementWithoutPopulatedMetadataElements() throws Exception {
+        String xmlFileUrl = ResourceUtils.getFile("classpath:jlink-schema-only.rdf").getAbsolutePath();
+        runTestWithGivenXmlFile(xmlFileUrl);
+    }
 
     @Test
     void parseJlinkElementWithoutOptionalXmpHeaders() throws Exception {
@@ -186,15 +192,17 @@ public class JlinkTests {
     private JlinkElement prepareScenario() {
         JlinkElement element = new JlinkElement();
 
-        Scene scene = new Scene();
+        JlinkScene scene = new JlinkScene();
 
-        Image image = new Image();
+        JlinkImage image = new JlinkImage();
         image.setFormat("format");
         image.setHref("test");
 
+        scene.setTitle("");
+        scene.setNote("");
         scene.setImage(image);
 
-        Region region = new Region();
+        JlinkRegion region = new JlinkRegion();
         region.setX(12.0);
         region.setY(12.0);
         region.setW(12.0);
@@ -202,12 +210,14 @@ public class JlinkTests {
         region.setRotation(12.0);
         region.setShape("rectangle");
 
-        Link link1 = new Link();
+        JlinkLink link1 = new JlinkLink();
         link1.setTo("test");
         link1.setSprite("test");
         link1.setRegion(region);
+        link1.setDuration(600);
+        link1.setVpid(1);
 
-        Link link2 = new Link();
+        JlinkLink link2 = new JlinkLink();
         link2.setTo("test2");
         link2.setSprite("test");
         link2.setRegion(null);

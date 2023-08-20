@@ -8,9 +8,9 @@ import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.Value;
-import org.mipams.jlink.entities.Link;
+import org.mipams.jlink.entities.JlinkLink;
 
-public class LinkValidator extends JlinkAbstractValidator<Link> {
+public class LinkValidator extends JlinkAbstractValidator<JlinkLink> {
 
     RegionValidator regionValidator;
 
@@ -25,8 +25,8 @@ public class LinkValidator extends JlinkAbstractValidator<Link> {
     }
 
     @Override
-    protected Link initializeJlinkElement() {
-        return new Link();
+    protected JlinkLink initializeJlinkElement() {
+        return new JlinkLink();
     }
 
     @Override
@@ -35,7 +35,7 @@ public class LinkValidator extends JlinkAbstractValidator<Link> {
     }
 
     @Override
-    protected void handleSubschema(Link link, Statement schemaStatement, List<String> allowedPropertyNames,
+    protected void handleSubschema(JlinkLink link, Statement schemaStatement, List<String> allowedPropertyNames,
             boolean isMetadataStructure) throws Exception {
         String schemaName = schemaStatement.getObject().stringValue();
         List<Value> schemaContents = getSchemaContents(schemaStatement, isMetadataStructure);
@@ -55,27 +55,29 @@ public class LinkValidator extends JlinkAbstractValidator<Link> {
     }
 
     @Override
-    protected void populateObjectFromMap(Link link, Map<String, String> linkMetadataProperties) throws Exception {
+    protected void populateObjectFromMap(JlinkLink link, Map<String, String> linkMetadataProperties) throws Exception {
         String linkDuration = linkMetadataProperties.getOrDefault(LinkProperty.DURATION.getKey(), "");
         String linkTo = linkMetadataProperties.getOrDefault(LinkProperty.TO.getKey(), "");
         String linkVpid = linkMetadataProperties.getOrDefault(LinkProperty.VPID.getKey(), "");
         String linkSprite = linkMetadataProperties.getOrDefault(LinkProperty.SPRITE.getKey(), "");
 
-        if (!linkDuration.isBlank()) {
-            link.setDuration(Integer.parseInt(linkDuration));
+        if (linkDuration.isBlank()) {
+            throw new Exception("Duration not specified for link.");
         }
+        link.setDuration(Integer.parseInt(linkDuration));
 
         if (linkTo.isBlank()) {
-            throw new Exception("No To was specified for link.");
+            throw new Exception("'To' not specified for link.");
         }
         link.setTo(linkTo);
 
-        if (!linkVpid.isBlank()) {
-            link.setVpid(Integer.parseInt(linkVpid));
+        if (linkVpid.isBlank()) {
+            throw new Exception("VPID not specified for link.");
         }
+        link.setVpid(Integer.parseInt(linkVpid));
 
         if (linkSprite.isBlank()) {
-            throw new Exception("No Sprite was specified for link.");
+            throw new Exception("Sprite not specified for link.");
         }
         link.setSprite(linkSprite);
     }

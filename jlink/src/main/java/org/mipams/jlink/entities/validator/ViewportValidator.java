@@ -6,9 +6,9 @@ import java.util.Map;
 
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;
-import org.mipams.jlink.entities.Viewport;
+import org.mipams.jlink.entities.JlinkViewport;
 
-public class ViewportValidator extends JlinkAbstractValidator<Viewport> {
+public class ViewportValidator extends JlinkAbstractValidator<JlinkViewport> {
 
     public ViewportValidator(Model jlinkModel, Map<String, Resource> subjectNameToResourceMap) {
         super(jlinkModel, subjectNameToResourceMap);
@@ -20,8 +20,8 @@ public class ViewportValidator extends JlinkAbstractValidator<Viewport> {
     }
 
     @Override
-    protected Viewport initializeJlinkElement() {
-        return new Viewport();
+    protected JlinkViewport initializeJlinkElement() {
+        return new JlinkViewport();
     }
 
     @Override
@@ -30,7 +30,7 @@ public class ViewportValidator extends JlinkAbstractValidator<Viewport> {
     }
 
     @Override
-    protected void populateObjectFromMap(Viewport viewport, Map<String, String> viewportMetadataProperties)
+    protected void populateObjectFromMap(JlinkViewport viewport, Map<String, String> viewportMetadataProperties)
             throws Exception {
         String viewportX = viewportMetadataProperties.getOrDefault(ViewportProperty.X.getKey(), "");
         String viewportY = viewportMetadataProperties.getOrDefault(ViewportProperty.Y.getKey(), "");
@@ -39,31 +39,29 @@ public class ViewportValidator extends JlinkAbstractValidator<Viewport> {
         String viewportId = viewportMetadataProperties.getOrDefault(ViewportProperty.ID.getKey(), "");
 
         if (viewportId.isBlank()) {
-            throw new Exception("No ID was specified for viewport.");
-        } else {
-            int val = Integer.parseInt(viewportId);
-            viewport.setId(val);
+            throw new Exception("ID not specified for viewport.");
         }
+        viewport.setId(Integer.parseInt(viewportId));
 
-        if (!viewportX.isBlank()) {
-            double val = Double.parseDouble(viewportX);
-            viewport.setX(val);
+        if (viewportX.isBlank()) {
+            throw new Exception("X not specified for viewport.");
         }
+        viewport.setX(Double.parseDouble(viewportX));
 
-        if (!viewportY.isBlank()) {
-            double val = Double.parseDouble(viewportY);
-            viewport.setY(val);
+        if (viewportY.isBlank()) {
+            throw new Exception("Y not specified for viewport.");
         }
+        viewport.setY(Double.parseDouble(viewportY));
 
-        if (!viewportXFov.isBlank()) {
-            double val = Double.parseDouble(viewportXFov);
-            viewport.setXfov(val);
+        if (viewportXFov.isBlank()) {
+            throw new Exception("XFOV not specified for viewport.");
         }
+        viewport.setXfov(Double.parseDouble(viewportXFov));
 
-        if (!viewportYFov.isBlank()) {
-            double val = Double.parseDouble(viewportYFov);
-            viewport.setYfov(val);
+        if (viewportYFov.isBlank()) {
+            throw new Exception("YFOV not specified for viewport.");
         }
+        viewport.setYfov(Double.parseDouble(viewportYFov));
     }
 
     enum ViewportProperty {

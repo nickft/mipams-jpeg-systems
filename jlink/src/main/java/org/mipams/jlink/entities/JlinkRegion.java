@@ -1,6 +1,6 @@
 package org.mipams.jlink.entities;
 
-public class Region {
+public class JlinkRegion {
     String shape = "rectangle";
 
     Double x;

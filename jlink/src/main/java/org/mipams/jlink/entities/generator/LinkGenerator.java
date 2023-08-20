@@ -1,9 +1,9 @@
 package org.mipams.jlink.entities.generator;
 
-import org.mipams.jlink.entities.Link;
+import org.mipams.jlink.entities.JlinkLink;
 import org.mipams.jlink.entities.validator.PropertyType;
 
-public class LinkGenerator extends JlinkElementAbstractGenerator<Link> {
+public class LinkGenerator extends JlinkElementAbstractGenerator<JlinkLink> {
 
     RegionGenerator regionGenerator;
 
@@ -31,34 +31,16 @@ public class LinkGenerator extends JlinkElementAbstractGenerator<Link> {
     }
 
     @Override
-    public String metadataToRdfXml(Link link) throws Exception {
+    public String metadataToRdfXml(JlinkLink link) throws Exception {
         StringBuilder linkMetadata = new StringBuilder(addResourceOpeningTag());
 
         linkMetadata.append(addSchema("Link"));
         linkMetadata.append("<umf:set><rdf:Bag>");
 
-        if (link.getDuration() != 600) {
-            linkMetadata.append(addMetadataProperty("Duration", Integer.toString(link.getDuration())));
-        }
-
-        if (link.getVpid() != 0) {
-            linkMetadata.append(addMetadataProperty("VPID", Integer.toString(link.getVpid())));
-        }
-
-        if (link.getTo() == null || link.getTo().isBlank()) {
-            throw new Exception("No To was specified for link.");
-        }
+        linkMetadata.append(addMetadataProperty("Duration", Integer.toString(link.getDuration())));
+        linkMetadata.append(addMetadataProperty("VPID", Integer.toString(link.getVpid())));
         linkMetadata.append(addMetadataProperty("To", link.getTo()));
-
-        if (link.getSprite() == null || link.getSprite().isBlank()) {
-            throw new Exception("No Sprite was specified for link.");
-        }
         linkMetadata.append(addMetadataProperty("Sprite", link.getSprite()));
-
-        if (link.getRegion() == null) {
-            throw new Exception("No Region is specified for link");
-        }
-
         linkMetadata.append(regionGenerator.metadataToRdfXml(link.getRegion()));
 
         linkMetadata.append("</rdf:Bag></umf:set>");

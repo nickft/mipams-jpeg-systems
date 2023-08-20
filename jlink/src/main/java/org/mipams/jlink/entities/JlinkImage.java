@@ -1,6 +1,6 @@
 package org.mipams.jlink.entities;
 
-public class Image {
+public class JlinkImage {
     String format;
 
     String href;

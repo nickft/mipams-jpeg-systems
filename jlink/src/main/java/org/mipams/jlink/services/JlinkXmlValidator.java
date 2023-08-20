@@ -22,6 +22,9 @@ import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 import org.mipams.jlink.entities.JlinkElement;
+import org.mipams.jlink.entities.JlinkLink;
+import org.mipams.jlink.entities.JlinkScene;
+import org.mipams.jlink.entities.JlinkViewport;
 import org.mipams.jlink.entities.validator.JlinkValidator;
 import org.mipams.jlink.entities.validator.ValidatorUtils;
 import org.mipams.jumbf.entities.JumbfBox;
@@ -72,6 +75,8 @@ public class JlinkXmlValidator {
             element.setNextId(nextId);
 
             return element;
+        } catch (Exception e) {
+            throw new Exception(String.format("Failed to validate JLINK metadata elements: %s", e.getMessage()), e);
         }
     }
 
@@ -187,11 +192,25 @@ public class JlinkXmlValidator {
         Optional<Statement> metadataStatement = ValidatorUtils.getOptionalValue(jlinkModel, iri("adobe:ns:meta"),
                 iri("http://ns.intel.com/umf/2.0metadata"));
 
-        Resource metadataContentsResource = internalResourceMap.get(metadataStatement.get().getObject().stringValue());
-        List<Value> metadataDescriptorResourceNames = ValidatorUtils.getRdfBagContents(metadataContentsResource,
-                jlinkModel);
+        if (metadataStatement.isPresent()) {
+            Resource metadataContentsResource = internalResourceMap
+                    .get(metadataStatement.get().getObject().stringValue());
+            List<Value> metadataDescriptorResourceNames = ValidatorUtils.getRdfBagContents(metadataContentsResource,
+                    jlinkModel);
 
-        JlinkValidator schemaValidator = new JlinkValidator(jlinkModel, internalResourceMap);
-        return schemaValidator.readFromMetadata(metadataDescriptorResourceNames);
+            JlinkValidator schemaValidator = new JlinkValidator(jlinkModel, internalResourceMap);
+            return schemaValidator.readFromMetadata(metadataDescriptorResourceNames);
+        } else {
+            JlinkElement defaultJlinkElement = new JlinkElement();
+
+            JlinkScene defaultScene = new JlinkScene();
+            defaultScene.addViewport(new JlinkViewport());
+
+            defaultJlinkElement.setScene(defaultScene);
+            defaultJlinkElement.setNextId(0);
+            defaultJlinkElement.addLink(new JlinkLink());
+
+            return defaultJlinkElement;
+        }
     }
 }

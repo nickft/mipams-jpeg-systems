@@ -1,7 +1,7 @@
 package org.mipams.jlink.entities.generator;
 
 import org.mipams.jlink.entities.JlinkElement;
-import org.mipams.jlink.entities.Link;
+import org.mipams.jlink.entities.JlinkLink;
 
 public class JlinkGenerator extends JlinkElementAbstractGenerator<JlinkElement> {
 
@@ -29,7 +29,7 @@ public class JlinkGenerator extends JlinkElementAbstractGenerator<JlinkElement> 
         jlinkSchema.append("<umf:metadata><rdf:Bag>");
         jlinkSchema.append(sceneGenerator.metadataToRdfXml(jlinkElement.getScene()));
 
-        for (Link link : jlinkElement.getLinks()) {
+        for (JlinkLink link : jlinkElement.getLinks()) {
             jlinkSchema.append(linkGenerator.metadataToRdfXml(link));
         }
 

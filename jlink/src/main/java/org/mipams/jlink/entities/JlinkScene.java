@@ -3,7 +3,7 @@ package org.mipams.jlink.entities;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Scene {
+public class JlinkScene {
 
     String version = "1.0.0";
 
@@ -11,9 +11,9 @@ public class Scene {
 
     String note = "";
 
-    Image image;
+    JlinkImage image;
 
-    List<Viewport> viewports = new ArrayList<>();
+    List<JlinkViewport> viewports = new ArrayList<>();
 
     public void setVersion(String version) {
         this.version = version;
@@ -39,24 +39,24 @@ public class Scene {
         return note;
     }
 
-    public void setImage(Image image) {
+    public void setImage(JlinkImage image) {
         this.image = image;
     }
 
-    public Image getImage() {
+    public JlinkImage getImage() {
         return image;
     }
 
-    public void setViewports(List<Viewport> viewport) {
+    public void setViewports(List<JlinkViewport> viewport) {
         this.viewports.clear();
         this.viewports.addAll(viewport);
     }
 
-    public void addViewport(Viewport viewport) {
+    public void addViewport(JlinkViewport viewport) {
         this.viewports.add(viewport);
     }
 
-    public List<Viewport> getViewports() {
+    public List<JlinkViewport> getViewports() {
         return viewports;
     }
 

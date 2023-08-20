@@ -6,9 +6,9 @@ import java.util.Map;
 
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;
-import org.mipams.jlink.entities.Image;
+import org.mipams.jlink.entities.JlinkImage;
 
-public class ImageValidator extends JlinkAbstractValidator<Image> {
+public class ImageValidator extends JlinkAbstractValidator<JlinkImage> {
 
     public ImageValidator(Model jlinkModel, Map<String, Resource> subjectNameToResourceMap) {
         super(jlinkModel, subjectNameToResourceMap);
@@ -20,8 +20,8 @@ public class ImageValidator extends JlinkAbstractValidator<Image> {
     }
 
     @Override
-    protected Image initializeJlinkElement() {
-        return new Image();
+    protected JlinkImage initializeJlinkElement() {
+        return new JlinkImage();
     }
 
     @Override
@@ -30,7 +30,8 @@ public class ImageValidator extends JlinkAbstractValidator<Image> {
     }
 
     @Override
-    protected void populateObjectFromMap(Image image, Map<String, String> imageMetadataProperties) throws Exception {
+    protected void populateObjectFromMap(JlinkImage image, Map<String, String> imageMetadataProperties)
+            throws Exception {
         String format = imageMetadataProperties.getOrDefault(ImageProperty.FORMAT.getKey(), "");
         String href = imageMetadataProperties.getOrDefault(ImageProperty.HREF.getKey(), "");
 

@@ -1,9 +1,9 @@
 package org.mipams.jlink.entities.generator;
 
-import org.mipams.jlink.entities.Viewport;
+import org.mipams.jlink.entities.JlinkViewport;
 import org.mipams.jlink.entities.validator.PropertyType;
 
-public class ViewportGenerator extends JlinkElementAbstractGenerator<Viewport> {
+public class ViewportGenerator extends JlinkElementAbstractGenerator<JlinkViewport> {
 
     @Override
     public String schemaToRdfXml() throws Exception {
@@ -24,33 +24,17 @@ public class ViewportGenerator extends JlinkElementAbstractGenerator<Viewport> {
     }
 
     @Override
-    public String metadataToRdfXml(Viewport viewport) throws Exception {
+    public String metadataToRdfXml(JlinkViewport viewport) throws Exception {
         StringBuilder viewportMetadata = new StringBuilder(addResourceOpeningTag());
 
         viewportMetadata.append(addSchema("Viewport"));
         viewportMetadata.append("<umf:set><rdf:Bag>");
 
-        if (viewport.getId() == null) {
-            throw new Exception("No Id was found for viewport");
-        }
-
         viewportMetadata.append(addMetadataProperty("ID", viewport.getId().toString()));
-
-        if (viewport.getX() != 50.0) {
-            viewportMetadata.append(addMetadataProperty("X", Double.toString(viewport.getX())));
-        }
-
-        if (viewport.getY() != 50.0) {
-            viewportMetadata.append(addMetadataProperty("Y", Double.toString(viewport.getY())));
-        }
-
-        if (viewport.getXfov() != 100.0) {
-            viewportMetadata.append(addMetadataProperty("XFOV", Double.toString(viewport.getXfov())));
-        }
-
-        if (viewport.getYfov() != 100.0) {
-            viewportMetadata.append(addMetadataProperty("YFOV", Double.toString(viewport.getXfov())));
-        }
+        viewportMetadata.append(addMetadataProperty("X", Double.toString(viewport.getX())));
+        viewportMetadata.append(addMetadataProperty("Y", Double.toString(viewport.getY())));
+        viewportMetadata.append(addMetadataProperty("XFOV", Double.toString(viewport.getXfov())));
+        viewportMetadata.append(addMetadataProperty("YFOV", Double.toString(viewport.getXfov())));
 
         viewportMetadata.append("</rdf:Bag></umf:set>");
         viewportMetadata.append(addResourceClosingTag());

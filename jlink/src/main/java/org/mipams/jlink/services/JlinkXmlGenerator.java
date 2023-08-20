@@ -16,6 +16,7 @@ public class JlinkXmlGenerator {
     public XmlBox getXmlBoxFromJlinkElement(JlinkElement element) throws MipamsException {
         try {
             String xmpContent = getXmpContent(element);
+            // logger.info(xmpContent);
             XmlBox xmlBox = new XmlBox();
             xmlBox.setContent(xmpContent.getBytes());
             return xmlBox;

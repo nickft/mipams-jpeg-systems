@@ -1,7 +1,7 @@
 package org.mipams.jlink.entities;
 
-public class Link {
-    Region region;
+public class JlinkLink {
+    JlinkRegion region;
 
     int duration = 600;
 
@@ -11,11 +11,11 @@ public class Link {
 
     String to;
 
-    public void setRegion(Region region) {
+    public void setRegion(JlinkRegion region) {
         this.region = region;
     }
 
-    public Region getRegion() {
+    public JlinkRegion getRegion() {
         return region;
     }
 

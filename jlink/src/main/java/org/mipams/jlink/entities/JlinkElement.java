@@ -7,9 +7,9 @@ public class JlinkElement {
 
     Integer nextId;
 
-    Scene scene;
+    JlinkScene scene;
 
-    List<Link> links = new ArrayList<>();
+    List<JlinkLink> links = new ArrayList<>();
 
     public void setNextId(Integer nextId) {
         this.nextId = nextId;
@@ -19,24 +19,24 @@ public class JlinkElement {
         return this.nextId;
     }
 
-    public void setScene(Scene scene) {
+    public void setScene(JlinkScene scene) {
         this.scene = scene;
     }
 
-    public Scene getScene() {
+    public JlinkScene getScene() {
         return scene;
     }
 
-    public void addLink(Link link) {
+    public void addLink(JlinkLink link) {
         this.links.add(link);
     }
 
-    public void setLinks(List<Link> links) {
+    public void setLinks(List<JlinkLink> links) {
         this.links.clear();
         this.links.addAll(links);
     }
 
-    public List<Link> getLinks() {
+    public List<JlinkLink> getLinks() {
         return links;
     }
 }

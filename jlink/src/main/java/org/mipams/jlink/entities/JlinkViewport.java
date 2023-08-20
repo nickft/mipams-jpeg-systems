@@ -1,6 +1,6 @@
 package org.mipams.jlink.entities;
 
-public class Viewport {
+public class JlinkViewport {
     double x = 50.0;
 
     double y = 50.0;

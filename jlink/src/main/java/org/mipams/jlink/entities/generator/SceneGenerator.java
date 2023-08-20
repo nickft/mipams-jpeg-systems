@@ -1,10 +1,10 @@
 package org.mipams.jlink.entities.generator;
 
-import org.mipams.jlink.entities.Scene;
-import org.mipams.jlink.entities.Viewport;
+import org.mipams.jlink.entities.JlinkScene;
+import org.mipams.jlink.entities.JlinkViewport;
 import org.mipams.jlink.entities.validator.PropertyType;
 
-public class SceneGenerator extends JlinkElementAbstractGenerator<Scene> {
+public class SceneGenerator extends JlinkElementAbstractGenerator<JlinkScene> {
 
     private ViewportGenerator viewportGenerator;
     private ImageGenerator imageGenerator;
@@ -34,20 +34,14 @@ public class SceneGenerator extends JlinkElementAbstractGenerator<Scene> {
     }
 
     @Override
-    public String metadataToRdfXml(Scene scene) throws Exception {
+    public String metadataToRdfXml(JlinkScene scene) throws Exception {
         StringBuilder sceneMetadata = new StringBuilder(addResourceOpeningTag());
         sceneMetadata.append(addSchema("Scene"));
         sceneMetadata.append("<umf:set><rdf:Bag>");
 
         sceneMetadata.append(addMetadataProperty("Version", scene.getVersion()));
-
-        if (scene.getTitle() != null && !scene.getTitle().isBlank()) {
-            sceneMetadata.append(addMetadataProperty("Title", scene.getTitle()));
-        }
-
-        if (scene.getNote() != null && !scene.getNote().isBlank()) {
-            sceneMetadata.append(addMetadataProperty("Note", scene.getNote()));
-        }
+        sceneMetadata.append(addMetadataProperty("Title", scene.getTitle()));
+        sceneMetadata.append(addMetadataProperty("Note", scene.getNote()));
 
         if (scene.getImage() == null) {
             throw new Exception("No schema is specified for scene");
@@ -55,7 +49,7 @@ public class SceneGenerator extends JlinkElementAbstractGenerator<Scene> {
 
         sceneMetadata.append(imageGenerator.metadataToRdfXml(scene.getImage()));
 
-        for (Viewport vp : scene.getViewports()) {
+        for (JlinkViewport vp : scene.getViewports()) {
             sceneMetadata.append(viewportGenerator.metadataToRdfXml(vp));
         }
 
