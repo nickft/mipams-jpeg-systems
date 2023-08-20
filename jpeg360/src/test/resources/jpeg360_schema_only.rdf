@@ -1,0 +1,108 @@
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+	<rdf:Description rdf:about="" xmlns:xmp="http://ns.adobe.com/xap/1.0/" xmlns:umf="http://ns.intel.com/umf/2.0">
+		<umf:next-id>0</umf:next-id>
+		<umf:schemas>
+			<rdf:Bag>
+				<rdf:li rdf:parseType="Resource">
+				<!-- JPEG 360 Metadata -->
+					<umf:schema>JPEG360Metadata</umf:schema>
+					<umf:descriptors>
+						<rdf:Bag>
+							<rdf:li rdf:parseType="Resource">
+								<umf:name>JPEG360ImageMetadata</umf:name>
+								<umf:fields>
+									<rdf:Bag>
+										<rdf:li rdf:parseType="Resource">
+											<umf:name>JPEG360Version</umf:name>
+											<umf:type>integer</umf:type>
+										</rdf:li>
+										<rdf:li rdf:parseType="Resource">
+											<umf:name>MediaType</umf:name>
+											<umf:type>string</umf:type>
+										</rdf:li>
+										<rdf:li rdf:parseType="Resource">
+											<umf:name>ProjectionType</umf:name>
+											<umf:type>string</umf:type>
+										</rdf:li>
+										<rdf:li rdf:parseType="Resource">
+											<umf:name>PhiMin</umf:name>
+											<umf:type>real</umf:type>
+										</rdf:li>
+										<rdf:li rdf:parseType="Resource">
+											<umf:name>PhiMax</umf:name>
+											<umf:type>real</umf:type>
+										</rdf:li>
+										<rdf:li rdf:parseType="Resource">
+											<umf:name>ThetaMax</umf:name>
+											<umf:type>real</umf:type>
+										</rdf:li>
+										<rdf:li rdf:parseType="Resource">
+											<umf:name>ThetaMin</umf:name>
+											<umf:type>real</umf:type>
+										</rdf:li>
+										<rdf:li rdf:parseType="Resource">
+											<umf:name>PhiGravity</umf:name>
+											<umf:type>real</umf:type>
+										</rdf:li>
+										<rdf:li rdf:parseType="Resource">
+											<umf:name>ThetaGravity</umf:name>
+											<umf:type>real</umf:type>
+										</rdf:li>
+										<rdf:li rdf:parseType="Resource">
+											<umf:name>CompassPhi</umf:name>
+											<umf:type>real</umf:type>
+										</rdf:li>
+										<rdf:li rdf:parseType="Resource">
+											<umf:name>BoxReference</umf:name>
+											<umf:type>string</umf:type>
+										</rdf:li>
+									</rdf:Bag>
+								</umf:fields>
+							</rdf:li>
+							<rdf:li rdf:parseType="Resource">
+								<umf:name>JPEG360ViewportMetadata</umf:name>
+								<umf:fields>
+									<rdf:Bag>
+										<rdf:li rdf:parseType="Resource">
+											<umf:name>JPEG360ViewportNumber</umf:name>
+											<umf:type>integer</umf:type>
+										</rdf:li>
+										<rdf:li rdf:parseType="Resource">
+											<umf:name>ViewportPhi</umf:name>
+											<umf:type>real</umf:type>
+										</rdf:li>
+										<rdf:li rdf:parseType="Resource">
+											<umf:name>ViewportTheta</umf:name>
+											<umf:type>real</umf:type>
+										</rdf:li>
+										<rdf:li rdf:parseType="Resource">
+											<umf:name>ViewportPhiFOV</umf:name>
+											<umf:type>real</umf:type>
+										</rdf:li>
+										<rdf:li rdf:parseType="Resource">
+											<umf:name>ViewportThetaFOV</umf:name>
+											<umf:type>real</umf:type>
+										</rdf:li>
+										<rdf:li rdf:parseType="Resource">
+											<umf:name>ViewportRoll</umf:name>
+											<umf:type>real</umf:type>
+										</rdf:li>
+									</rdf:Bag>
+								</umf:fields>
+							</rdf:li>
+						</rdf:Bag>
+					</umf:descriptors>
+				</rdf:li>
+			</rdf:Bag>
+		</umf:schemas>
+		<umf:metadata>
+    		<rdf:Bag>
+     			<rdf:li rdf:parseType="Resource">
+					<umf:schema>JPEG360Metadata</umf:schema>
+      				<umf:set>
+      				</umf:set>
+     			</rdf:li>
+			</rdf:Bag>
+   		</umf:metadata>
+	</rdf:Description>
+</rdf:RDF>
