@@ -16,6 +16,7 @@
 		<module>privsec</module>
 		<module>jlink</module>
 		<module>jpegsnack</module>
+		<module>jpeg360</module>
     </modules>
 
 	<properties>
