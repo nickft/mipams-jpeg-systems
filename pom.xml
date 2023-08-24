@@ -15,6 +15,7 @@
         <module>jumbf</module>
 		<module>privsec</module>
 		<module>jlink</module>
+		<module>jpegsnack</module>
     </modules>
 
 	<properties>

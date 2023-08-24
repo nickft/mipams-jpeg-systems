@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>  
+	
+	<parent>  
+		<groupId>org.mipams</groupId>  
+		<artifactId>jpeg-systems</artifactId>
+		<version>1.0</version>  
+	</parent>
+
+	<groupId>org.mipams</groupId>
+	<artifactId>jpegsnack</artifactId>
+	<version>1.0</version>
+	<packaging>jar</packaging>
+
+	<name>JPEG Snack</name>
+	<description>
+		Module that contains the implementation of JUMBF boxes according 
+		to JPEG Snack (ISO/IEC 19566-8)
+	</description>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.mipams</groupId>  
+			<artifactId>jumbf</artifactId>
+			<version>2.0</version>  
+		</dependency>
+	</dependencies>
+</project>
