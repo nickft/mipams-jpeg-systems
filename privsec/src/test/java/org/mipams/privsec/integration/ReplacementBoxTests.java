@@ -47,7 +47,7 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
 
                 JsonBox jsonBox = new JsonBox();
                 jsonBox.setContent(TEST_CONTENT.getBytes());
-                jsonBox.updateBmffHeadersBasedOnBox();
+                jsonBox.updateFieldsBasedOnExistingData();
 
                 JsonContentType jsonContentType = new JsonContentType();
                 String contentTypeUuid = jsonContentType.getContentTypeUuid();
@@ -71,7 +71,7 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
 
                 JsonBox jsonBox = new JsonBox();
                 jsonBox.setContent(TEST_CONTENT.getBytes());
-                jsonBox.updateBmffHeadersBasedOnBox();
+                jsonBox.updateFieldsBasedOnExistingData();
 
                 JsonContentType jsonContentType = new JsonContentType();
                 String contentTypeUuid = jsonContentType.getContentTypeUuid();
@@ -94,7 +94,7 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
 
                 JsonBox jsonBox = new JsonBox();
                 jsonBox.setContent(TEST_CONTENT.getBytes());
-                jsonBox.updateBmffHeadersBasedOnBox();
+                jsonBox.updateFieldsBasedOnExistingData();
 
                 JsonContentType jsonContentType = new JsonContentType();
                 String contentTypeUuid = jsonContentType.getContentTypeUuid();
@@ -118,7 +118,7 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
 
                 JsonBox jsonBox = new JsonBox();
                 jsonBox.setContent(TEST_CONTENT.getBytes());
-                jsonBox.updateBmffHeadersBasedOnBox();
+                jsonBox.updateFieldsBasedOnExistingData();
 
                 JsonContentType jsonContentType = new JsonContentType();
                 String contentTypeUuid = jsonContentType.getContentTypeUuid();
@@ -143,7 +143,7 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
 
                 BinaryDataBox binaryDataBox = new BinaryDataBox();
                 binaryDataBox.setFileUrl(assetFileUrl);
-                binaryDataBox.updateBmffHeadersBasedOnBox();
+                binaryDataBox.updateFieldsBasedOnExistingData();
 
                 List<BmffBox> replacementDataBoxList = List.of(binaryDataBox);
 
@@ -163,7 +163,7 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
 
                 ContiguousCodestreamBox jp2cBox = new ContiguousCodestreamBox();
                 jp2cBox.setFileUrl(assetFileUrl);
-                jp2cBox.updateBmffHeadersBasedOnBox();
+                jp2cBox.updateFieldsBasedOnExistingData();
 
                 List<BmffBox> replacementDataBoxList = List.of(jp2cBox);
 
@@ -182,7 +182,7 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
 
                 ContiguousCodestreamBox jp2cBox = new ContiguousCodestreamBox();
                 jp2cBox.setFileUrl(assetFileUrl);
-                jp2cBox.updateBmffHeadersBasedOnBox();
+                jp2cBox.updateFieldsBasedOnExistingData();
 
                 List<BmffBox> replacementDataBoxList = List.of(jp2cBox);
 
@@ -201,7 +201,7 @@ public class ReplacementBoxTests extends AbstractIntegrationTests {
                 replacementDescriptionBox.setAutoApply(replacementTypeId > 1);
                 replacementDescriptionBox.setReplacementTypeId(replacementTypeId);
                 replacementDescriptionBox.setParamHandler(paramHandler);
-                replacementDescriptionBox.updateBmffHeadersBasedOnBox();
+                replacementDescriptionBox.updateFieldsBasedOnExistingData();
 
                 ReplacementContentType replacementContentType = new ReplacementContentType();
                 String contentTypeUuid = replacementContentType.getContentTypeUuid();

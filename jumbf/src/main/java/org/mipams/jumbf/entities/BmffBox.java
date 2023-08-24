@@ -45,8 +45,15 @@ public abstract class BmffBox implements BoxInterface {
         return getLBox() == 1 && (getXlBox() != null);
     }
 
-    public final void updateBmffHeadersBasedOnBox() throws MipamsException {
+    public final void updateFieldsBasedOnExistingData() throws MipamsException {
+        applyInternalBoxFieldsBasedOnExistingData();
+        updateBmffHeadersBasedOnBox();
+    }
 
+    protected void applyInternalBoxFieldsBasedOnExistingData() throws MipamsException {
+    }
+
+    private void updateBmffHeadersBasedOnBox() throws MipamsException {
         setTBox(getTypeId());
 
         long size = calculateSizeFromBox();

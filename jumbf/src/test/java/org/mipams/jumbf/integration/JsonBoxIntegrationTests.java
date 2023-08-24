@@ -146,7 +146,7 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
 
         JsonBox jsonBox = new JsonBox();
         jsonBox.setContent(TEST_CONTENT.getBytes());
-        jsonBox.updateBmffHeadersBasedOnBox();
+        jsonBox.updateFieldsBasedOnExistingData();
 
         JumbfBoxBuilder builder = new JumbfBoxBuilder(jsonContentType);
         builder.appendContentBox(jsonBox);
@@ -210,7 +210,7 @@ public class JsonBoxIntegrationTests extends AbstractIntegrationTests {
 
         JsonBox jBox = new JsonBox();
         jBox.setContent(TEST_CONTENT.getBytes());
-        jBox.updateBmffHeadersBasedOnBox();
+        jBox.updateFieldsBasedOnExistingData();
         String privateBoxWithSingleBoxUrl = ResourceUtils.getFile("classpath:single-private.obj")
                 .getAbsolutePath();
         jsonBoxService.writeToJumbfFile(jBox, new FileOutputStream(privateBoxWithSingleBoxUrl));

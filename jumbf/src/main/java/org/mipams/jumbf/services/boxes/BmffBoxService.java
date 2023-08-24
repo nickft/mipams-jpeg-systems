@@ -38,21 +38,20 @@ public abstract class BmffBoxService<T extends BmffBox> implements BoxServiceInt
     @Override
     public final T parseFromJumbfFile(InputStream input, ParseMetadata parseMetadata) throws MipamsException {
 
-        logger.log(Level.FINE,"Start parsing a new BMFF Box");
+        logger.log(Level.FINE, "Start parsing a new BMFF Box");
 
         T bmffBox = initializeBox();
 
         populateHeadersFromJumbfFile(bmffBox, input);
 
-        ParseMetadata bmffPayloadParseMetadata = new ParseMetadata();
+        ParseMetadata bmffPayloadParseMetadata = parseMetadata.clone();
         bmffPayloadParseMetadata.setAvailableBytesForBox(bmffBox.getPayloadSizeFromBmffHeaders());
-        bmffPayloadParseMetadata.setParentDirectory(parseMetadata.getParentDirectory());
 
         populatePayloadFromJumbfFile(bmffBox, bmffPayloadParseMetadata, input);
 
         verifyBoxSizeEqualsToSizeSpecifiedInBmffHeaders(bmffBox);
 
-        logger.log(Level.FINE,"The box " + Integer.toHexString(bmffBox.getTypeId()) + " has a total length of "
+        logger.log(Level.FINE, "The box " + Integer.toHexString(bmffBox.getTypeId()) + " has a total length of "
                 + bmffBox.getBoxSizeFromBmffHeaders());
 
         return bmffBox;

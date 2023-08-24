@@ -30,7 +30,7 @@ public class BmffBoxServiceTests {
 
         JsonBox jsonBox = new JsonBox();
         jsonBox.setContent("test".getBytes());
-        jsonBox.updateBmffHeadersBasedOnBox();
+        jsonBox.updateFieldsBasedOnExistingData();
 
         jsonBox.setLBox(-1);
         Exception e = assertThrows(MipamsException.class, () -> {
@@ -95,7 +95,7 @@ public class BmffBoxServiceTests {
     void testUpdatingBmffHeadersOfLongBox() throws MipamsException {
         MockLongBox mockBox = new MockLongBox();
 
-        mockBox.updateBmffHeadersBasedOnBox();
+        mockBox.updateFieldsBasedOnExistingData();
 
         long expectedSize = CoreUtils.INT_BYTE_SIZE * 2 + CoreUtils.LONG_BYTE_SIZE + mockBox.PAYLOAD_SIZE;
 

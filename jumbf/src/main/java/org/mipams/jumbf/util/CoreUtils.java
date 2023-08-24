@@ -52,6 +52,10 @@ public class CoreUtils {
         }
     }
 
+    public static void writeFloatToOutputStream(float val, OutputStream outputStream) throws MipamsException {
+        writeByteArrayToOutputStream(convertFloatToByteArray(val), outputStream);
+    }
+
     public static void writeIntToOutputStream(int val, OutputStream outputStream) throws MipamsException {
         writeByteArrayToOutputStream(convertIntToByteArray(val), outputStream);
     }
@@ -88,8 +92,16 @@ public class CoreUtils {
         return ByteBuffer.wrap(bytes).getInt();
     }
 
+    public static float convertByteArrayToFloat(byte[] bytes) {
+        return ByteBuffer.wrap(bytes).getFloat();
+    }
+
     public static byte[] convertIntToByteArray(int num) {
         return ByteBuffer.allocate(4).putInt(num).array();
+    }
+
+    public static byte[] convertFloatToByteArray(float num) {
+        return ByteBuffer.allocate(4).putFloat(num).array();
     }
 
     public static byte[] convertHexToByteArray(String hexAsString) {
@@ -189,6 +201,11 @@ public class CoreUtils {
     public static int readIntFromInputStream(InputStream input) throws MipamsException {
         byte[] intBuffer = readBytesFromInputStream(input, INT_BYTE_SIZE);
         return convertByteArrayToInt(intBuffer);
+    }
+
+    public static float readFloatFromInputStream(InputStream input) throws MipamsException {
+        byte[] floatBuffer = readBytesFromInputStream(input, INT_BYTE_SIZE);
+        return convertByteArrayToFloat(floatBuffer);
     }
 
     public static long readLongFromInputStream(InputStream input) throws MipamsException {

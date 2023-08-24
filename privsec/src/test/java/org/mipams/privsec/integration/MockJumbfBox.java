@@ -15,8 +15,7 @@ public class MockJumbfBox {
         DescriptionBox dBox = new DescriptionBox();
         dBox.setUuid(uuid);
         dBox.setLabel("This is a test");
-        dBox.computeAndSetToggleBasedOnFields();
-        dBox.updateBmffHeadersBasedOnBox();
+        dBox.updateFieldsBasedOnExistingData();
 
         return generateJumbfBox(dBox, contentBoxes);
     }
@@ -27,7 +26,7 @@ public class MockJumbfBox {
         JumbfBox jumbfBox = new JumbfBox();
         jumbfBox.setDescriptionBox(descriptionBox);
         jumbfBox.setContentBoxList(contentBoxes);
-        jumbfBox.updateBmffHeadersBasedOnBox();
+        jumbfBox.updateFieldsBasedOnExistingData();
 
         return jumbfBox;
     }

@@ -19,4 +19,11 @@ public class ParseMetadata {
     public void setParentDirectory(String parentDirectory) {
         this.parentDirectory = parentDirectory;
     }
+
+    public ParseMetadata clone() {
+        ParseMetadata clonedMetadata = new ParseMetadata();
+        clonedMetadata.setAvailableBytesForBox(availableBytesForBox);
+        clonedMetadata.setParentDirectory(parentDirectory);
+        return clonedMetadata;
+    }
 }

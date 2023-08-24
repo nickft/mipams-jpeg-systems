@@ -30,63 +30,72 @@ public class JumbfBoxBuilder {
         this.jumbfBox = jumbfBox;
     }
 
-    public void setJumbfBoxAsRequestable() {
+    public JumbfBoxBuilder setJumbfBoxAsRequestable() {
         this.jumbfBox.getDescriptionBox().setAsRequestable();
+        return this;
     }
 
-    private void setContentType(ContentTypeService contentTypeService) {
+    private JumbfBoxBuilder setContentType(ContentTypeService contentTypeService) {
         this.jumbfBox.getDescriptionBox().setUuid(contentTypeService.getContentTypeUuid());
+        return this;
     }
 
-    public void setLabel(String label) {
+    public JumbfBoxBuilder setLabel(String label) {
         this.jumbfBox.getDescriptionBox().setLabel(label);
+        return this;
     }
 
-    public void setId(int id) {
+    public JumbfBoxBuilder setId(int id) {
         this.jumbfBox.getDescriptionBox().setId(id);
+        return this;
     }
 
-    public void setSha256Hash(byte[] digest) {
+    public JumbfBoxBuilder setSha256Hash(byte[] digest) {
         this.jumbfBox.getDescriptionBox().setSha256Hash(digest);
+        return this;
     }
 
-    public void setPrivateField(BmffBox privateField) {
+    public JumbfBoxBuilder setPrivateField(BmffBox privateField) {
         this.jumbfBox.getDescriptionBox().setPrivateField(privateField);
+        return this;
     }
 
-    public void setPaddingSize(long numberOfBytes) throws MipamsException {
+    public JumbfBoxBuilder setPaddingSize(long numberOfBytes) throws MipamsException {
         PaddingBox paddingBox = new PaddingBox();
         paddingBox.setPaddingSize(numberOfBytes);
-        paddingBox.updateBmffHeadersBasedOnBox();
+        paddingBox.updateFieldsBasedOnExistingData();
         this.jumbfBox.setPaddingBox(paddingBox);
+        return this;
     }
 
-    public void appendContentBox(BmffBox box) {
+    public JumbfBoxBuilder appendContentBox(BmffBox box) {
         this.jumbfBox.getContentBoxList().add(box);
+        return this;
     }
 
-    public void appendAllContentBoxes(List<? extends BmffBox> boxList) {
+    public JumbfBoxBuilder appendAllContentBoxes(List<? extends BmffBox> boxList) {
         this.jumbfBox.getContentBoxList().addAll(boxList);
+        return this;
     }
 
-    public void removeContentBox(BmffBox box) {
+    public JumbfBoxBuilder removeContentBox(BmffBox box) {
         this.jumbfBox.getContentBoxList().remove(box);
+        return this;
     }
 
-    public void emptyContentBoxList() {
+    public JumbfBoxBuilder emptyContentBoxList() {
         this.jumbfBox.setContentBoxList(new ArrayList<>());
+        return this;
     }
 
     public JumbfBox getResult() throws MipamsException {
-
-        this.jumbfBox.getDescriptionBox().computeAndSetToggleBasedOnFields();
-        this.jumbfBox.getDescriptionBox().updateBmffHeadersBasedOnBox();
+        this.jumbfBox.getDescriptionBox().updateFieldsBasedOnExistingData();
 
         for (BmffBox contentBox : this.jumbfBox.getContentBoxList()) {
-            contentBox.updateBmffHeadersBasedOnBox();
+            contentBox.updateFieldsBasedOnExistingData();
         }
 
-        this.jumbfBox.updateBmffHeadersBasedOnBox();
+        this.jumbfBox.updateFieldsBasedOnExistingData();
 
         return this.jumbfBox;
     }

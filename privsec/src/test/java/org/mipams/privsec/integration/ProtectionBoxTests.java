@@ -38,7 +38,7 @@ public class ProtectionBoxTests extends AbstractIntegrationTests {
 
         ProtectionDescriptionBox protectionDescriptionBox = new ProtectionDescriptionBox();
         protectionDescriptionBox.setAes256CbcProtection();
-        protectionDescriptionBox.updateBmffHeadersBasedOnBox();
+        protectionDescriptionBox.updateFieldsBasedOnExistingData();
 
         JumbfBox givenJumbfBox = getProtectionJumbfBoxBasedOnProtectionDescriptionBox(protectionDescriptionBox);
         JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
@@ -52,7 +52,7 @@ public class ProtectionBoxTests extends AbstractIntegrationTests {
         protectionDescriptionBox.setAes256CbcWithIvProtection();
         byte[] iv = CoreUtils.convertHexToByteArray("D9BBA15016D876F67532FAFB8B851D24");
         protectionDescriptionBox.setIv(iv);
-        protectionDescriptionBox.updateBmffHeadersBasedOnBox();
+        protectionDescriptionBox.updateFieldsBasedOnExistingData();
 
         JumbfBox givenJumbfBox = getProtectionJumbfBoxBasedOnProtectionDescriptionBox(protectionDescriptionBox);
         JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
@@ -65,13 +65,13 @@ public class ProtectionBoxTests extends AbstractIntegrationTests {
         ProtectionDescriptionBox protectionDescriptionBox = new ProtectionDescriptionBox();
         protectionDescriptionBox.setProtectionMethodAsExternallyReferenced();
         protectionDescriptionBox.setEncLabel("encryption-reference");
-        protectionDescriptionBox.updateBmffHeadersBasedOnBox();
+        protectionDescriptionBox.updateFieldsBasedOnExistingData();
 
         JumbfBox protectionJumbfBox = getProtectionJumbfBoxBasedOnProtectionDescriptionBox(protectionDescriptionBox);
 
         JsonBox jsonBox = new JsonBox();
         jsonBox.setContent(TEST_CONTENT.getBytes());
-        jsonBox.updateBmffHeadersBasedOnBox();
+        jsonBox.updateFieldsBasedOnExistingData();
 
         JsonContentType jsonContentType = new JsonContentType();
         String contentTypeUuid = jsonContentType.getContentTypeUuid();
@@ -79,8 +79,7 @@ public class ProtectionBoxTests extends AbstractIntegrationTests {
         DescriptionBox dBox = new DescriptionBox();
         dBox.setUuid(contentTypeUuid);
         dBox.setLabel("encryption-reference");
-        dBox.computeAndSetToggleBasedOnFields();
-        dBox.updateBmffHeadersBasedOnBox();
+        dBox.updateFieldsBasedOnExistingData();
 
         JumbfBox jsonJumbfBox = MockJumbfBox.generateJumbfBox(dBox, List.of(jsonBox));
 
@@ -96,12 +95,12 @@ public class ProtectionBoxTests extends AbstractIntegrationTests {
         protectionDescriptionBox.setAes256CbcProtection();
         protectionDescriptionBox.setArLabel("access-rules-reference");
         protectionDescriptionBox.includeAccessRulesInToggle();
-        protectionDescriptionBox.updateBmffHeadersBasedOnBox();
+        protectionDescriptionBox.updateFieldsBasedOnExistingData();
         JumbfBox protectionJumbfBox = getProtectionJumbfBoxBasedOnProtectionDescriptionBox(protectionDescriptionBox);
 
         XmlBox xmlBox = new XmlBox();
         xmlBox.setContent(TEST_CONTENT.getBytes());
-        xmlBox.updateBmffHeadersBasedOnBox();
+        xmlBox.updateFieldsBasedOnExistingData();
 
         XmlContentType xmlContentType = new XmlContentType();
         String contentTypeUuid = xmlContentType.getContentTypeUuid();
@@ -109,8 +108,7 @@ public class ProtectionBoxTests extends AbstractIntegrationTests {
         DescriptionBox dBox = new DescriptionBox();
         dBox.setUuid(contentTypeUuid);
         dBox.setLabel("access-rules-reference");
-        dBox.computeAndSetToggleBasedOnFields();
-        dBox.updateBmffHeadersBasedOnBox();
+        dBox.updateFieldsBasedOnExistingData();
 
         JumbfBox xmlJumbfBox = MockJumbfBox.generateJumbfBox(dBox, List.of(xmlBox));
 
@@ -129,7 +127,7 @@ public class ProtectionBoxTests extends AbstractIntegrationTests {
 
         BinaryDataBox binaryDataBox = new BinaryDataBox();
         binaryDataBox.setFileUrl(assetFileUrl);
-        binaryDataBox.updateBmffHeadersBasedOnBox();
+        binaryDataBox.updateFieldsBasedOnExistingData();
 
         return MockJumbfBox.generateJumbfBoxWithContent(contentTypeUuid, List.of(pdBox, binaryDataBox));
     }
