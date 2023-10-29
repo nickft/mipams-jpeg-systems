@@ -1,5 +1,6 @@
 package org.mipams.jlink.services;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -54,35 +55,42 @@ public class JlinkContentType implements ContentTypeService {
 
         contentBoxes.add(xmlContentTypeJumbfBox);
 
-        long remainingBytes = parseMetadata.getAvailableBytesForBox()
-                - xmlContentTypeJumbfBox.getBoxSizeFromBmffHeaders();
+        long nominalBytesRemaining = parseMetadata.getAvailableBytesForBox() > 0
+                ? parseMetadata.getAvailableBytesForBox()
+                        - xmlContentTypeJumbfBox.getBoxSizeFromBmffHeaders()
+                : parseMetadata.getAvailableBytesForBox();
+
+        long availableBytesForBox = nominalBytesRemaining;
 
         JumbfBox jumbfBox = null;
 
-        while (remainingBytes > 0) {
+        try {
+            while ((nominalBytesRemaining == 0 || availableBytesForBox > 0) && input.available() > 1) {
+                if (CoreUtils.isPaddingBoxNext(input)) {
+                    break;
+                }
 
-            if (CoreUtils.isPaddingBoxNext(input)) {
-                break;
+                jumbfBox = jumbfBoxService.parseFromJumbfFile(input, parseMetadata);
+
+                if (isContiguousCodestreamContentType(jumbfBox)) {
+                    logger.log(Level.FINE, "JP2C Content JUMBF Box");
+                } else if (isJlinkContentType(jumbfBox)) {
+                    logger.log(Level.FINE, "JLINK Content JUMBF Box");
+                } else {
+                    throw new MipamsException("Only Codestream and JLINK Content types are supported.");
+                }
+
+                if (jumbfBox.getDescriptionBox().getLabel() == null) {
+                    throw new MipamsException(
+                            "Label not found. JLINK requires content JUMBF Boxes to have label: "
+                                    + jumbfBox.toString());
+                }
+
+                contentBoxes.add(jumbfBox);
+                availableBytesForBox -= jumbfBox.getBoxSize();
             }
-
-            jumbfBox = jumbfBoxService.parseFromJumbfFile(input, parseMetadata);
-
-            if (isContiguousCodestreamContentType(jumbfBox)) {
-                logger.log(Level.FINE, "JP2C Content JUMBF Box");
-            } else if (isJlinkContentType(jumbfBox)) {
-                logger.log(Level.FINE, "JLINK Content JUMBF Box");
-            } else {
-                throw new MipamsException("Only Codestream and JLINK Content types are supported.");
-            }
-
-            if (jumbfBox.getDescriptionBox().getLabel() == null) {
-                throw new MipamsException(
-                        "Label not found. JLINK requires content JUMBF Boxes to have label: " + jumbfBox.toString());
-            }
-
-            contentBoxes.add(jumbfBox);
-            remainingBytes -= jumbfBox.getBoxSizeFromBmffHeaders();
-
+        } catch (IOException e) {
+            throw new MipamsException(e);
         }
 
         return contentBoxes;
