@@ -23,6 +23,7 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 import org.mipams.jlink.entities.JlinkElement;
 import org.mipams.jlink.entities.JlinkLink;
+import org.mipams.jlink.entities.JlinkRegion;
 import org.mipams.jlink.entities.JlinkScene;
 import org.mipams.jlink.entities.JlinkViewport;
 import org.mipams.jlink.entities.validator.JlinkValidator;
@@ -208,7 +209,10 @@ public class JlinkXmlValidator {
 
             defaultJlinkElement.setScene(defaultScene);
             defaultJlinkElement.setNextId(0);
-            defaultJlinkElement.addLink(new JlinkLink());
+
+            JlinkLink defaultLink = new JlinkLink();
+            defaultLink.setRegion(new JlinkRegion());
+            defaultJlinkElement.addLink(defaultLink);
 
             return defaultJlinkElement;
         }
