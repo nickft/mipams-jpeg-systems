@@ -40,7 +40,10 @@ public class JlinkXmlGenerator {
 
         xmpContent.append(String.format("<umf:next-id>%s</umf:next-id>", element.getNextId().toString()));
         xmpContent.append(jlinkGenerator.schemaToRdfXml());
-        xmpContent.append(jlinkGenerator.metadataToRdfXml(element));
+
+        if (element.getScene() != null) {
+            xmpContent.append(jlinkGenerator.metadataToRdfXml(element));
+        }
 
         xmpContent.append("</rdf:Description>");
         xmpContent.append("</rdf:RDF>");
