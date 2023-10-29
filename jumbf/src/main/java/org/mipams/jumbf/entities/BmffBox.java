@@ -58,7 +58,7 @@ public abstract class BmffBox implements BoxInterface {
 
         long size = calculateSizeFromBox();
 
-        if (isXBoxRequiredBasedOnSize(size)) {
+        if (shouldEnableXlBox(size)) {
             setLBox(1);
             setXlBox(size);
         } else {
@@ -69,11 +69,15 @@ public abstract class BmffBox implements BoxInterface {
     public long calculateSizeFromBox() throws MipamsException {
         long sum = Long.valueOf(getLBoxSize() + getTBoxSize()) + calculatePayloadSize();
 
-        if (isXBoxRequiredBasedOnSize(sum)) {
+        if (shouldEnableXlBox(sum)) {
             sum += getXBoxSize();
         }
 
         return sum;
+    }
+
+    private boolean shouldEnableXlBox(long size) {
+        return getLBox() == 1 || isXBoxRequiredBasedOnSize(size);
     }
 
     private boolean isXBoxRequiredBasedOnSize(long size) {

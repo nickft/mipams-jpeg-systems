@@ -92,6 +92,18 @@ public class BmffBoxServiceTests {
     }
 
     @Test
+    void testUpdatingBmffHeadersWhenEnablingXlBoxOnSmallBox() throws MipamsException {
+        JsonBox jsonBox = new JsonBox();
+        jsonBox.setLBox(1);
+        jsonBox.setContent("test".getBytes());
+        jsonBox.updateFieldsBasedOnExistingData();
+
+        long expectedSize = CoreUtils.INT_BYTE_SIZE * 2 + CoreUtils.LONG_BYTE_SIZE + jsonBox.getContent().length;
+
+        assertEquals(expectedSize, jsonBox.getXlBox());
+    }
+
+    @Test
     void testUpdatingBmffHeadersOfLongBox() throws MipamsException {
         MockLongBox mockBox = new MockLongBox();
 
