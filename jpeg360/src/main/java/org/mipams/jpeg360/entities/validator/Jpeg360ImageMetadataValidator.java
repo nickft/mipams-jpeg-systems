@@ -203,15 +203,16 @@ public class Jpeg360ImageMetadataValidator extends Jpeg360AbstractValidator<Jpeg
                             thetaDifference));
         }
 
-        if ((element.getPhiGravity() >= 180.0 + phiDifference) || (element.getPhiGravity() <= -180.0 + phiDifference)) {
+        if ((element.getPhiGravity() >= 180.0 + element.getPhiMax())
+                || (element.getPhiGravity() <= -180.0 + element.getPhiMin())) {
             throw new Exception(String.format("PhiGravity out of bounds. Expected Range [%f,%f], found %f",
-                    -180.0 + phiDifference, 180.0 + phiDifference, element.getPhiGravity()));
+                    -180.0 + element.getPhiMin(), 180.0 + element.getPhiMax(), element.getPhiGravity()));
         }
 
-        if ((element.getThetaGravity() >= 90.0 + thetaDifference)
-                || (element.getPhiGravity() <= -90.0 + thetaDifference)) {
+        if ((element.getThetaGravity() >= 90.0 + +element.getThetaMax())
+                || (element.getPhiGravity() <= -90.0 + element.getThetaMin())) {
             throw new Exception(String.format("ThetaGravity out of bounds. Expected Range [%f,%f], found %f",
-                    -90.0 + thetaDifference, 90.0 + thetaDifference, element.getThetaGravity()));
+                    -90.0 + element.getThetaMin(), 90.0 + element.getThetaMax(), element.getThetaGravity()));
         }
 
         if (element.getCompassPhi() < 0 || element.getCompassPhi() >= 360) {

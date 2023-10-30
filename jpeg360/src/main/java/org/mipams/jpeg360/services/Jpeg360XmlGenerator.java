@@ -20,8 +20,8 @@ public class Jpeg360XmlGenerator {
             xmlBox.setContent(xmpContent.getBytes());
             return xmlBox;
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Failed to generate JLINK XML schema", e);
-            throw new MipamsException("Failed to generate JLINK XML schema", e);
+            logger.log(Level.SEVERE, "Failed to generate JPEG 360 XML schema", e);
+            throw new MipamsException("Failed to generate JPEG 360 XML schema", e);
         }
     }
 

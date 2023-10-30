@@ -15,7 +15,7 @@ public class Jpeg360ImageMetadataGenerator extends Jpeg360AbstractGenerator<Jpeg
         imageMetadata.append(addSchemaProperty("MediaType", PropertyType.STRING));
         imageMetadata.append(addSchemaProperty("ProjectionType", PropertyType.STRING));
 
-        if (jpeg360ImageMetadata.getStereoscopicFormat() != null) {
+        if (jpeg360ImageMetadata != null && jpeg360ImageMetadata.getStereoscopicFormat() != null) {
             imageMetadata.append(addSchemaProperty("StereoscopicFormat", PropertyType.STRING));
         }
 

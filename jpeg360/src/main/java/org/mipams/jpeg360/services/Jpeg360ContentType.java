@@ -1,5 +1,6 @@
 package org.mipams.jpeg360.services;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -56,31 +57,38 @@ public class Jpeg360ContentType implements ContentTypeService {
 
         contentBoxes.add(xmlContentTypeJumbfBox);
 
-        long remainingBytes = parseMetadata.getAvailableBytesForBox()
-                - xmlContentTypeJumbfBox.getBoxSizeFromBmffHeaders();
+        long nominalBytesRemaining = parseMetadata.getAvailableBytesForBox() > 0
+                ? parseMetadata.getAvailableBytesForBox()
+                        - xmlContentTypeJumbfBox.getBoxSizeFromBmffHeaders()
+                : parseMetadata.getAvailableBytesForBox();
+
+        long availableBytesForBox = nominalBytesRemaining;
 
         JumbfBox jumbfBox = null;
 
-        while (remainingBytes > 0) {
+        try {
+            while ((nominalBytesRemaining == 0 || availableBytesForBox > 0) && input.available() > 1) {
+                if (CoreUtils.isPaddingBoxNext(input)) {
+                    break;
+                }
 
-            if (CoreUtils.isPaddingBoxNext(input)) {
-                break;
+                jumbfBox = jumbfBoxService.parseFromJumbfFile(input, parseMetadata);
+
+                if (isContiguousCodestreamContentType(jumbfBox)) {
+                    logger.log(Level.FINE, "JP2C Content type JUMBF Box");
+                } else if (isUuidContentType(jumbfBox)) {
+                    logger.log(Level.FINE, "Uuid Content type JUMBF Box");
+                } else if (isEmbeddedFileContentType(jumbfBox)) {
+                    logger.log(Level.FINE, "Embedded File Content type JUMBF Box");
+                } else {
+                    throw new MipamsException("Only Codestream, UUID and Embedded File Content types are supported.");
+                }
+
+                contentBoxes.add(jumbfBox);
+                availableBytesForBox -= jumbfBox.getBoxSize();
             }
-
-            jumbfBox = jumbfBoxService.parseFromJumbfFile(input, parseMetadata);
-
-            if (isContiguousCodestreamContentType(jumbfBox)) {
-                logger.log(Level.FINE, "JP2C Content JUMBF Box");
-            } else if (isUuidContentType(jumbfBox)) {
-                logger.log(Level.FINE, "Uuid Content JUMBF Box");
-            } else if (isEmbeddedFileContentType(jumbfBox)) {
-                logger.log(Level.FINE, "Uuid Content JUMBF Box");
-            } else {
-                throw new MipamsException("Only Codestream and UUID Content types are supported.");
-            }
-
-            contentBoxes.add(jumbfBox);
-            remainingBytes -= jumbfBox.getBoxSizeFromBmffHeaders();
+        } catch (IOException e) {
+            throw new MipamsException(e);
         }
 
         return contentBoxes;

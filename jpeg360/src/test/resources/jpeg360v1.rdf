@@ -150,7 +150,7 @@
 														<umf:name>CompassPhi</umf:name>
 													</rdf:li>
 													<rdf:li rdf:parseType="Resource">
-														<rdf:value>convential</rdf:value>
+														<rdf:value>conventional</rdf:value>
 														<umf:name>BoxReference</umf:name>
 													</rdf:li>
 												</rdf:Bag>

@@ -337,7 +337,7 @@
 													</rdf:li>	
 													<rdf:li rdf:parseType="Resource">
 														<umf:name>BoxReference</umf:name>
-														<rdf:value>convential</rdf:value>
+														<rdf:value>conventional</rdf:value>
 													</rdf:li>
 												</rdf:Bag>
 											</umf:fields>		

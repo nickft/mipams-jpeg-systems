@@ -15,7 +15,7 @@ public class Jpeg360ImageMetadata {
     Double thetaGravity = -90.0;
     Double compassPhi = 0.0;
     Double compassTheta = 0.0;
-    String boxReference = "convential";
+    String boxReference = "conventional";
 
     public void setUmfId(Integer id) {
         this.id = id;
