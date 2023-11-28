@@ -132,6 +132,7 @@ public class Jpeg360Tests {
 
         JumbfBoxBuilder xmlContentBoxBuilder = new JumbfBoxBuilder(new XmlContentType());
         xmlContentBoxBuilder.setJumbfBoxAsRequestable();
+        xmlContentBoxBuilder.setLabel("JPEG360 XML Schema");
         xmlContentBoxBuilder.setPaddingSize(1);
         xmlContentBoxBuilder.appendContentBox(xmlBox);
 

@@ -97,6 +97,7 @@ public class JlinkTests {
 
         JumbfBoxBuilder xmlContentBoxBuilder = new JumbfBoxBuilder(new XmlContentType());
         xmlContentBoxBuilder.setJumbfBoxAsRequestable();
+        xmlContentBoxBuilder.setLabel("JLINK XML Schema");
         xmlContentBoxBuilder.setPaddingSize(1);
         xmlContentBoxBuilder.appendContentBox(xmlBox);
 
@@ -147,6 +148,7 @@ public class JlinkTests {
 
         JumbfBoxBuilder xmlContentBoxBuilder = new JumbfBoxBuilder(new XmlContentType());
         xmlContentBoxBuilder.setJumbfBoxAsRequestable();
+        xmlContentBoxBuilder.setLabel("JLINK XML Schema");
         xmlContentBoxBuilder.setPaddingSize(1);
         xmlContentBoxBuilder.appendContentBox(xmlBox);
 

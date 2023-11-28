@@ -80,7 +80,8 @@ public class DescriptionBox extends BmffBox {
     }
 
     public void setAsRequestable() {
-        CoreUtils.setBitValueAtGivenPosition(toggle, 0, 1);
+        int updatedToggle = CoreUtils.setBitValueAtGivenPosition(getToggle(), 0, 1);
+        setToggle(updatedToggle);
     }
 
     public boolean isRequestable() {
