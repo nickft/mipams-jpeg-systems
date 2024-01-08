@@ -2,7 +2,6 @@ package org.mipams.jpegsnack.services.boxes;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 
 import org.mipams.jpegsnack.entities.ObjectMetadataBox;
 import org.mipams.jumbf.entities.ParseMetadata;

@@ -3,7 +3,6 @@ package org.mipams.jpegsnack.entities;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.mipams.jpegsnack.util.JpegSnackException;
 import org.mipams.jumbf.entities.BmffBox;
 import org.mipams.jumbf.util.CoreUtils;
 import org.mipams.jumbf.util.MipamsException;
