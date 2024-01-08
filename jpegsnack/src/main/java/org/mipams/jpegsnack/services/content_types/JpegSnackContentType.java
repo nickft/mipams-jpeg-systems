@@ -136,39 +136,44 @@ public class JpegSnackContentType implements ContentTypeService {
         }
 
         List<Integer> discoveredObjectIds = new ArrayList<>();
-        String mediaType = null;
-        for (int i = 2; i < contentBoxes.size(); i++) {
+        try {
+            for (int i = 2; i < contentBoxes.size(); i++) {
 
-            ObjectMetadataBox obmb = (ObjectMetadataBox) contentBoxes.get(i);
+                ObjectMetadataBox obmb = (ObjectMetadataBox) contentBoxes.get(i);
 
-            if (obmb.getNoOfMedia() < 0) {
-                throw new JpegSnackException(
-                        "Corrupted Object Metadata box. Number of media field shall be greater than zero");
+                if (obmb.getNoOfMedia() < 0) {
+                    throw new JpegSnackException(
+                            "Corrupted Object Metadata box. Number of media field shall be greater than zero");
+                }
+
+                int objectMetadataBoxToggle = obmb.getToggle();
+                obmb.applyInternalBoxFieldsBasedOnExistingData();
+
+                if (obmb.getToggle() != objectMetadataBoxToggle) {
+                    throw new JpegSnackException(
+                            String.format("Invalid Object Metadata Toggle. Expected: %d Found: %d", obmb.getToggle(),
+                                    objectMetadataBoxToggle));
+                }
+
+                if (obmb.getId() == 0) {
+                    throw new JpegSnackException("Object metadata box id shall be a non-zero integer.");
+                }
+
+                if (obmb.getOpacity() != null && (obmb.getOpacity() > 1 || obmb.getOpacity() < 0)) {
+                    throw new JpegSnackException(
+                            String.format(
+                                    "Invalid opacity value for Object Metadata. It shall be between 0-1, found %f",
+                                    obmb.getOpacity()));
+                }
+
+                if (discoveredObjectIds.contains(obmb.getId())) {
+                    throw new JpegSnackException("Object metadata box id %d shall be unique in a JPEG Snack file");
+                }
             }
-
-            int objectMetadataBoxToggle = obmb.getToggle();
-            obmb.applyInternalBoxFieldsBasedOnExistingData();
-
-            if (obmb.getToggle() != objectMetadataBoxToggle) {
-                throw new JpegSnackException(
-                        String.format("Invalid Object Metadata Toggle. Expected: %d Found: %d", obmb.getToggle(),
-                                objectMetadataBoxToggle));
-            }
-
-            if (obmb.getId() == 0) {
-                throw new JpegSnackException("Object metadata box id shall be a non-zero integer.");
-            }
-
-            if (obmb.getOpacity() != null && (obmb.getOpacity() > 1 || obmb.getOpacity() < 0)) {
-                throw new JpegSnackException(
-                        String.format("Invalid opacity value for Object Metadata. It shall be between 0-1, found %f",
-                                obmb.getOpacity()));
-            }
-
-            if (discoveredObjectIds.contains(obmb.getId())) {
-                throw new JpegSnackException("Object metadata box id %d shall be unique in a JPEG Snack file");
-            }
+        } catch (Exception e) {
+            throw new JpegSnackException("Failed to parse Object Metadata boxes.", e);
         }
+
     }
 
 }
