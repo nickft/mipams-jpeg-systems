@@ -107,8 +107,13 @@ public class JpegSnackDescriptionBoxService extends BmffBoxService<JpegSnackDesc
         }
 
         for (Composition composition : jsdb.getCompositions()) {
-            if (noOfCompositionExists) {
-                CoreUtils.writeIntAsSingleByteToOutputStream(composition.getId(), os);
+            if (composition.getId() != null) {
+                if (noOfCompositionExists) {
+                    CoreUtils.writeIntAsSingleByteToOutputStream(composition.getId(), os);
+                } else {
+                    throw new JpegSnackException(
+                            "The composition id value shall be absent when the number of compositions field is not present");
+                }
             }
             CoreUtils.writeIntAsSingleByteToOutputStream(composition.getNoOfObjects(), os);
             if (composition.getNoOfObjects() != composition.getObjectIds().size()) {
