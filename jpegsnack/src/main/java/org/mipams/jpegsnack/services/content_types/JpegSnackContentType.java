@@ -155,16 +155,6 @@ public class JpegSnackContentType implements ContentTypeService {
                                 objectMetadataBoxToggle));
             }
 
-            if (mediaType == null) {
-                mediaType = obmb.getMediaType();
-            } else {
-                if (mediaType != obmb.getMediaType()) {
-                    throw new JpegSnackException(
-                            String.format("Inconsistent media type in object metadata list. Expected %s, found %s",
-                                    mediaType, obmb.getMediaType()));
-                }
-            }
-
             if (obmb.getId() == 0) {
                 throw new JpegSnackException("Object metadata box id shall be a non-zero integer.");
             }
