@@ -141,7 +141,7 @@ public class JpegSnackContentType implements ContentTypeService {
 
                 ObjectMetadataBox obmb = (ObjectMetadataBox) contentBoxes.get(i);
 
-                if (obmb.getNoOfMedia() < 0) {
+                if (obmb.getNoOfMedia() != null && obmb.getNoOfMedia() < 0) {
                     throw new JpegSnackException(
                             "Corrupted Object Metadata box. Number of media field shall be greater than zero");
                 }

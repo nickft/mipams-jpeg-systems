@@ -168,8 +168,10 @@ public class InstructionParameter {
     }
 
     public int getPersistAndLifeValue() throws JpegSnackException {
-        int mask = persist ? 0x80 : 0x00;
-        return mask & life;
+        if (!persist) {
+            return life;
+        }
+        return life |= (1 << 31);
     }
 
     public int applyAndReturnToggleForInstructionParameter() throws JpegSnackException {

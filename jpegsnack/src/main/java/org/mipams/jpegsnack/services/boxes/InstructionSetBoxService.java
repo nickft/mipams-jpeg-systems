@@ -66,11 +66,11 @@ public class InstructionSetBoxService extends BmffBoxService<InstructionSetBox> 
             }
 
             if (parameter.persistAndLifeAndNextUseExist()) {
-                int life = CoreUtils.readIntFromInputStream(is);
+                int persistAndLife = CoreUtils.readIntFromInputStream(is);
                 int nextUse = CoreUtils.readIntFromInputStream(is);
 
-                boolean persist = life < 0;
-                life = life & 0x7F;
+                boolean persist = (persistAndLife & 0x800000) != 0;
+                int life = persistAndLife & 0x7FFFFFFF;
 
                 parameter.setPersist(persist);
                 parameter.setLife(life);
