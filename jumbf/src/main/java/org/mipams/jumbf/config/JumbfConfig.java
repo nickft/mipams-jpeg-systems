@@ -9,6 +9,8 @@ import org.mipams.jumbf.services.CoreGeneratorService;
 import org.mipams.jumbf.services.CoreParserService;
 import org.mipams.jumbf.services.JpegCodestreamGenerator;
 import org.mipams.jumbf.services.JpegCodestreamParser;
+import org.mipams.jumbf.services.JpegXLGenerator;
+import org.mipams.jumbf.services.JpegXLParser;
 import org.mipams.jumbf.services.boxes.BinaryDataBoxService;
 import org.mipams.jumbf.services.boxes.CborBoxService;
 import org.mipams.jumbf.services.boxes.ContiguousCodestreamBoxService;
@@ -123,6 +125,17 @@ public class JumbfConfig {
     @Bean
     public PaddingBoxService paddingBoxService() {
         return new PaddingBoxService();
+    }
+
+    @Bean
+    public JpegXLParser jpegXLParser() {
+        return new JpegXLParser();
+    }
+
+
+    @Bean
+    public JpegXLGenerator jpegXLGenerator() {
+        return new JpegXLGenerator();
     }
 
     @Bean

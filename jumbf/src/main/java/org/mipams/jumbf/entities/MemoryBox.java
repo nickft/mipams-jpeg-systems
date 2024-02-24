@@ -20,7 +20,6 @@ public abstract class MemoryBox extends BmffBox {
 
     @Override
     public String toString() {
-
         final String content = this.content != null ? getContent().toString() : "null";
         return "MemoryBox(" + super.toString() + ", content=" + content + ")";
     }
