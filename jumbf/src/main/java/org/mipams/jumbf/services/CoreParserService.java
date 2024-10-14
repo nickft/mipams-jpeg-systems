@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -41,12 +42,9 @@ public class CoreParserService implements ParserInterface {
             List<JumbfBox> bmffBoxList = new ArrayList<>();
 
             while (input.available() > 0) {
-                try {
-                    JumbfBox jumbfBox = superBoxService.parseSuperBox(input, parseMetadata);
-                    logger.log(Level.FINE, "New box discovered: " + jumbfBox.toString());
-                    bmffBoxList.add(jumbfBox);
-                } catch (UnsupportedContentTypeException e) {
-                    /* Ignore JUMBF Box and continue */
+                Optional<JumbfBox> jumbfBox = parseJumbfBoxFromInputStream(parseMetadata, input);
+                if(jumbfBox.isPresent()){
+                    bmffBoxList.add(jumbfBox.get());
                 }
             }
 
@@ -55,4 +53,16 @@ public class CoreParserService implements ParserInterface {
             throw new CorruptedJumbfFileException("Could not open file: " + assetUrl, e);
         }
     }
+
+    public Optional<JumbfBox> parseJumbfBoxFromInputStream(ParseMetadata parseMetadata, InputStream input) throws MipamsException {
+        try{
+            JumbfBox jumbfBox = superBoxService.parseSuperBox(input, parseMetadata);
+            logger.log(Level.FINE, "New box discovered: " + jumbfBox.toString());
+            return Optional.of(jumbfBox);
+        } catch (UnsupportedContentTypeException e) {
+            /* Ignore JUMBF Box and continue */
+            return Optional.empty();
+        }
+    }
+
 }
