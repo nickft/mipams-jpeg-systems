@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.mipams.jumbf.entities.JumbfBox;
 import org.mipams.jumbf.util.CoreUtils;
-import org.mipams.jumbf.util.JpegCodestreamException;
+import org.mipams.jumbf.util.Jp2CodestreamException;
 import org.mipams.jumbf.util.MipamsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,18 +22,14 @@ public class Jp2CodestreamGenerator {
     CoreGeneratorService coreGeneratorService;
 
     public void generateJumbfMetadataToFile(List<JumbfBox> jumbfBoxList, String assetUrl, String outputUrl)
-            throws JpegCodestreamException {
+            throws Jp2CodestreamException {
 
         try (OutputStream os = new FileOutputStream(outputUrl);) {
-            CoreUtils.writeFileContentToOutput(outputUrl, os);
-        }  catch (IOException | MipamsException e) {
-            throw new JpegCodestreamException(e);
-        }
-
-        try (OutputStream os = new FileOutputStream(outputUrl, true);) {
+            CoreUtils.writeFileContentToOutput(assetUrl, os);
+            
             coreGeneratorService.generateJumbfBoxesToOutputStream(jumbfBoxList, os);
         }  catch (IOException | MipamsException e) {
-            throw new JpegCodestreamException(e);
+            throw new Jp2CodestreamException(e);
         }
     }
 }

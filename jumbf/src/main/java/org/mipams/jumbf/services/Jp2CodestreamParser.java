@@ -101,23 +101,34 @@ public class Jp2CodestreamParser implements ParserInterface {
 
     private void parseFileTypeBox(InputStream is) throws Jp2CodestreamException {
         try{
+            long parsedBytes = 0;
+            
             long boxLength = CoreUtils.readIntFromInputStream(is);
+            parsedBytes += CoreUtils.INT_BYTE_SIZE;
 
             int boxType = CoreUtils.readIntFromInputStream(is);
+            parsedBytes += CoreUtils.INT_BYTE_SIZE;
             if(boxType != JP2_FILE_TYPE_BOX_TYPE) {
                 throw new Jp2CodestreamException("Invalid box type");
             }
 
             if (boxLength == 1L) {
                 boxLength = CoreUtils.readLongFromInputStream(is);
+                parsedBytes += CoreUtils.LONG_BYTE_SIZE;
             }
 
             int boxBrand = CoreUtils.readIntFromInputStream(is);
+            parsedBytes += CoreUtils.INT_BYTE_SIZE;
             if(isSupportedBrand(boxBrand)){
                 logger.info(String.format("JP2: Parsing a %s file", Integer.toHexString(boxBrand)));
             } else {
                 throw new Jp2CodestreamException(String.format("Unsupported brand name %s", Integer.toHexString(boxBrand)));
             }
+
+            if(boxLength > parsedBytes) {
+                CoreUtils.readBytesFromInputStream(is, boxLength - parsedBytes);
+            }
+
         } catch (MipamsException e) {
             throw new Jp2CodestreamException("Failed to parse JPEG 2000 File Type Box", e);
         }

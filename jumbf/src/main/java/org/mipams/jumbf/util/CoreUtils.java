@@ -665,16 +665,21 @@ public class CoreUtils {
 
     public static int parseBoxAndGetType(InputStream is) throws MipamsException {
         try {
-            long boxLength = readIntFromInputStream(is);
+            long parsedBytes = 0;
+            
+            long boxLength = CoreUtils.readIntFromInputStream(is);
+            parsedBytes += CoreUtils.INT_BYTE_SIZE;
 
-            int boxType = readIntFromInputStream(is);
+            int boxType = CoreUtils.readIntFromInputStream(is);
+            parsedBytes += CoreUtils.INT_BYTE_SIZE;
 
-            if (boxLength == 1) {
-                boxLength = readLongFromInputStream(is);
+            if (boxLength == 1L) {
+                boxLength = CoreUtils.readLongFromInputStream(is);
+                parsedBytes += CoreUtils.LONG_BYTE_SIZE;
             }
 
-            if (boxLength > 0) {
-                readBytesFromInputStream(is, boxLength);
+            if (boxLength > parsedBytes) {
+                readBytesFromInputStream(is, boxLength - parsedBytes);
             }
             
             return boxType;
