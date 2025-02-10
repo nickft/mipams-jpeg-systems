@@ -14,6 +14,6 @@ This project contains jumbf-2.0 library, a JAVA reference implementation of the 
 
 TO develop the library you need the following tools:
 
-* Java 11
-* Apache Maven 3.6.3
-* Spring framework 5.3.25
+* Java 21
+* Apache Maven 3.9.6
+* Spring framework 6.2.2
