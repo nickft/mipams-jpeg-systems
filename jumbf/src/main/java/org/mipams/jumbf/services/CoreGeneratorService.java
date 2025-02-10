@@ -12,6 +12,7 @@ import org.mipams.jumbf.util.BadRequestException;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,11 +41,22 @@ public class CoreGeneratorService {
         }
 
         try (FileOutputStream fileOutputStream = new FileOutputStream(assetUrl)) {
-            for (JumbfBox jumbfBox : supportedJumbfBoxList) {
-                superBoxService.writeToJumbfFile(jumbfBox, fileOutputStream);
-            }
+            generateJumbfBoxesToOutputStream(jumbfBoxList, fileOutputStream);
         } catch (IOException e) {
             throw new BadRequestException("Could not open file: " + assetUrl, e);
+        }
+    }
+
+    public void generateJumbfBoxesToOutputStream(List<JumbfBox> jumbfBoxList, OutputStream os) throws MipamsException {
+        for(JumbfBox jumbfBox: jumbfBoxList) {
+            try {
+                contentTypeDiscoveryManager
+                        .getContentBoxServiceBasedOnContentUuid(jumbfBox.getDescriptionBox().getUuid());
+
+                superBoxService.writeToJumbfFile(jumbfBox, os);
+            } catch (UnsupportedContentTypeException e) {
+                /* Ignore unsupported JUMBF Box */
+            }
         }
     }
 }

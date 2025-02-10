@@ -66,6 +66,7 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
             if (descriptionBox.getPrivateField().getClass().equals(PrivateBox.class)) {
                 privateBoxService.writeToJumbfFile((PrivateBox) descriptionBox.getPrivateField(), outputStream);
             } else {
+                
                 BmffBoxService service = bmffBoxServiceDiscoveryManager
                         .getBmffBoxServiceBasedOnTbox(descriptionBox.getPrivateField().getTBox());
                 service.writeToJumbfFile(descriptionBox.getPrivateField(), outputStream);

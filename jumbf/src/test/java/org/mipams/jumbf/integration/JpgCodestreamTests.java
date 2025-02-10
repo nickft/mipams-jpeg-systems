@@ -116,6 +116,22 @@ public class JpgCodestreamTests extends AbstractIntegrationTests {
         });
     }
 
+    @Test
+    void testJpegImageAndJumbfWithLboxEqualTo0() throws MipamsException, FileNotFoundException {
+        JumbfBox box = createJsonJumbfFile(0);
+        box.setLBox(0);
+
+        String assetFileUrl = ResourceUtils.getFile("classpath:sample.jpeg").getAbsolutePath();
+
+        String targetUrl = assetFileUrl + "-new";
+
+        jpegCodestreamGenerator.generateJumbfMetadataToFile(List.of(box), assetFileUrl, targetUrl);
+
+        List<JumbfBox> resultList = jpegCodestreamParser.parseMetadataFromFile(targetUrl);
+
+        assertEquals(1, resultList.size());
+    }
+
     private JumbfBox createXmlJumbfFile(int padding) throws MipamsException {
 
         XmlContentType xmlContentType = new XmlContentType();

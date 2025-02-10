@@ -7,8 +7,12 @@ import org.mipams.jumbf.BmffBoxServiceDiscoveryManager;
 import org.mipams.jumbf.ContentTypeDiscoveryManager;
 import org.mipams.jumbf.services.CoreGeneratorService;
 import org.mipams.jumbf.services.CoreParserService;
+import org.mipams.jumbf.services.Jp2CodestreamGenerator;
+import org.mipams.jumbf.services.Jp2CodestreamParser;
 import org.mipams.jumbf.services.JpegCodestreamGenerator;
 import org.mipams.jumbf.services.JpegCodestreamParser;
+import org.mipams.jumbf.services.JpegXLGenerator;
+import org.mipams.jumbf.services.JpegXLParser;
 import org.mipams.jumbf.services.boxes.BinaryDataBoxService;
 import org.mipams.jumbf.services.boxes.CborBoxService;
 import org.mipams.jumbf.services.boxes.ContiguousCodestreamBoxService;
@@ -126,6 +130,17 @@ public class JumbfConfig {
     }
 
     @Bean
+    public JpegXLParser jpegXLParser() {
+        return new JpegXLParser();
+    }
+
+
+    @Bean
+    public JpegXLGenerator jpegXLGenerator() {
+        return new JpegXLGenerator();
+    }
+
+    @Bean
     public JpegCodestreamParser jpegCodestreamParser() {
         return new JpegCodestreamParser();
     }
@@ -133,6 +148,16 @@ public class JumbfConfig {
     @Bean
     public JpegCodestreamGenerator jpegCodestreamGenerator() {
         return new JpegCodestreamGenerator();
+    }
+
+    @Bean
+    public Jp2CodestreamGenerator jp2CodestreamGenerator() {
+        return new Jp2CodestreamGenerator();
+    }
+
+    @Bean
+    public Jp2CodestreamParser jp2CodestreamParser() {
+        return new Jp2CodestreamParser();
     }
 
     @Bean

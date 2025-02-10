@@ -576,6 +576,25 @@ public class CoreUtils {
         return result;
     }
 
+    public static int getNextBoxType(InputStream input) throws MipamsException {
+
+        try {
+            if (!input.markSupported()) {
+                throw new MipamsException("Input Stream does not support marking.");
+            }
+
+            input.mark(16);
+
+            readIntFromInputStream(input);
+            int tBox = readIntFromInputStream(input);
+
+            input.reset();
+            return tBox;
+        } catch (IOException e) {
+            throw new MipamsException(e);
+        }
+    }
+
     public static boolean isPrivateBoxNext(InputStream input) throws MipamsException {
 
         input.mark(16);
@@ -641,6 +660,31 @@ public class CoreUtils {
             remainingBytes -= numberOfBytesRead;
             maximumBytesToRead = (remainingBytes / currentBufferSize > 0) ? currentBufferSize
                     : (int) remainingBytes;
+        }
+    }
+
+    public static int parseBoxAndGetType(InputStream is) throws MipamsException {
+        try {
+            long parsedBytes = 0;
+            
+            long boxLength = CoreUtils.readIntFromInputStream(is);
+            parsedBytes += CoreUtils.INT_BYTE_SIZE;
+
+            int boxType = CoreUtils.readIntFromInputStream(is);
+            parsedBytes += CoreUtils.INT_BYTE_SIZE;
+
+            if (boxLength == 1L) {
+                boxLength = CoreUtils.readLongFromInputStream(is);
+                parsedBytes += CoreUtils.LONG_BYTE_SIZE;
+            }
+
+            if (boxLength > parsedBytes) {
+                readBytesFromInputStream(is, boxLength - parsedBytes);
+            }
+            
+            return boxType;
+        } catch (Exception e) {
+            throw new MipamsException("Failed to parse box", e);
         }
     }
 }
