@@ -4,10 +4,9 @@ import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.eclipse.rdf4j.model.Model;
-import org.eclipse.rdf4j.model.Resource;
-import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.Value;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
 import org.mipams.jlink.entities.JlinkLink;
 
 public class LinkValidator extends JlinkAbstractValidator<JlinkLink> {
@@ -37,8 +36,8 @@ public class LinkValidator extends JlinkAbstractValidator<JlinkLink> {
     @Override
     protected void handleSubschema(JlinkLink link, Statement schemaStatement, List<String> allowedPropertyNames,
             boolean isMetadataStructure) throws Exception {
-        String schemaName = schemaStatement.getObject().stringValue();
-        List<Value> schemaContents = getSchemaContents(schemaStatement, isMetadataStructure);
+        String schemaName = schemaStatement.getObject().toString();
+        List<Statement> schemaContents = getSchemaContents(schemaStatement, isMetadataStructure);
 
         removePropertyIfExistsOrElseThrowException(schemaName, allowedPropertyNames);
 

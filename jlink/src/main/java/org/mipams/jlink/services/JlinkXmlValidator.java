@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -13,14 +12,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.rdf4j.model.Model;
-import org.eclipse.rdf4j.model.Resource;
-import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.Value;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.eclipse.rdf4j.rio.RDFFormat;
-import org.eclipse.rdf4j.rio.Rio;
 import org.mipams.jlink.entities.JlinkElement;
 import org.mipams.jlink.entities.JlinkLink;
 import org.mipams.jlink.entities.JlinkRegion;
@@ -31,9 +22,16 @@ import org.mipams.jlink.entities.validator.ValidatorUtils;
 import org.mipams.jumbf.entities.JumbfBox;
 import org.mipams.jumbf.entities.XmlBox;
 import org.mipams.jumbf.util.MipamsException;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.rdf.model.ResourceFactory;
 import org.springframework.stereotype.Service;
 
-import static org.eclipse.rdf4j.model.util.Values.iri;
 
 @Service
 public class JlinkXmlValidator {
@@ -54,18 +52,19 @@ public class JlinkXmlValidator {
     private JlinkElement validateXmlBoxContents(XmlBox xmpBox) throws Exception {
 
         byte[] rdfSchemaInBytes = stripXmpTags(xmpBox.getContent());
-        ValueFactory factory = SimpleValueFactory.getInstance();
+
         try (InputStream is = new ByteArrayInputStream(rdfSchemaInBytes)) {
-            Model jlinkModel = Rio.parse(is, "adobe:ns:meta", RDFFormat.RDFXML);
+            Model jlinkModel = ModelFactory.createDefaultModel();
+            jlinkModel.read(is, "");
 
-            Iterator<Statement> nextIdStatement = jlinkModel
-                    .getStatements(null, iri(factory, "http://ns.intel.com/umf/2.0next-id"), null).iterator();
+            Property nextIdProperty = ResourceFactory.createProperty("http://ns.intel.com/umf/2.0", "next-id");
 
+            StmtIterator nextIdStatement = jlinkModel.listStatements(null, nextIdProperty, (RDFNode) null);
             if (!nextIdStatement.hasNext()) {
-                throw new Exception("JLINK next id was not found");
+                throw new Exception("JPEG 360 next id was not found");
             }
 
-            Integer nextId = Integer.parseInt(nextIdStatement.next().getObject().stringValue());
+            Integer nextId = Integer.parseInt(nextIdStatement.next().getLiteral().toString());
 
             logger.log(Level.FINE, String.format("id: %d", nextId));
 
@@ -83,8 +82,11 @@ public class JlinkXmlValidator {
 
     private Map<String, Resource> initializeResourceMap(Model jlinkModel) {
         Map<String, Resource> internalResourceMap = new HashMap<>();
-        for (Statement st : jlinkModel) {
-            internalResourceMap.put(st.getSubject().stringValue(), st.getSubject());
+        StmtIterator i = jlinkModel.listStatements();
+
+        while(i.hasNext()) {
+            Statement st = i.next();
+            internalResourceMap.put(st.getSubject().toString(), st.getSubject());
         }
         return internalResourceMap;
     }
@@ -173,15 +175,15 @@ public class JlinkXmlValidator {
     }
 
     private void validateSchemasContent(Model jlinkModel, Map<String, Resource> internalResourceMap) throws Exception {
-        Optional<Statement> schemaStatement = ValidatorUtils.getOptionalValue(jlinkModel, iri("adobe:ns:meta"),
-                iri("http://ns.intel.com/umf/2.0schemas"));
+        Optional<Statement> schemaStatement = ValidatorUtils.getOptionalValue(jlinkModel, null,
+                ResourceFactory.createProperty("http://ns.intel.com/umf/2.0schemas"));
 
         if (schemaStatement.isEmpty()) {
             throw new Exception("Schema doesn't exist");
         }
 
-        Resource schemasContentsResource = internalResourceMap.get(schemaStatement.get().getObject().stringValue());
-        List<Value> schemaDescriptorResourceNames = ValidatorUtils.getRdfBagContents(schemasContentsResource,
+        Resource schemasContentsResource = internalResourceMap.get(schemaStatement.get().getObject().toString());
+        List<Statement> schemaDescriptorResourceNames = ValidatorUtils.getRdfBagContents(schemasContentsResource,
                 jlinkModel);
 
         JlinkValidator schemaValidator = new JlinkValidator(jlinkModel, internalResourceMap);
@@ -190,13 +192,13 @@ public class JlinkXmlValidator {
 
     private JlinkElement validateMetadataContent(Model jlinkModel, Map<String, Resource> internalResourceMap)
             throws Exception {
-        Optional<Statement> metadataStatement = ValidatorUtils.getOptionalValue(jlinkModel, iri("adobe:ns:meta"),
-                iri("http://ns.intel.com/umf/2.0metadata"));
+        Optional<Statement> metadataStatement = ValidatorUtils.getOptionalValue(jlinkModel, null,
+            ResourceFactory.createProperty("http://ns.intel.com/umf/2.0metadata"));
 
         if (metadataStatement.isPresent()) {
             Resource metadataContentsResource = internalResourceMap
-                    .get(metadataStatement.get().getObject().stringValue());
-            List<Value> metadataDescriptorResourceNames = ValidatorUtils.getRdfBagContents(metadataContentsResource,
+                    .get(metadataStatement.get().getObject().toString());
+            List<Statement> metadataDescriptorResourceNames = ValidatorUtils.getRdfBagContents(metadataContentsResource,
                     jlinkModel);
 
             JlinkValidator schemaValidator = new JlinkValidator(jlinkModel, internalResourceMap);

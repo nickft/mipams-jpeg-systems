@@ -191,7 +191,7 @@ public class Jpeg360XmlValidator {
     private Jpeg360Metadata readMetadataContent(Model jpeg360Model, Map<String, Resource> internalResourceMap)
             throws Exception {
         Optional<Statement> metadataStatement = ValidatorUtils.getOptionalValue(jpeg360Model, null,
-        ResourceFactory.createProperty("http://ns.intel.com/umf/2.0metadata"));
+            ResourceFactory.createProperty("http://ns.intel.com/umf/2.0metadata"));
 
         Resource metadataContentsResource = internalResourceMap.get(metadataStatement.get().getObject().toString());
         List<Statement> metadataDescriptorResourceNames = ValidatorUtils.getRdfBagContents(metadataContentsResource,
