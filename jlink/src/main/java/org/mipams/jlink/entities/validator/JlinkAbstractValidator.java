@@ -3,14 +3,14 @@ package org.mipams.jlink.entities.validator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Statement;
+
 import java.util.List;
 
-import org.eclipse.rdf4j.model.Model;
-import org.eclipse.rdf4j.model.Resource;
-import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.Value;
-
-import static org.eclipse.rdf4j.model.util.Values.iri;
 
 public abstract class JlinkAbstractValidator<T> implements ElementValidator<T> {
 
@@ -31,23 +31,23 @@ public abstract class JlinkAbstractValidator<T> implements ElementValidator<T> {
     }
 
     @Override
-    public T readFromMetadata(List<Value> contents) throws Exception {
+    public T readFromMetadata(List<Statement> contents) throws Exception {
         return validateElement(contents, true);
     }
 
     @Override
-    public void validateSchema(List<Value> contents) throws Exception {
+    public void validateSchema(List<Statement> contents) throws Exception {
         validateElement(contents, false);
     }
 
-    private T validateElement(List<Value> sceneContents, boolean isMetadataStructure) throws Exception {
+    private T validateElement(List<Statement> sceneContents, boolean isMetadataStructure) throws Exception {
         Map<String, String> metadataProperties = new HashMap<>();
         List<String> allowedPropertyKeys = getAllowedProperties();
 
         T jlinkElement = initializeJlinkElement();
 
-        for (Value i : sceneContents) {
-            Resource resource = getSubjectNameToResourceMap().get(i.stringValue());
+        for (Statement i : sceneContents) {
+            Resource resource = getSubjectNameToResourceMap().get(i.getObject().toString());
 
             if (supportsSubschemata() && ValidatorUtils.isSchemaStatement(jlinkModel, resource)) {
                 Optional<Statement> schemaStatement = ValidatorUtils.getSchemaStatement(jlinkModel, resource);
@@ -106,17 +106,17 @@ public abstract class JlinkAbstractValidator<T> implements ElementValidator<T> {
         }
     }
 
-    protected List<Value> getSchemaContents(Statement schemaStatement, boolean isMetadataStructure) throws Exception {
+    protected List<Statement> getSchemaContents(Statement schemaStatement, boolean isMetadataStructure) throws Exception {
         Statement descriptor = getChildStatementBasedOnElementType(schemaStatement, isMetadataStructure);
-        Resource bag = getSubjectNameToResourceMap().get(descriptor.getObject().stringValue());
+        Resource bag = getSubjectNameToResourceMap().get(descriptor.getObject().toString());
 
         return ValidatorUtils.getRdfBagContents(bag, jlinkModel);
     }
 
     protected Statement getChildStatementBasedOnElementType(Statement parentStatement, boolean isSchemaElement) {
         return (!isSchemaElement) ? ValidatorUtils.getOptionalValue(jlinkModel,
-                parentStatement.getSubject(), iri("http://ns.intel.com/umf/2.0descriptors")).get()
+                parentStatement.getSubject(), ResourceFactory.createProperty("http://ns.intel.com/umf/2.0descriptors")).get()
                 : ValidatorUtils.getOptionalValue(jlinkModel,
-                        parentStatement.getSubject(), iri("http://ns.intel.com/umf/2.0set")).get();
+                        parentStatement.getSubject(), ResourceFactory.createProperty("http://ns.intel.com/umf/2.0set")).get();
     }
 }

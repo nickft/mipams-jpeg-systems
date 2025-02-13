@@ -4,10 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 
-import org.eclipse.rdf4j.model.Model;
-import org.eclipse.rdf4j.model.Resource;
-import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.Value;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
 import org.mipams.jlink.entities.JlinkScene;
 
 public class SceneValidator extends JlinkAbstractValidator<JlinkScene> {
@@ -44,9 +43,9 @@ public class SceneValidator extends JlinkAbstractValidator<JlinkScene> {
     @Override
     protected void handleSubschema(JlinkScene scene, Statement schemaStatement, List<String> allowedPropertyNames,
             boolean isMetadataStructure) throws Exception {
-        String schemaName = schemaStatement.getObject().stringValue();
+        String schemaName = schemaStatement.getObject().toString();
 
-        List<Value> schemaContents = getSchemaContents(schemaStatement, isMetadataStructure);
+        List<Statement> schemaContents = getSchemaContents(schemaStatement, isMetadataStructure);
         SceneProperty schema = SceneProperty.getSchemaPropertyFromString(schemaName);
 
         if (SceneProperty.IMAGE.equals(schema)) {

@@ -2,10 +2,10 @@ package org.mipams.jpeg360.entities.validator;
 
 import java.util.List;
 
-import org.eclipse.rdf4j.model.Value;
+import org.apache.jena.rdf.model.Statement;
 
 public interface ElementValidator<T> {
-    public T readFromMetadata(List<Value> descriptorContents) throws Exception;
+    public T readFromMetadata(List<Statement> descriptorContents) throws Exception;
 
-    public void validateMetadataBasedOnSchema(T element, List<Value> contents) throws Exception;
+    public void validateMetadataBasedOnSchema(T element, List<Statement> contents) throws Exception;
 }

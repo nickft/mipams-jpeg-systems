@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class Jpeg360Config {
 
     @Bean
-    public Jpeg360ContentType jlinkContentType() {
+    public Jpeg360ContentType jpeg360ContentType() {
         return new Jpeg360ContentType();
     }
 

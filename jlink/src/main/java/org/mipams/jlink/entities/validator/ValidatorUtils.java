@@ -1,35 +1,42 @@
 package org.mipams.jlink.entities.validator;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.Model;
-import org.eclipse.rdf4j.model.Resource;
-import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.Value;
-import org.eclipse.rdf4j.model.util.RDFContainers;
-import org.eclipse.rdf4j.model.vocabulary.RDF;
-
-import static org.eclipse.rdf4j.model.util.Values.iri;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
 
 public class ValidatorUtils {
 
-    public static ArrayList<Value> getRdfBagContents(Resource rdfBagParentResource, Model jlinkModel) {
-        return RDFContainers.toValues(RDF.BAG, jlinkModel, rdfBagParentResource, new ArrayList<>());
+    public static List<Statement> getRdfBagContents(Resource rdfBagParentResource, Model jlinkModel) {
+        return jlinkModel
+            .getBag(rdfBagParentResource)
+            .listProperties()
+            .toList()
+            .stream()
+            .filter(st -> 
+                !st.getObject()
+                    .toString()
+                    .equals("http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag"))
+                    .collect(Collectors.toList()
+            );
     }
 
-    public static Optional<Statement> getOptionalValue(Model model, Resource sub, IRI predicate) {
-        Iterator<Statement> schemaDescriptors = model
-                .getStatements(sub, predicate, null).iterator();
+    public static Optional<Statement> getOptionalValue(Model model, Resource sub, Property predicate) {
+        StmtIterator schemaDescriptorIterator = model.listStatements(sub, predicate, (RDFNode) null);
 
-        if (!schemaDescriptors.hasNext()) {
+        if (!schemaDescriptorIterator.hasNext()) {
             return Optional.empty();
         }
 
-        return Optional.of(schemaDescriptors.next());
+        return Optional.of(schemaDescriptorIterator.next());
     }
 
     public static void validatePropertyName(String propertyName, Set<String> occuredProperties,
@@ -62,24 +69,28 @@ public class ValidatorUtils {
     }
 
     public static Optional<Statement> getSchemaStatement(Model model, Resource resource) {
-        return ValidatorUtils.getOptionalValue(model, resource, iri("http://ns.intel.com/umf/2.0schema"));
+        Property property = ResourceFactory.createProperty("http://ns.intel.com/umf/2.0schema");
+        return ValidatorUtils.getOptionalValue(model, resource, property);
     }
 
     public static String getPropertyName(Model model, Resource resource) {
+        Property property = ResourceFactory.createProperty("http://ns.intel.com/umf/2.0name");
         return ValidatorUtils
-                .getOptionalValue(model, resource, iri("http://ns.intel.com/umf/2.0name"))
-                .get().getObject().stringValue();
+                .getOptionalValue(model, resource, property)
+                .get().getObject().toString();
     }
 
     public static String getPropertyType(Model model, Resource resource) {
+        Property property = ResourceFactory.createProperty("http://ns.intel.com/umf/2.0type");
         return ValidatorUtils
-                .getOptionalValue(model, resource, iri("http://ns.intel.com/umf/2.0type"))
-                .get().getObject().stringValue();
+                .getOptionalValue(model, resource, property)
+                .get().getObject().toString();
     }
 
     public static String getPropertyValue(Model model, Resource resource) {
+        Property property = ResourceFactory.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#value");
         return ValidatorUtils
-                .getOptionalValue(model, resource, iri("http://www.w3.org/1999/02/22-rdf-syntax-ns#value"))
-                .get().getObject().stringValue();
+                .getOptionalValue(model, resource, property)
+                .get().getObject().toString();
     }
 }
