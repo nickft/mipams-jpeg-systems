@@ -5,16 +5,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.eclipse.rdf4j.model.Model;
-import org.eclipse.rdf4j.model.Resource;
-import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.Value;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Statement;
 import org.mipams.jpeg360.entities.Jpeg360AcceleratedRoi;
 import org.mipams.jpeg360.entities.Jpeg360ImageMetadata;
 import org.mipams.jpeg360.entities.Jpeg360Metadata;
 import org.mipams.jpeg360.entities.Jpeg360Viewport;
-
-import static org.eclipse.rdf4j.model.util.Values.iri;
 
 public class Jpeg360MetadataValidator extends Jpeg360AbstractValidator<Jpeg360Metadata> {
 
@@ -51,16 +49,16 @@ public class Jpeg360MetadataValidator extends Jpeg360AbstractValidator<Jpeg360Me
     }
 
     @Override
-    public void validateMetadataBasedOnSchema(Jpeg360Metadata element, List<Value> contents) throws Exception {
+    public void validateMetadataBasedOnSchema(Jpeg360Metadata element, List<Statement> contents) throws Exception {
         List<String> propertiesYetNotFoundInStructure = getAllowedProperties();
 
-        for (Value i : contents) {
-            Resource resource = getSubjectNameToResourceMap().get(i.stringValue());
+        for (Statement i : contents) {
+            Resource resource = getSubjectNameToResourceMap().get(i.getObject().toString());
 
             String schemaName = getSchemaNameFromResourceOrElseThrowException(resource);
             Jpeg360MetadataProperty schema = Jpeg360MetadataProperty.getSchemaPropertyFromString(schemaName);
 
-            List<Value> schemaContents = getSchemaContentsFromResourceOrElseThrowException(resource);
+            List<Statement> schemaContents = getSchemaContentsFromResourceOrElseThrowException(resource);
 
             removePropertyIfExistsOrElseThrowException(schemaName, propertiesYetNotFoundInStructure);
             if (Jpeg360MetadataProperty.IMAGE_METADATA.equals(schema)) {
@@ -86,29 +84,29 @@ public class Jpeg360MetadataValidator extends Jpeg360AbstractValidator<Jpeg360Me
 
     private String getSchemaNameFromResourceOrElseThrowException(Resource resource) throws Exception {
         Optional<Statement> nameStatement = ValidatorUtils.getOptionalValue(jpeg360Model, resource,
-                iri("http://ns.intel.com/umf/2.0name"));
+                ResourceFactory.createProperty("http://ns.intel.com/umf/2.0name"));
         if (nameStatement.isEmpty()) {
             throw new Exception("Name is not found for schema");
         }
         return ValidatorUtils.getPropertyName(jpeg360Model, nameStatement.get().getSubject());
     }
 
-    private List<Value> getSchemaContentsFromResourceOrElseThrowException(Resource resource) throws Exception {
+    private List<Statement> getSchemaContentsFromResourceOrElseThrowException(Resource resource) throws Exception {
         Optional<Statement> schemaContents = ValidatorUtils.getOptionalValue(jpeg360Model, resource,
-                iri("http://ns.intel.com/umf/2.0fields"));
+                ResourceFactory.createProperty("http://ns.intel.com/umf/2.0fields"));
         if (schemaContents.isEmpty()) {
             throw new Exception("Schema contentents <umf:fields> element is not found for schema");
         }
-        resource = getSubjectNameToResourceMap().get(schemaContents.get().getObject().stringValue());
+        resource = getSubjectNameToResourceMap().get(schemaContents.get().getObject().toString());
 
         return ValidatorUtils.getRdfBagContents(resource, jpeg360Model);
     }
 
     @Override
-    public Jpeg360Metadata readFromMetadata(List<Value> contents) throws Exception {
+    public Jpeg360Metadata readFromMetadata(List<Statement> contents) throws Exception {
         Jpeg360Metadata jpeg360MetadataElement = initializeJpeg360Element();
-        for (Value i : contents) {
-            Resource resource = getSubjectNameToResourceMap().get(i.stringValue());
+        for (Statement i : contents) {
+            Resource resource = getSubjectNameToResourceMap().get(i.getObject().toString());
 
             String schemaName = getSchemaNameFromResourceOrElseThrowException(resource);
             Jpeg360MetadataProperty schema = Jpeg360MetadataProperty.getSchemaPropertyFromString(schemaName);
@@ -117,7 +115,7 @@ public class Jpeg360MetadataValidator extends Jpeg360AbstractValidator<Jpeg360Me
             Integer umfId = getUmfIdFromResourceOrElseThrowException(metadataParentElement);
 
             try {
-                List<Value> metadataContents = getSchemaContentsFromResourceOrElseThrowException(
+                List<Statement> metadataContents = getSchemaContentsFromResourceOrElseThrowException(
                         metadataParentElement);
 
                 if (Jpeg360MetadataProperty.IMAGE_METADATA.equals(schema)) {
@@ -154,20 +152,20 @@ public class Jpeg360MetadataValidator extends Jpeg360AbstractValidator<Jpeg360Me
 
     private Integer getUmfIdFromResourceOrElseThrowException(Resource resource) throws Exception {
         Optional<Statement> metadataIdStatement = ValidatorUtils.getOptionalValue(jpeg360Model, resource,
-                iri("http://ns.intel.com/umf/2.0id"));
+                ResourceFactory.createProperty("http://ns.intel.com/umf/2.0id"));
         if (metadataIdStatement.isEmpty()) {
             throw new Exception("Umf Id is not found for metadata element");
         }
-        return Integer.parseInt(metadataIdStatement.get().getObject().stringValue());
+        return Integer.parseInt(metadataIdStatement.get().getObject().toString());
     }
 
     private Resource getMetadataParentElement(Resource resource) {
         Optional<Statement> metadataSetStatement = ValidatorUtils.getOptionalValue(jpeg360Model, resource,
-                iri("http://ns.intel.com/umf/2.0set"));
-        resource = getSubjectNameToResourceMap().get(metadataSetStatement.get().getObject().stringValue());
+                ResourceFactory.createProperty("http://ns.intel.com/umf/2.0set"));
+        resource = getSubjectNameToResourceMap().get(metadataSetStatement.get().getObject().toString());
 
-        List<Value> internalSchemaContents = ValidatorUtils.getRdfBagContents(resource, jpeg360Model);
-        return getSubjectNameToResourceMap().get(internalSchemaContents.get(0).stringValue());
+        List<Statement> internalSchemaContents = ValidatorUtils.getRdfBagContents(resource, jpeg360Model);
+        return getSubjectNameToResourceMap().get(internalSchemaContents.get(0).getObject().toString());
     }
 
     enum Jpeg360MetadataProperty {
