@@ -10,7 +10,6 @@ import org.apache.jena.rdf.model.Statement;
 
 import java.util.List;
 
-
 public abstract class Jpeg360AbstractValidator<T> implements ElementValidator<T> {
 
     protected Model jpeg360Model;
@@ -100,7 +99,8 @@ public abstract class Jpeg360AbstractValidator<T> implements ElementValidator<T>
         }
     }
 
-    protected List<Statement> getSchemaContents(Statement schemaStatement, boolean isMetadataStructure) throws Exception {
+    protected List<Statement> getSchemaContents(Statement schemaStatement, boolean isMetadataStructure)
+            throws Exception {
         Statement descriptor = getChildStatementBasedOnElementType(schemaStatement, isMetadataStructure);
         Resource bag = getSubjectNameToResourceMap().get(descriptor.getObject().toString());
 
@@ -109,8 +109,10 @@ public abstract class Jpeg360AbstractValidator<T> implements ElementValidator<T>
 
     protected Statement getChildStatementBasedOnElementType(Statement parentStatement, boolean isSchemaElement) {
         return (!isSchemaElement) ? ValidatorUtils.getOptionalValue(jpeg360Model,
-                parentStatement.getSubject(), ResourceFactory.createProperty("http://ns.intel.com/umf/2.0descriptors")).get()
+                parentStatement.getSubject(), ResourceFactory.createProperty("http://ns.intel.com/umf/2.0descriptors"))
+                .get()
                 : ValidatorUtils.getOptionalValue(jpeg360Model,
-                        parentStatement.getSubject(), ResourceFactory.createProperty("http://ns.intel.com/umf/2.0set")).get();
+                        parentStatement.getSubject(), ResourceFactory.createProperty("http://ns.intel.com/umf/2.0set"))
+                        .get();
     }
 }

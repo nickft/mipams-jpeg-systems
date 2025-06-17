@@ -133,7 +133,8 @@ public class Jpeg360ImageMetadataValidator extends Jpeg360AbstractValidator<Jpeg
         if (!stereoscopicFormat.isBlank() && !stereoscopicFormat.equals("extended")) {
             if (!boxReference.equals("conventional")) {
                 throw new Exception(
-                        "'Conventional' shall be provided when StereoscopicFormat is set to 'side-by-side' and 'top-bottom'.");
+                        "'Conventional' shall be provided when StereoscopicFormat is set to "
+                                + "'side-by-side' and 'top-bottom'.");
             }
         }
         imageMetadata.setBoxReference(boxReference);
@@ -146,7 +147,8 @@ public class Jpeg360ImageMetadataValidator extends Jpeg360AbstractValidator<Jpeg
         if (propertiesYetNotFoundInStructure.size() == 0) {
             if (element.getStereoscopicFormat() == null) {
                 throw new Exception(
-                        "JPEG 360 Metadata Schema descriptor for Stereoscopic Format exists but no such tag is found in metadata element with umf id: %d");
+                        "JPEG 360 Metadata Schema descriptor for Stereoscopic Format exists "
+                                + "but no such tag is found in metadata element with umf id: %d");
             }
             return;
         }
@@ -154,7 +156,8 @@ public class Jpeg360ImageMetadataValidator extends Jpeg360AbstractValidator<Jpeg
         if (propertiesYetNotFoundInStructure.get(0).equals(Jpeg360ImageMetadataProperty.STEREOSCOPIC_FORMAT.getKey())) {
             if (element.getStereoscopicFormat() != null) {
                 throw new Exception(
-                        "JPEG 360 Metadata Schema descriptor for Stereoscopic Format does not exist but no a tag is found");
+                        "JPEG 360 Metadata Schema descriptor for Stereoscopic Format "
+                                + "does not exist but no a tag is found");
             }
             removePropertyIfExistsOrElseThrowException(Jpeg360ImageMetadataProperty.STEREOSCOPIC_FORMAT.getKey(),
                     propertiesYetNotFoundInStructure);

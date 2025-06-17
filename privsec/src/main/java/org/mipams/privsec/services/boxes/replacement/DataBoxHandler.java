@@ -9,10 +9,10 @@ import org.mipams.jumbf.entities.ParseMetadata;
 import org.mipams.jumbf.util.MipamsException;
 
 public interface DataBoxHandler {
-        void writeDataBoxToJumbfFile(List<BmffBox> replacementDataBoxList, OutputStream outputStream)
-                        throws MipamsException;
+    void writeDataBoxToJumbfFile(List<BmffBox> replacementDataBoxList, OutputStream outputStream)
+            throws MipamsException;
 
-        List<BmffBox> parseDataBoxFromJumbfFile(InputStream inputStream, ParseMetadata parseMetadata)
-                        throws MipamsException;
+    List<BmffBox> parseDataBoxFromJumbfFile(InputStream inputStream, ParseMetadata parseMetadata)
+            throws MipamsException;
 
 }

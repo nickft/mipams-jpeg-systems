@@ -112,7 +112,8 @@ public class JpegSnackDescriptionBoxService extends BmffBoxService<JpegSnackDesc
                     CoreUtils.writeIntAsSingleByteToOutputStream(composition.getId(), os);
                 } else {
                     throw new JpegSnackException(
-                            "The composition id value shall be absent when the number of compositions field is not present");
+                            "The composition id value shall be absent " +
+                                    "when the number of compositions field is not present");
                 }
             }
             CoreUtils.writeIntAsSingleByteToOutputStream(composition.getNoOfObjects(), os);

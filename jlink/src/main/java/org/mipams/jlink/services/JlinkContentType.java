@@ -76,8 +76,6 @@ public class JlinkContentType implements ContentTypeService {
                     logger.log(Level.FINE, "JP2C Content JUMBF Box");
                 } else if (isJlinkContentType(jumbfBox)) {
                     logger.log(Level.FINE, "JLINK Content JUMBF Box");
-                } else {
-                    throw new MipamsException("Only Codestream and JLINK Content types are supported.");
                 }
 
                 if (jumbfBox.getDescriptionBox().getLabel() == null) {

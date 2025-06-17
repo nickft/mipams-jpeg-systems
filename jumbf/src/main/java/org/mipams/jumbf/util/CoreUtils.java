@@ -10,10 +10,8 @@ import java.io.OutputStream;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
-import org.mipams.jumbf.entities.JumbfBox;
 import org.mipams.jumbf.entities.PaddingBox;
 import org.mipams.jumbf.entities.PrivateBox;
 import org.springframework.http.MediaType;
@@ -532,24 +530,6 @@ public class CoreUtils {
         return String.format("%d-%d", boxType, boxInstanceNumber);
     }
 
-    public static JumbfBox locateJumbfBoxFromLabel(List<JumbfBox> assertionJumbfBoxList, String label)
-            throws MipamsException {
-        JumbfBox result = null;
-
-        if (label == null) {
-            return result;
-        }
-
-        for (JumbfBox jumbfBox : assertionJumbfBoxList) {
-            if (label.equals(jumbfBox.getDescriptionBox().getLabel())) {
-                result = jumbfBox;
-                break;
-            }
-        }
-
-        return result;
-    }
-
     public static boolean isPaddingBoxNext(InputStream input) throws MipamsException {
 
         input.mark(16);
@@ -666,7 +646,7 @@ public class CoreUtils {
     public static int parseBoxAndGetType(InputStream is) throws MipamsException {
         try {
             long parsedBytes = 0;
-            
+
             long boxLength = CoreUtils.readIntFromInputStream(is);
             parsedBytes += CoreUtils.INT_BYTE_SIZE;
 
@@ -681,7 +661,7 @@ public class CoreUtils {
             if (boxLength > parsedBytes) {
                 readBytesFromInputStream(is, boxLength - parsedBytes);
             }
-            
+
             return boxType;
         } catch (Exception e) {
             throw new MipamsException("Failed to parse box", e);

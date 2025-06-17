@@ -25,20 +25,20 @@ public class JpegXLGenerator {
     @Autowired
     JumbfBoxService jumbfBoxService;
 
-    public void generateJumbfMetadataToFile(List<JumbfBox> jumbfBoxList, String assetUrl, String outputUrl) 
-    throws JpegXLException {
+    public void generateJumbfMetadataToFile(List<JumbfBox> jumbfBoxList, String assetUrl, String outputUrl)
+            throws JpegXLException {
 
         try {
             List<JumbfBox> embeddedJumbfBoxes = jpegXLParser.parseMetadataFromFile(assetUrl);
             embeddedJumbfBoxes.addAll(0, jumbfBoxList);
 
             try (InputStream is = new BufferedInputStream(new FileInputStream(assetUrl), 8);
-            OutputStream os = new FileOutputStream(outputUrl);) {
+                    OutputStream os = new FileOutputStream(outputUrl);) {
 
                 int nextTBoxId = jpegXLParser.getNextBoxType(is);
                 JXL_BOXES tBox = JXL_BOXES.getTBoxFromInt(nextTBoxId);
 
-                if(!JXL_BOXES.JXL_SIGNATURE_BOX_TYPE.equals(tBox)) {
+                if (!JXL_BOXES.JXL_SIGNATURE_BOX_TYPE.equals(tBox)) {
                     throw new JpegXLException("Jxl signature box expected");
                 }
 
@@ -47,7 +47,7 @@ public class JpegXLGenerator {
                 nextTBoxId = jpegXLParser.getNextBoxType(is);
                 tBox = JXL_BOXES.getTBoxFromInt(nextTBoxId);
 
-                if(!JXL_BOXES.JXL_FILE_TYPE_BOX_TYPE.equals(tBox)) {
+                if (!JXL_BOXES.JXL_FILE_TYPE_BOX_TYPE.equals(tBox)) {
                     throw new JpegXLException("Jxl file type box expected");
                 }
 
@@ -56,15 +56,15 @@ public class JpegXLGenerator {
                 nextTBoxId = jpegXLParser.getNextBoxType(is);
                 tBox = JXL_BOXES.getTBoxFromInt(nextTBoxId);
 
-                if(JXL_BOXES.JXL_LEVEL_BOX_TYPE.equals(tBox)) {
+                if (JXL_BOXES.JXL_LEVEL_BOX_TYPE.equals(tBox)) {
                     writeJxlBoxToOutputStream(is, os);
                 }
 
-                for (JumbfBox jumbfBox: embeddedJumbfBoxes){
+                for (JumbfBox jumbfBox : embeddedJumbfBoxes) {
                     jumbfBoxService.writeToJumbfFile(jumbfBox, os);
                 }
 
-                while(is.available() > 0) {
+                while (is.available() > 0) {
                     writeJxlBoxToOutputStream(is, os);
                 }
             }
@@ -84,7 +84,7 @@ public class JpegXLGenerator {
 
         long boxLength = lBox;
 
-        if (boxLength == 1 ) {
+        if (boxLength == 1) {
             boxLength = CoreUtils.readLongFromInputStream(is);
             boxLength -= CoreUtils.LONG_BYTE_SIZE;
             CoreUtils.writeLongToOutputStream(boxLength, os);
@@ -93,7 +93,6 @@ public class JpegXLGenerator {
         if (lBox != 0) {
             boxLength -= 2 * CoreUtils.INT_BYTE_SIZE;
         }
-
 
         CoreUtils.writeBytesFromInputStreamToOutputstream(is, boxLength, os);
     }

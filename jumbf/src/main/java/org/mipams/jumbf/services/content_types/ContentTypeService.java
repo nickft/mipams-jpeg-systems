@@ -10,12 +10,12 @@ import org.mipams.jumbf.util.MipamsException;
 
 public interface ContentTypeService {
 
-        public String getContentTypeUuid();
+    public String getContentTypeUuid();
 
-        public List<BmffBox> parseContentBoxesFromJumbfFile(InputStream input, ParseMetadata parseMetadata)
-                        throws MipamsException;
+    public List<BmffBox> parseContentBoxesFromJumbfFile(InputStream input, ParseMetadata parseMetadata)
+            throws MipamsException;
 
-        public void writeContentBoxesToJumbfFile(List<BmffBox> inputBox, OutputStream outputStream)
-                        throws MipamsException;
+    public void writeContentBoxesToJumbfFile(List<BmffBox> inputBox, OutputStream outputStream)
+            throws MipamsException;
 
 }

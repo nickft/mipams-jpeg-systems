@@ -31,7 +31,8 @@ public class Jpeg360XmlGenerator {
         StringBuilder xmpContent = new StringBuilder();
         xmpContent.append("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">");
         xmpContent.append(
-                "<rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\" xmlns:umf=\"http://ns.intel.com/umf/2.0\">");
+                "<rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\" "
+                        + "xmlns:umf=\"http://ns.intel.com/umf/2.0\">");
 
         if (element.getNextId() == null) {
             throw new Exception("JLINK metadata doesn't have a next-id assigned.");

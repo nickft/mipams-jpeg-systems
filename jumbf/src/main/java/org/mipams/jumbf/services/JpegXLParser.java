@@ -49,15 +49,15 @@ public class JpegXLParser implements ParserInterface {
         }
 
         public static JXL_BOXES getTBoxFromInt(int tBoxId) throws JpegXLException {
-            for (JXL_BOXES box: values()){
-                if(box.getTBox() == tBoxId) {
+            for (JXL_BOXES box : values()) {
+                if (box.getTBox() == tBoxId) {
                     return box;
                 }
             }
 
             throw new JpegXLException(String.format("Unsupported tBox: %d", tBoxId));
         }
-    } 
+    }
 
     @Autowired
     JumbfBoxService superBoxService;
@@ -70,13 +70,13 @@ public class JpegXLParser implements ParserInterface {
         ParseMetadata parseMetadata = new ParseMetadata();
         parseMetadata.setParentDirectory(tmpDirectory);
 
-        Set<Integer> tBoxesEncountered = new HashSet<>(); 
+        Set<Integer> tBoxesEncountered = new HashSet<>();
 
         try (InputStream input = new BufferedInputStream(new FileInputStream(assetUrl), 16)) {
             parseJxlBox(input, JXL_BOXES.JXL_SIGNATURE_BOX_TYPE);
 
             parseJxlBox(input, JXL_BOXES.JXL_FILE_TYPE_BOX_TYPE);
-            
+
             List<JumbfBox> bmffBoxList = new ArrayList<>();
 
             while (input.available() > 0) {
@@ -90,15 +90,17 @@ public class JpegXLParser implements ParserInterface {
                         bmffBoxList.add(jumbfBox);
                         break;
                     case JXL_PARTIAL_JXL_BOX_TYPE:
-                        if(tBoxesEncountered.contains(JXL_BOXES.JXL_JXL_BOX_TYPE.getTBox())){
-                            throw new JpegXLException(String.format("JXL file cannot have both complete and partial JPEG XL Codestream boxes."));
+                        if (tBoxesEncountered.contains(JXL_BOXES.JXL_JXL_BOX_TYPE.getTBox())) {
+                            throw new JpegXLException(String.format(
+                                    "JXL file cannot have both complete and partial JPEG XL Codestream boxes."));
                         }
                         parseJxlBox(input, tBox);
                         tBoxesEncountered.add(nextTBoxId);
                         break;
                     default:
-                        if(tBoxesEncountered.contains(nextTBoxId)){
-                            throw new JpegXLException(String.format("JXL box type %d has been encountered multiple times", nextTBoxId));
+                        if (tBoxesEncountered.contains(nextTBoxId)) {
+                            throw new JpegXLException(
+                                    String.format("JXL box type %d has been encountered multiple times", nextTBoxId));
                         }
                         parseJxlBox(input, tBox);
                         tBoxesEncountered.add(nextTBoxId);
@@ -111,7 +113,8 @@ public class JpegXLParser implements ParserInterface {
         }
     }
 
-    private JumbfBox parseJumbfBox(InputStream input, ParseMetadata parseMetadata) throws JpegXLException, UnsupportedContentTypeException {
+    private JumbfBox parseJumbfBox(InputStream input, ParseMetadata parseMetadata)
+            throws JpegXLException, UnsupportedContentTypeException {
         try {
             JumbfBox jumbfBox = superBoxService.parseSuperBox(input, parseMetadata);
             return jumbfBox;
@@ -125,7 +128,7 @@ public class JpegXLParser implements ParserInterface {
 
         int tBox = CoreUtils.readIntFromInputStream(input);
 
-        if(tBox != expectedBoxType.getTBox()) {
+        if (tBox != expectedBoxType.getTBox()) {
             throw new JpegXLException(String.format("Expected box %d, found box %d", expectedBoxType.getTBox(), tBox));
         }
 
@@ -144,13 +147,12 @@ public class JpegXLParser implements ParserInterface {
         }
     }
 
-    public int getNextBoxType(InputStream input) throws JpegXLException{
+    public int getNextBoxType(InputStream input) throws JpegXLException {
         input.mark(16);
 
         try {
             CoreUtils.readIntFromInputStream(input);
             int tBox = CoreUtils.readIntFromInputStream(input);
-
 
             if (!input.markSupported()) {
                 throw new JpegXLException("Input Stream does not support marking.");
@@ -163,7 +165,7 @@ public class JpegXLParser implements ParserInterface {
         }
     }
 
-    public boolean assetHasLevelBox(String assetUrl) throws MipamsException{
+    public boolean assetHasLevelBox(String assetUrl) throws MipamsException {
         try (InputStream input = new BufferedInputStream(new FileInputStream(assetUrl), 16)) {
             parseJxlBox(input, JXL_BOXES.JXL_SIGNATURE_BOX_TYPE);
 

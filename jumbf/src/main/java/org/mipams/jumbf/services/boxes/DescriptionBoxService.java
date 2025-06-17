@@ -42,6 +42,7 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
         return serviceMetadata;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     protected void writeBmffPayloadToJumbfFile(DescriptionBox descriptionBox, OutputStream outputStream)
             throws MipamsException {
@@ -66,7 +67,7 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
             if (descriptionBox.getPrivateField().getClass().equals(PrivateBox.class)) {
                 privateBoxService.writeToJumbfFile((PrivateBox) descriptionBox.getPrivateField(), outputStream);
             } else {
-                
+
                 BmffBoxService service = bmffBoxServiceDiscoveryManager
                         .getBmffBoxServiceBasedOnTbox(descriptionBox.getPrivateField().getTBox());
                 service.writeToJumbfFile(descriptionBox.getPrivateField(), outputStream);
@@ -74,6 +75,7 @@ public final class DescriptionBoxService extends BmffBoxService<DescriptionBox> 
         }
     }
 
+    @SuppressWarnings({ "rawtypes" })
     @Override
     protected void populatePayloadFromJumbfFile(DescriptionBox descriptionBox, ParseMetadata parseMetadata,
             InputStream input) throws MipamsException {

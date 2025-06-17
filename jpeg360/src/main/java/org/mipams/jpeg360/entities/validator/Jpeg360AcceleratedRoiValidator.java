@@ -99,7 +99,8 @@ public class Jpeg360AcceleratedRoiValidator extends Jpeg360AbstractValidator<Jpe
 
         if (boxReference.isBlank()) {
             throw new Exception(
-                    "boxReference shall be provided in JPEG 360 Schema for Accelerated ROIs except for global CTE re-ordering");
+                    "boxReference shall be provided in JPEG 360 Schema "
+                            + "for Accelerated ROIs except for global CTE re-ordering");
         }
         acceleratedRoi.setBoxReference(boxReference);
     }

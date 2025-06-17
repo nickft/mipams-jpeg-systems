@@ -182,7 +182,8 @@ public class InstructionParameter {
 
         if (Boolean.logicalXor(xoExists, yoExists)) {
             throw new JpegSnackException(String.format(
-                    "InstructionSetBox structure is corrupted: either Horizontal Offset (XO - exists: [%b]) or Vertical Offset (YO - exists: [%b]) is not set.",
+                    "InstructionSetBox structure is corrupted: either Horizontal Offset " +
+                            "(XO - exists: [%b]) or Vertical Offset (YO - exists: [%b]) is not set.",
                     xoExists, yoExists));
         }
 
@@ -195,7 +196,8 @@ public class InstructionParameter {
 
         if (Boolean.logicalXor(widthExists, heightExists)) {
             throw new JpegSnackException(String.format(
-                    "InstructionSetBox structure is corrupted: either Width (exists: [%b]) or Height (exists: [%b]) is not set.",
+                    "InstructionSetBox structure is corrupted: either Width " +
+                            "(exists: [%b]) or Height (exists: [%b]) is not set.",
                     widthExists, heightExists));
         }
 
@@ -210,7 +212,8 @@ public class InstructionParameter {
         if (Boolean.logicalOr(Boolean.logicalXor(persistExists, lifeExists),
                 Boolean.logicalXor(lifeExists, nextUseExists))) {
             throw new JpegSnackException(String.format(
-                    "InstructionSetBox structure is corrupted: Something between Persist (exists: [%b]), Life (exists: [%b]) and Next-Use (exists: [%b]) is not set.",
+                    "InstructionSetBox structure is corrupted: Something between Persist "
+                            + "(exists: [%b]), Life (exists: [%b]) and Next-Use (exists: [%b]) is not set.",
                     persistExists, lifeExists, nextUseExists));
         }
 
@@ -226,7 +229,9 @@ public class InstructionParameter {
         if (Boolean.logicalOr(Boolean.logicalXor(xcExists, ycExists),
                 Boolean.logicalXor(hcExists, wcExists))) {
             throw new JpegSnackException(String.format(
-                    "InstructionSetBox structure is corrupted: Something between Horizontal Crop Offset (XC - exists: [%b]), Vertical Crop Offset (YC - exists: [%b]), Cropped Width (WC - exists: [%b]) and Cropped Height (HC - exists: [%b]) is not set.",
+                    "InstructionSetBox structure is corrupted: Something between Horizontal "
+                            + "Crop Offset (XC - exists: [%b]), Vertical Crop Offset (YC - exists: [%b]), "
+                            + "Cropped Width (WC - exists: [%b]) and Cropped Height (HC - exists: [%b]) is not set.",
                     xcExists, ycExists, wcExists, hcExists));
         }
 

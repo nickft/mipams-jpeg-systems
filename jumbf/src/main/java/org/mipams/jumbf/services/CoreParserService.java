@@ -43,7 +43,7 @@ public class CoreParserService implements ParserInterface {
 
             while (input.available() > 0) {
                 Optional<JumbfBox> jumbfBox = parseJumbfBoxFromInputStream(parseMetadata, input);
-                if(jumbfBox.isPresent()){
+                if (jumbfBox.isPresent()) {
                     bmffBoxList.add(jumbfBox.get());
                 }
             }
@@ -54,8 +54,9 @@ public class CoreParserService implements ParserInterface {
         }
     }
 
-    public Optional<JumbfBox> parseJumbfBoxFromInputStream(ParseMetadata parseMetadata, InputStream input) throws MipamsException {
-        try{
+    public Optional<JumbfBox> parseJumbfBoxFromInputStream(ParseMetadata parseMetadata, InputStream input)
+            throws MipamsException {
+        try {
             JumbfBox jumbfBox = superBoxService.parseSuperBox(input, parseMetadata);
             logger.log(Level.FINE, "New box discovered: " + jumbfBox.toString());
             return Optional.of(jumbfBox);
