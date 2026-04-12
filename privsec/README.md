@@ -1,9 +1,31 @@
-# MIPAMS JPEG Systems Reference software: Privacy and Security submodule
+# MIPAMS JPEG Systems: Privacy and Security (ISO/IEC 19566-4)
 
-## Table of Contents
+This submodule extends the core JUMBF SDK to enable privacy- and security-aware metadata handling inside JPEG codestreams. It introduces the **Protection JUMBF Box** and **Replacement JUMBF Box**.
 
-1. [Introduction](#intro)
+*Requires the `/jumbf` core module.*
 
-## Introduction <a name="intro"></a>
+---
 
-This submodule implements the JUMBF boxes as defined in JPEG systems — Part 4: Privacy and security (ISO/IEC 19566-4) standard by extending jumbf submodule.
+## Usage Scenarios
+
+This module allows you to signal cryptographic protection schemes and structured replacement content.
+
+### AES-256-CBC Protection Box Example
+
+```java
+public void createProtectedBox() throws Exception {
+    ProtectionDescriptionBox protectionDescriptionBox = new ProtectionDescriptionBox();
+    
+    // Configure encryption scheme
+    protectionDescriptionBox.setAes256CbcProtection();
+    protectionDescriptionBox.updateFieldsBasedOnExistingData();
+
+    // Wrap in a Protection JUMBF Box
+    JumbfBox givenJumbfBox = getProtectionJumbfBoxBasedOnProtectionDescriptionBox(protectionDescriptionBox);
+
+    // Mock lifecycle: Generate to file and parse back
+    JumbfBox parsedJumbfBox = generateJumbfFileAndParseBox(List.of(givenJumbfBox)).get(0);
+
+    assertEquals(givenJumbfBox, parsedJumbfBox);
+}
+```
