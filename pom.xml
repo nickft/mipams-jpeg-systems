@@ -5,15 +5,15 @@
 
 	<licenses>
 		<license>
-			<name>Apache License, Version 2.0</name>
-			<url>https://www.apache.org/licenses/LICENSE-2.0</url>
+			<name>The 3-Clause BSD License</name>
+			<url>https://opensource.org/licenses/BSD-3-Clause</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
 
 	<groupId>org.mipams</groupId>
 	<artifactId>jpeg-systems</artifactId>
-	<version>1.1</version>
+	<version>1.2</version>
 	<packaging>pom</packaging>
 	
 	<name>JPEG Systems Reference Software</name>
